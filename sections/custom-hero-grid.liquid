@@ -1,0 +1,907 @@
+{%- liquid
+  assign left_image_alt         = section.settings.left_image_alt         | default: '' | escape
+  assign right_top_image_alt    = section.settings.right_top_image_alt    | default: '' | escape
+  assign right_bottom_image_alt = section.settings.right_bottom_image_alt | default: '' | escape
+  assign section_aria_label     = section.settings.left_heading | default: 'Hero promotion' | escape
+-%}
+
+{% style %}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  /* Per-instance image focus points — desktop (override stylesheet defaults) */
+  #hero-grid-{{ section.id }} .hero-grid__picture--left .hero-grid__image {
+    object-position: {{ section.settings.left_img_pos_desktop | default: 'right bottom' }};
+  }
+  #hero-grid-{{ section.id }} .hero-grid__picture--right-top .hero-grid__image {
+    object-position: {{ section.settings.right_top_img_pos_desktop | default: 'right center' }};
+  }
+  #hero-grid-{{ section.id }} .hero-grid__picture--right-bottom .hero-grid__image {
+    object-position: {{ section.settings.right_bottom_img_pos_desktop | default: 'left center' }};
+  }
+
+  /* Stacked layout — kicks in at 1130px */
+  @media screen and (max-width: 1130px) {
+    #hero-grid-{{ section.id }} .hero-grid__picture--left .hero-grid__image {
+      object-position: {{ section.settings.left_img_pos_tablet | default: 'right bottom' }};
+    }
+    #hero-grid-{{ section.id }} .hero-grid__picture--right-top .hero-grid__image {
+      object-position: {{ section.settings.right_top_img_pos_tablet | default: 'right center' }};
+    }
+    #hero-grid-{{ section.id }} .hero-grid__picture--right-bottom .hero-grid__image {
+      object-position: {{ section.settings.right_bottom_img_pos_tablet | default: 'right center' }};
+    }
+  }
+
+  /* Mobile */
+  @media screen and (max-width: 749px) {
+    #hero-grid-{{ section.id }} .hero-grid__picture--left .hero-grid__image {
+      object-position: {{ section.settings.left_img_pos_mobile | default: 'center bottom' }};
+    }
+    #hero-grid-{{ section.id }} .hero-grid__picture--right-top .hero-grid__image {
+      object-position: {{ section.settings.right_top_img_pos_mobile | default: 'center center' }};
+    }
+    #hero-grid-{{ section.id }} .hero-grid__picture--right-bottom .hero-grid__image {
+      object-position: {{ section.settings.right_bottom_img_pos_mobile | default: 'center center' }};
+    }
+  }
+{% endstyle %}
+
+<section
+  class="hero-grid section-{{ section.id }}-padding"
+  id="hero-grid-{{ section.id }}"
+  aria-label="{{ section_aria_label }}"
+>
+  <div class="hero-grid__wrapper page-width">
+
+    {%- comment -%} Left large card {%- endcomment -%}
+    <div
+      class="hero-grid__card hero-grid__card--left"
+      style="background-color: {{ section.settings.left_bg_color }};"
+    >
+      {%- if section.settings.left_image != blank -%}
+        <picture class="hero-grid__picture hero-grid__picture--left">
+          {%- if section.settings.left_mobile_image != blank -%}
+            <source
+              media="(max-width: 749px)"
+              srcset="{{ section.settings.left_mobile_image | image_url: width: 750 }} 750w, {{ section.settings.left_mobile_image | image_url: width: 375 }} 375w"
+            >
+          {%- endif -%}
+          {{
+            section.settings.left_image
+            | image_url: width: 1400
+            | image_tag:
+              class: 'hero-grid__image',
+              alt: left_image_alt,
+              widths: '600, 800, 1000, 1200, 1400',
+              sizes: '(max-width: 749px) 100vw, 65vw',
+              loading: 'eager',
+              fetchpriority: 'high'
+          }}
+        </picture>
+      {%- endif -%}
+
+      {%- if section.settings.left_overlay_opacity > 0 -%}
+        <div
+          class="hero-grid__overlay"
+          style="background-color: {{ section.settings.left_overlay_color }}; opacity: {{ section.settings.left_overlay_opacity | divided_by: 100.0 }};"
+        ></div>
+      {%- endif -%}
+
+      <div class="hero-grid__content hero-grid__content--left">
+        {%- if section.settings.left_small_text != blank -%}
+          <p class="hero-grid__eyebrow">{{ section.settings.left_small_text | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.left_heading != blank -%}
+          <h2 class="hero-grid__big-heading">{{ section.settings.left_heading | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.left_subheading != blank -%}
+          <p class="hero-grid__subheading">{{ section.settings.left_subheading | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.left_button_text != blank -%}
+          <a
+            href="{{ section.settings.left_button_link }}"
+            class="hero-grid__btn hero-grid__btn--green"
+          >
+            {{- section.settings.left_button_text | escape -}}
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} Right column — two stacked cards {%- endcomment -%}
+    <div class="hero-grid__right">
+
+      {%- comment -%} Right top card {%- endcomment -%}
+      <div
+        class="hero-grid__card hero-grid__card--right-top"
+        style="background-color: {{ section.settings.right_top_bg_color }};"
+      >
+        {%- if section.settings.right_top_image != blank -%}
+          <picture class="hero-grid__picture hero-grid__picture--right-top">
+            {%- if section.settings.right_top_mobile_image != blank -%}
+              <source
+                media="(max-width: 749px)"
+                srcset="{{ section.settings.right_top_mobile_image | image_url: width: 750 }} 750w"
+              >
+            {%- endif -%}
+            {{
+              section.settings.right_top_image
+              | image_url: width: 700
+              | image_tag:
+                class: 'hero-grid__image',
+                alt: right_top_image_alt,
+                widths: '300, 500, 700',
+                sizes: '(max-width: 749px) 100vw, 35vw',
+                loading: 'lazy'
+            }}
+          </picture>
+        {%- endif -%}
+
+        {%- if section.settings.right_top_overlay_opacity > 0 -%}
+          <div
+            class="hero-grid__overlay"
+            style="background-color: {{ section.settings.right_top_overlay_color }}; opacity: {{ section.settings.right_top_overlay_opacity | divided_by: 100.0 }};"
+          ></div>
+        {%- endif -%}
+
+        <div class="hero-grid__content hero-grid__content--right-top">
+          {%- if section.settings.right_top_heading != blank -%}
+            <h3 class="hero-grid__card-heading">{{ section.settings.right_top_heading | escape }}</h3>
+          {%- endif -%}
+          {%- if section.settings.right_top_button_text != blank -%}
+            <a
+              href="{{ section.settings.right_top_button_link }}"
+              class="hero-grid__btn hero-grid__btn--outline"
+            >
+              {{- section.settings.right_top_button_text | escape -}}
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Right bottom card {%- endcomment -%}
+      <div
+        class="hero-grid__card hero-grid__card--right-bottom"
+        style="background-color: {{ section.settings.right_bottom_bg_color }};"
+      >
+        {%- if section.settings.right_bottom_image != blank -%}
+          <picture class="hero-grid__picture hero-grid__picture--right-bottom">
+            {%- if section.settings.right_bottom_mobile_image != blank -%}
+              <source
+                media="(max-width: 749px)"
+                srcset="{{ section.settings.right_bottom_mobile_image | image_url: width: 750 }} 750w"
+              >
+            {%- endif -%}
+            {{
+              section.settings.right_bottom_image
+              | image_url: width: 700
+              | image_tag:
+                class: 'hero-grid__image',
+                alt: right_bottom_image_alt,
+                widths: '300, 500, 700',
+                sizes: '(max-width: 749px) 100vw, 35vw',
+                loading: 'lazy'
+            }}
+          </picture>
+        {%- endif -%}
+
+        {%- if section.settings.right_bottom_overlay_opacity > 0 -%}
+          <div
+            class="hero-grid__overlay"
+            style="background-color: {{ section.settings.right_bottom_overlay_color }}; opacity: {{ section.settings.right_bottom_overlay_opacity | divided_by: 100.0 }};"
+          ></div>
+        {%- endif -%}
+
+        <div class="hero-grid__content hero-grid__content--right-bottom">
+          {%- if section.settings.right_bottom_heading != blank -%}
+            <h3 class="hero-grid__card-heading">{{ section.settings.right_bottom_heading | escape }}</h3>
+          {%- endif -%}
+          {%- if section.settings.right_bottom_button_text != blank -%}
+            <a
+              href="{{ section.settings.right_bottom_button_link }}"
+              class="hero-grid__btn hero-grid__btn--white"
+            >
+              {{- section.settings.right_bottom_button_text | escape -}}
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+/* ---- Hero Grid (Pet Center) ---- */
+
+.hero-grid { width: 100%; }
+
+.hero-grid__wrapper {
+  display: grid;
+  grid-template-columns: 65fr 35fr;
+  gap: 16px;
+}
+
+/* Cards */
+.hero-grid__card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 3px solid var(--pc-text, #2B1B12);
+  box-shadow: 6px 8px 0 rgba(43, 27, 18, 0.82);
+}
+
+.hero-grid__card--left {
+  min-height: 640px;
+}
+
+/* Right column — two equal stacked cards */
+.hero-grid__right {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Images — absolute fill behind content */
+.hero-grid__picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  z-index: 0;
+}
+
+.hero-grid__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Fallback focus points — overridden per-instance by {% style %} block above */
+.hero-grid__picture--left .hero-grid__image       { object-position: right bottom; }
+.hero-grid__picture--right-top .hero-grid__image   { object-position: right center; }
+.hero-grid__picture--right-bottom .hero-grid__image { object-position: left center; }
+
+/* Readability overlay — sits between image (z:0) and content (z:2) */
+.hero-grid__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Content — z-index 2 keeps it above overlay */
+.hero-grid__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Text safe areas — max-width keeps text away from image subject */
+.hero-grid__content--left {
+  padding: 2.5rem 2.25rem;
+  max-width: 70%;
+  justify-content: flex-start;
+}
+
+.hero-grid__content--right-top {
+  padding: 1.75rem 1.5rem;
+  max-width: 58%;
+  justify-content: flex-start;
+}
+
+/* Right bottom: content pushed right, image subject on left */
+.hero-grid__content--right-bottom {
+  padding: 1.75rem 1.5rem;
+  max-width: 58%;
+  margin-left: auto;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Typography */
+.hero-grid__eyebrow {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.hero-grid__big-heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(4rem, 8vw, 6.5rem);
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  line-height: 0.9;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Large desktop — let text area breathe fully */
+@media screen and (min-width: 1300px) {
+  .hero-grid__content--left { max-width: 75%; }
+}
+
+.hero-grid__subheading {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.hero-grid__card-heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.1;
+  margin: 0;
+}
+
+/* Buttons */
+.hero-grid__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 800;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  border: 2px solid transparent;
+  white-space: nowrap;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.hero-grid__btn--green {
+  background-color: var(--pc-green, #4F8A2F);
+  color: var(--pc-white, #FFFFFF);
+  border-color: var(--pc-green, #4F8A2F);
+}
+.hero-grid__btn--green:hover {
+  background-color: var(--pc-green-dark, #3E6F25);
+  border-color: var(--pc-green-dark, #3E6F25);
+  color: var(--pc-white, #FFFFFF);
+}
+
+.hero-grid__btn--outline {
+  background-color: transparent;
+  color: var(--pc-text, #2B1B12);
+  border-color: var(--pc-text, #2B1B12);
+}
+.hero-grid__btn--outline:hover {
+  background-color: var(--pc-text, #2B1B12);
+  color: var(--pc-white, #FFFFFF);
+}
+
+.hero-grid__btn--white {
+  background-color: var(--pc-white, #FFFFFF);
+  color: var(--pc-text, #2B1B12);
+  border-color: var(--pc-white, #FFFFFF);
+}
+.hero-grid__btn--white:hover {
+  background-color: var(--pc-cream, #F7DFB8);
+  border-color: var(--pc-cream, #F7DFB8);
+  color: var(--pc-text, #2B1B12);
+}
+
+/* Stacked layout — 1130px and below
+   Big card full-width on top, two smaller cards side-by-side below */
+@media screen and (max-width: 1130px) {
+  .hero-grid__wrapper {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .hero-grid__right {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 16px;
+  }
+  .hero-grid__card--left { min-height: 480px; }
+  .hero-grid__card--right-top,
+  .hero-grid__card--right-bottom { min-height: 280px; }
+
+  /* Left card: wider text safe zone — now full-width card so more room */
+  .hero-grid__content--left {
+    max-width: 68%;
+    padding: 2.5rem 2.25rem;
+  }
+  /* Right cards: text left-aligned now (no longer right-pushed) */
+  .hero-grid__content--right-top,
+  .hero-grid__content--right-bottom {
+    max-width: 58%;
+    padding: 1.5rem;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+  /* 8vw slope lands at 60px at 750px — matches where mobile range picks up */
+  .hero-grid__big-heading { font-size: clamp(3rem, 8vw, 5.5rem); }
+  .hero-grid__card-heading { font-size: clamp(1.25rem, 2.5vw, 1.75rem); }
+}
+
+/* Smaller stacked — reduce heights as viewport shrinks */
+@media screen and (max-width: 749px) {
+  .hero-grid__wrapper { gap: 12px; }
+  .hero-grid__right { gap: 12px; }
+  .hero-grid__card--left { min-height: 360px; }
+  .hero-grid__card--right-top,
+  .hero-grid__card--right-bottom { min-height: 220px; }
+  .hero-grid__content--left {
+    max-width: 72%;
+    padding: 1.75rem 1.5rem;
+  }
+  .hero-grid__content--right-top,
+  .hero-grid__content--right-bottom {
+    max-width: 60%;
+    padding: 1.25rem;
+  }
+  /* 8vw at 749px = 59.9px — seamlessly continues from stacked range's 60px */
+  .hero-grid__big-heading { font-size: clamp(2.5rem, 8vw, 3.75rem); }
+  .hero-grid__card-heading { font-size: clamp(1rem, 4vw, 1.375rem); }
+  .hero-grid__btn { font-size: 0.875rem; padding: 0.45rem 1rem; }
+}
+
+/* Narrow mobile — stack all three cards vertically */
+@media screen and (max-width: 480px) {
+  .hero-grid__right { grid-template-columns: 1fr; }
+  .hero-grid__card--right-top,
+  .hero-grid__card--right-bottom { min-height: 220px; }
+  .hero-grid__content--right-top,
+  .hero-grid__content--right-bottom { max-width: 65%; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero Grid",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+
+    {
+      "type": "header",
+      "content": "Left card — content"
+    },
+    {
+      "type": "text",
+      "id": "left_small_text",
+      "label": "Small text above heading",
+      "default": "Up to"
+    },
+    {
+      "type": "text",
+      "id": "left_heading",
+      "label": "Big promo heading",
+      "default": "45% OFF"
+    },
+    {
+      "type": "text",
+      "id": "left_subheading",
+      "label": "Subheading",
+      "default": "Thousands of pet favorites"
+    },
+    {
+      "type": "text",
+      "id": "left_button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "left_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "left_bg_color",
+      "label": "Background color",
+      "info": "Visible behind the image — match your photo's background color",
+      "default": "#F7DFB8"
+    },
+
+    {
+      "type": "header",
+      "content": "Left card — image"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image",
+      "label": "Desktop image",
+      "info": "Recommended: 1400 x 920px. Place your subject on the right side."
+    },
+    {
+      "type": "image_picker",
+      "id": "left_mobile_image",
+      "label": "Mobile image (optional)",
+      "info": "If blank, the desktop image is used on mobile too."
+    },
+    {
+      "type": "text",
+      "id": "left_image_alt",
+      "label": "Image alt text",
+      "info": "Describe the image for screen readers and SEO"
+    },
+
+    {
+      "type": "header",
+      "content": "Left card — image focus point"
+    },
+    {
+      "type": "select",
+      "id": "left_img_pos_desktop",
+      "label": "Desktop focus",
+      "info": "Where to anchor the image when it is cropped on desktop",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top center" },
+        { "value": "center bottom", "label": "Bottom center" },
+        { "value": "left center", "label": "Left center" },
+        { "value": "right center", "label": "Right center" },
+        { "value": "right bottom", "label": "Right bottom" },
+        { "value": "right top", "label": "Right top" },
+        { "value": "left bottom", "label": "Left bottom" },
+        { "value": "left top", "label": "Left top" }
+      ],
+      "default": "right bottom"
+    },
+    {
+      "type": "select",
+      "id": "left_img_pos_tablet",
+      "label": "Tablet focus",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top center" },
+        { "value": "center bottom", "label": "Bottom center" },
+        { "value": "left center", "label": "Left center" },
+        { "value": "right center", "label": "Right center" },
+        { "value": "right bottom", "label": "Right bottom" },
+        { "value": "right top", "label": "Right top" },
+        { "value": "left bottom", "label": "Left bottom" },
+        { "value": "left top", "label": "Left top" }
+      ],
+      "default": "right bottom"
+    },
+    {
+      "type": "select",
+      "id": "left_img_pos_mobile",
+      "label": "Mobile focus",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top center" },
+        { "value": "center bottom", "label": "Bottom center" },
+        { "value": "left center", "label": "Left center" },
+        { "value": "right center", "label": "Right center" },
+        { "value": "right bottom", "label": "Right bottom" },
+        { "value": "right top", "label": "Right top" },
+        { "value": "left bottom", "label": "Left bottom" },
+        { "value": "left top", "label": "Left top" }
+      ],
+      "default": "center bottom"
+    },
+
+    {
+      "type": "header",
+      "content": "Left card — readability overlay"
+    },
+    {
+      "type": "color",
+      "id": "left_overlay_color",
+      "label": "Overlay color",
+      "info": "Color placed over the image to improve text contrast. Cream works well on busy photos.",
+      "default": "#F7DFB8"
+    },
+    {
+      "type": "range",
+      "id": "left_overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 0,
+      "info": "0 = off. Increase if text is hard to read over the image."
+    },
+
+    {
+      "type": "header",
+      "content": "Right top card — content"
+    },
+    {
+      "type": "text",
+      "id": "right_top_heading",
+      "label": "Heading",
+      "default": "Lookin for Kitty Stuff?"
+    },
+    {
+      "type": "text",
+      "id": "right_top_button_text",
+      "label": "Button text",
+      "default": "Shop here"
+    },
+    {
+      "type": "url",
+      "id": "right_top_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "right_top_bg_color",
+      "label": "Background color",
+      "default": "#EE7B28"
+    },
+
+    {
+      "type": "header",
+      "content": "Right top card — image"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_top_image",
+      "label": "Desktop image",
+      "info": "Recommended: 700 x 480px. Place your subject on the right side."
+    },
+    {
+      "type": "image_picker",
+      "id": "right_top_mobile_image",
+      "label": "Mobile image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "right_top_image_alt",
+      "label": "Image alt text"
+    },
+
+    {
+      "type": "header",
+      "content": "Right top card — image focus point"
+    },
+    {
+      "type": "select",
+      "id": "right_top_img_pos_desktop",
+      "label": "Desktop focus",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top center" },
+        { "value": "center bottom", "label": "Bottom center" },
+        { "value": "left center", "label": "Left center" },
+        { "value": "right center", "label": "Right center" },
+        { "value": "right bottom", "label": "Right bottom" },
+        { "value": "right top", "label": "Right top" },
+        { "value": "left bottom", "label": "Left bottom" },
+        { "value": "left top", "label": "Left top" }
+      ],
+      "default": "right center"
+    },
+    {
+      "type": "select",
+      "id": "right_top_img_pos_tablet",
+      "label": "Tablet focus",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top center" },
+        { "value": "center bottom", "label": "Bottom center" },
+        { "value": "left center", "label": "Left center" },
+        { "value": "right center", "label": "Right center" },
+        { "value": "right bottom", "label": "Right bottom" },
+        { "value": "right top", "label": "Right top" },
+        { "value": "left bottom", "label": "Left bottom" },
+        { "value": "left top", "label": "Left top" }
+      ],
+      "default": "right center"
+    },
+    {
+      "type": "select",
+      "id": "right_top_img_pos_mobile",
+      "label": "Mobile focus",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top center" },
+        { "value": "center bottom", "label": "Bottom center" },
+        { "value": "left center", "label": "Left center" },
+        { "value": "right center", "label": "Right center" },
+        { "value": "right bottom", "label": "Right bottom" },
+        { "value": "right top", "label": "Right top" },
+        { "value": "left bottom", "label": "Left bottom" },
+        { "value": "left top", "label": "Left top" }
+      ],
+      "default": "center center"
+    },
+
+    {
+      "type": "header",
+      "content": "Right top card — readability overlay"
+    },
+    {
+      "type": "color",
+      "id": "right_top_overlay_color",
+      "label": "Overlay color",
+      "default": "#F7DFB8"
+    },
+    {
+      "type": "range",
+      "id": "right_top_overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 0,
+      "info": "0 = off. Increase if text is hard to read over the image."
+    },
+
+    {
+      "type": "header",
+      "content": "Right bottom card — content"
+    },
+    {
+      "type": "text",
+      "id": "right_bottom_heading",
+      "label": "Heading",
+      "default": "Lookin for Doggy Stuff?"
+    },
+    {
+      "type": "text",
+      "id": "right_bottom_button_text",
+      "label": "Button text",
+      "default": "Shop here"
+    },
+    {
+      "type": "url",
+      "id": "right_bottom_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "right_bottom_bg_color",
+      "label": "Background color",
+      "default": "#FFAD33"
+    },
+
+    {
+      "type": "header",
+      "content": "Right bottom card — image"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_bottom_image",
+      "label": "Desktop image",
+      "info": "Recommended: 700 x 480px. Place your subject on the left side."
+    },
+    {
+      "type": "image_picker",
+      "id": "right_bottom_mobile_image",
+      "label": "Mobile image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "right_bottom_image_alt",
+      "label": "Image alt text"
+    },
+
+    {
+      "type": "header",
+      "content": "Right bottom card — image focus point"
+    },
+    {
+      "type": "select",
+      "id": "right_bottom_img_pos_desktop",
+      "label": "Desktop focus",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top center" },
+        { "value": "center bottom", "label": "Bottom center" },
+        { "value": "left center", "label": "Left center" },
+        { "value": "right center", "label": "Right center" },
+        { "value": "right bottom", "label": "Right bottom" },
+        { "value": "right top", "label": "Right top" },
+        { "value": "left bottom", "label": "Left bottom" },
+        { "value": "left top", "label": "Left top" }
+      ],
+      "default": "left center"
+    },
+    {
+      "type": "select",
+      "id": "right_bottom_img_pos_tablet",
+      "label": "Tablet focus",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top center" },
+        { "value": "center bottom", "label": "Bottom center" },
+        { "value": "left center", "label": "Left center" },
+        { "value": "right center", "label": "Right center" },
+        { "value": "right bottom", "label": "Right bottom" },
+        { "value": "right top", "label": "Right top" },
+        { "value": "left bottom", "label": "Left bottom" },
+        { "value": "left top", "label": "Left top" }
+      ],
+      "default": "right center"
+    },
+    {
+      "type": "select",
+      "id": "right_bottom_img_pos_mobile",
+      "label": "Mobile focus",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top center" },
+        { "value": "center bottom", "label": "Bottom center" },
+        { "value": "left center", "label": "Left center" },
+        { "value": "right center", "label": "Right center" },
+        { "value": "right bottom", "label": "Right bottom" },
+        { "value": "right top", "label": "Right top" },
+        { "value": "left bottom", "label": "Left bottom" },
+        { "value": "left top", "label": "Left top" }
+      ],
+      "default": "center center"
+    },
+
+    {
+      "type": "header",
+      "content": "Right bottom card — readability overlay"
+    },
+    {
+      "type": "color",
+      "id": "right_bottom_overlay_color",
+      "label": "Overlay color",
+      "default": "#F7DFB8"
+    },
+    {
+      "type": "range",
+      "id": "right_bottom_overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 0,
+      "info": "0 = off. Increase if text is hard to read over the image."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Grid"
+    }
+  ]
+}
+{% endschema %}
