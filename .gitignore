@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# Shopify CLI / local config
+.shopify/
+.shopify-cli.yml
+
+# Temporary files
+*.tmp
+*.tmp.*
+*.bak
+*.backup
+*.log
+
+# Shopify temporary sync files
+sections/*.tmp
+sections/*.tmp.*
+snippets/*.tmp
+snippets/*.tmp.*
+blocks/*.tmp
+blocks/*.tmp.*
+templates/*.tmp
+templates/*.tmp.*
+assets/*.tmp
+assets/*.tmp.*
+config/*.tmp
+config/*.tmp.*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env
+.shopify/
+*.tmp
+node_modules/
