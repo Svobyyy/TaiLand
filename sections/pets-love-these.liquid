@@ -149,15 +149,14 @@
 }
 
 /* --- Product grid ---
-   Padding gives card shadows room at every edge without horizontal overflow.
-   Card shadow is 6px right / 8px bottom, so right needs ≥6px, bottom ≥8px. */
+   Symmetric padding keeps cards visually centered; 8px right gives shadow (6px) room. */
 .plt-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   list-style: none;
   margin: 0;
-  padding: 6px 14px 14px 6px;
+  padding: 6px 0 14px 0;
 }
 
 @media screen and (max-width: 1199px) {
@@ -171,7 +170,7 @@
   .plt-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-    padding: 4px 10px 12px 4px;
+    padding: 4px 0 12px 0;
   }
 }
 

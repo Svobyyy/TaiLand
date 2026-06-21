@@ -1,0 +1,427 @@
+{%- if section.blocks.size > 0 -%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color }};
+  }
+{% endstyle %}
+
+<section class="trb-section">
+  <div class="trb-container">
+
+    {%- if section.settings.show_heading -%}
+      <div class="trb-header">
+        <h2 class="trb-heading">
+          {%- if section.settings.heading_plain != blank -%}
+            <span class="trb-heading__plain">{{ section.settings.heading_plain | escape }}&nbsp;</span>
+          {%- endif -%}
+          {%- if section.settings.heading_highlighted != blank -%}
+            <span class="trb-heading__highlight">
+              {{ section.settings.heading_highlighted | escape }}
+              <svg class="trb-underline-svg" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="var(--pc-green, #5BB870)" stroke-width="4" fill="none" stroke-linecap="round"/>
+              </svg>
+            </span>
+          {%- endif -%}
+        </h2>
+      </div>
+    {%- endif -%}
+
+    <div class="trb-strip">
+      {%- for block in section.blocks -%}
+
+        {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}" class="trb-benefit trb-benefit--linked" {{ block.shopify_attributes }}>
+        {%- else -%}
+          <div class="trb-benefit" {{ block.shopify_attributes }}>
+        {%- endif -%}
+
+          <div class="trb-benefit__icon" aria-hidden="true">
+            {%- if block.settings.custom_icon != blank -%}
+              {%- assign trb_icon_alt = block.settings.title | escape -%}
+              {{-
+                block.settings.custom_icon
+                | image_url: width: 40
+                | image_tag:
+                  class: 'trb-icon-img',
+                  alt: trb_icon_alt,
+                  loading: 'lazy',
+                  width: 20,
+                  height: 20
+              -}}
+            {%- else -%}
+              {%- case block.settings.icon -%}
+                {%- when 'shipping' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                {%- when 'secure' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                {%- when 'returns' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                {%- when 'tracking' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                {%- when 'heart' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                {%- when 'paw' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><ellipse cx="12" cy="15.5" rx="5" ry="4.5"/><ellipse cx="5.5" cy="11" rx="2" ry="2.5"/><ellipse cx="18.5" cy="11" rx="2" ry="2.5"/><ellipse cx="8.5" cy="8" rx="1.8" ry="2.2"/><ellipse cx="15.5" cy="8" rx="1.8" ry="2.2"/></svg>
+                {%- when 'star' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {%- else -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              {%- endcase -%}
+            {%- endif -%}
+          </div>
+
+          <div class="trb-benefit__content">
+            <span class="trb-benefit__title">{{ block.settings.title | escape }}</span>
+            {%- if block.settings.text != blank -%}
+              <span class="trb-benefit__text">{{ block.settings.text | escape }}</span>
+            {%- endif -%}
+          </div>
+
+        {%- if block.settings.link != blank -%}
+          </a>
+        {%- else -%}
+          </div>
+        {%- endif -%}
+
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+{%- endif -%}
+
+{% stylesheet %}
+  .trb-section {
+    overflow: visible;
+  }
+
+  /* Container — horizontal padding matches hero grid's --page-margin variable */
+  .trb-container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-inline: var(--page-margin, 16px);
+  }
+
+  /* ---- Heading ---- */
+  .trb-header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .trb-heading {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--pc-text, #2B1B12);
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  .trb-heading__plain {
+    font-weight: 400;
+  }
+
+  .trb-heading__highlight {
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+  }
+
+  .trb-underline-svg {
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 100%;
+    height: 14px;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  /* ---- Strip: one unified cream unit ---- */
+  .trb-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: var(--pc-cream, #F7DFB8);
+    border: 2.5px solid var(--pc-text, #2B1B12);
+    border-radius: 20px;
+    box-shadow: 4px 6px 0 rgba(43, 27, 18, 0.5);
+    overflow: hidden;
+  }
+
+  /* ---- Benefit item ---- */
+  .trb-benefit {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 28px 24px;
+    text-decoration: none;
+    color: var(--pc-text, #2B1B12);
+  }
+
+  .trb-benefit--linked {
+    transition: background 0.15s ease;
+  }
+
+  .trb-benefit--linked:hover {
+    background: rgba(238, 123, 40, 0.1);
+    text-decoration: none;
+  }
+
+  /* ---- Icon badge ---- */
+  .trb-benefit__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--pc-orange, #EE7B28);
+    border: 2.5px solid var(--pc-text, #2B1B12);
+    border-radius: 12px;
+    box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  .trb-benefit__icon svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+  }
+
+  .trb-icon-img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* ---- Benefit text ---- */
+  .trb-benefit__content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .trb-benefit__title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--pc-text, #2B1B12);
+    line-height: 1.2;
+  }
+
+  .trb-benefit__text {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--pc-text, #2B1B12);
+    opacity: 0.65;
+    line-height: 1.45;
+  }
+
+  /* ---- Dividers: desktop (4-col) ---- */
+  @media (min-width: 1100px) {
+    .trb-benefit:not(:last-child) {
+      border-right: 1.5px solid rgba(43, 27, 18, 0.15);
+    }
+  }
+
+  /* ---- Tablet: 2 columns ---- */
+  @media (max-width: 1099px) {
+    .trb-strip {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .trb-heading {
+      font-size: 2rem;
+    }
+  }
+
+  /* Dividers: tablet (2-col) — use min+max to avoid bleeding into mobile */
+  @media (min-width: 480px) and (max-width: 1099px) {
+    /* Left column items get right border */
+    .trb-benefit:nth-child(odd) {
+      border-right: 1.5px solid rgba(43, 27, 18, 0.15);
+    }
+
+    /* Top row items get bottom border */
+    .trb-benefit:nth-child(-n+2) {
+      border-bottom: 1.5px solid rgba(43, 27, 18, 0.15);
+    }
+  }
+
+  /* ---- Mobile: 1 column ---- */
+  @media (max-width: 479px) {
+    .trb-strip {
+      grid-template-columns: 1fr;
+    }
+
+    .trb-heading {
+      font-size: 1.75rem;
+    }
+
+    .trb-header {
+      margin-bottom: 24px;
+    }
+
+    /* Stack dividers */
+    .trb-benefit:not(:last-child) {
+      border-bottom: 1.5px solid rgba(43, 27, 18, 0.15);
+    }
+
+    .trb-benefit {
+      padding: 20px 18px;
+    }
+
+    .trb-benefit__icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 11px;
+    }
+
+    .trb-benefit__icon svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Trust Benefits",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Show heading",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading (plain part)",
+      "default": "Why pet parents"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlighted",
+      "label": "Heading (highlighted part with underline)",
+      "default": "trust Tailand"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Benefit title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "shipping", "label": "Shipping / Truck" },
+            { "value": "secure", "label": "Secure / Lock" },
+            { "value": "returns", "label": "Returns / Refresh" },
+            { "value": "tracking", "label": "Tracking / Package" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "paw", "label": "Paw" },
+            { "value": "star", "label": "Star" }
+          ],
+          "default": "shipping"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom icon image (overrides preset)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust Benefits",
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Free Shipping Over $60",
+            "text": "Get free shipping on all orders over $60. No code needed.",
+            "icon": "shipping"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Secure Checkout",
+            "text": "Safe, encrypted payments every time you shop with us.",
+            "icon": "secure"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Easy Returns",
+            "text": "Not happy? We make returns simple, fast, and hassle-free.",
+            "icon": "returns"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Track Your Order",
+            "text": "Follow your order every step of the way from us to your door.",
+            "icon": "tracking"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -4,7 +4,8 @@
       "PowerShell(Get-ChildItem \"c:\\\\Users\\\\svoby\\\\OneDrive\\\\Plocha\\\\NasObchod\" -Name | Where-Object { $_ -match \"shopify|toml|ignore\" })",
       "PowerShell(Get-Process | Where-Object { $_.Name -match \"shopify|node|ruby\" } | Select-Object Name, Id, CPU | Format-Table -AutoSize)",
       "PowerShell(Get-ChildItem \"c:\\\\Users\\\\svoby\\\\OneDrive\\\\Plocha\\\\NasObchod\" -Hidden -Name | Where-Object { $_ -match \"shopify\" })",
-      "PowerShell(shopify theme list 2>&1)"
+      "PowerShell(shopify theme list 2>&1)",
+      "Bash(shopify theme *)"
     ]
   }
 }

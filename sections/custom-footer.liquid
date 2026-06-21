@@ -1,0 +1,739 @@
+{%- liquid
+  assign cft_brand_name    = section.settings.brand_name | default: shop.name
+  assign cft_brand_desc    = section.settings.brand_description
+  assign cft_instagram     = section.settings.instagram_url
+  assign cft_tiktok        = section.settings.tiktok_url
+  assign cft_facebook      = section.settings.facebook_url
+  assign cft_ql_menu       = linklists[section.settings.quick_links_menu]
+  assign cft_cc_menu       = linklists[section.settings.customer_care_menu]
+  assign cft_pol_menu      = linklists[section.settings.policies_menu]
+  assign cft_nl_heading    = section.settings.newsletter_heading | default: 'Join the pack'
+  assign cft_nl_text       = section.settings.newsletter_text
+  assign cft_nl_btn        = section.settings.newsletter_btn | default: 'Subscribe'
+  assign cft_show_trust    = section.settings.show_trust
+  assign cft_copyright     = section.settings.copyright_text | default: '© 2026 Tailand. All rights reserved.'
+  assign cft_logo_alt      = cft_brand_name | escape
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.footer_bg }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    overflow-x: hidden;
+  }
+{% endstyle %}
+
+<div class="cft-section">
+  <div class="cft-outer page-width">
+    <div class="cft-card">
+
+      <!-- ── Main grid ── -->
+      <div class="cft-grid">
+
+        <!-- Col 1: Brand + Social -->
+        <div class="cft-col cft-col--brand">
+          <div class="cft-logo">
+            {%- if section.settings.logo != blank -%}
+              {{-
+                section.settings.logo
+                | image_url: width: 200
+                | image_tag:
+                  class: 'cft-logo__img',
+                  alt: cft_logo_alt,
+                  loading: 'lazy',
+                  widths: '100, 150, 200'
+              -}}
+            {%- else -%}
+              <span class="cft-logo__text">{{ cft_brand_name | escape }}</span>
+            {%- endif -%}
+          </div>
+
+          {%- if cft_brand_desc != blank -%}
+            <p class="cft-tagline">{{ cft_brand_desc | escape }}</p>
+          {%- endif -%}
+
+          <div class="cft-social">
+            {%- if cft_instagram != blank -%}
+              <a href="{{ cft_instagram }}" class="cft-social__btn" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              </a>
+            {%- endif -%}
+            {%- if cft_tiktok != blank -%}
+              <a href="{{ cft_tiktok }}" class="cft-social__btn" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.21 8.21 0 0 0 4.8 1.54V6.78a4.85 4.85 0 0 1-1.03-.09z"/></svg>
+              </a>
+            {%- endif -%}
+            {%- if cft_facebook != blank -%}
+              <a href="{{ cft_facebook }}" class="cft-social__btn" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <!-- Col 2: Quick Links + Customer Care -->
+        <div class="cft-col cft-col--links">
+
+          {%- if cft_ql_menu.links.size > 0 -%}
+            <div class="cft-links-group">
+              <h3 class="cft-col-heading">{{ section.settings.quick_links_heading | default: 'Quick Links' | escape }}</h3>
+              <ul class="cft-links-list" role="list">
+                {%- for link in cft_ql_menu.links -%}
+                  <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+
+          {%- if cft_cc_menu.links.size > 0 -%}
+            <div class="cft-links-group">
+              <h3 class="cft-col-heading">{{ section.settings.customer_care_heading | default: 'Customer Care' | escape }}</h3>
+              <ul class="cft-links-list" role="list">
+                {%- for link in cft_cc_menu.links -%}
+                  <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+
+        </div>
+
+        <!-- Col 3: Newsletter + Trust badges -->
+        <div class="cft-col cft-col--newsletter">
+          <h3 class="cft-col-heading">{{ cft_nl_heading | escape }}</h3>
+
+          {%- if cft_nl_text != blank -%}
+            <p class="cft-nl-desc">{{ cft_nl_text | escape }}</p>
+          {%- endif -%}
+
+          {%- form 'customer', id: 'cft-form-{{ section.id }}', class: 'cft-nl-form' -%}
+            {%- if form.posted_successfully? -%}
+              <p class="cft-nl-success">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                You're in the pack!
+              </p>
+            {%- else -%}
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <div class="cft-nl-wrap">
+                <label for="cft-email-{{ section.id }}" class="visually-hidden">Email address</label>
+                <input
+                  id="cft-email-{{ section.id }}"
+                  type="email"
+                  name="contact[email]"
+                  class="cft-nl-input"
+                  placeholder="your@email.com"
+                  required
+                  autocomplete="email"
+                  aria-label="Email address"
+                >
+                <button type="submit" class="cft-nl-btn">{{ cft_nl_btn | escape }}</button>
+              </div>
+              {%- if form.errors -%}
+                <p class="cft-nl-error">{{ form.errors | default_errors }}</p>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endform -%}
+
+          {%- if cft_show_trust -%}
+            <div class="cft-trust" aria-label="Store benefits">
+              <span class="cft-trust__badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Secure Checkout
+              </span>
+              <span class="cft-trust__badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                Pet-Friendly Picks
+              </span>
+              <span class="cft-trust__badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Fast Support
+              </span>
+              <span class="cft-trust__badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                Easy Returns
+              </span>
+            </div>
+          {%- endif -%}
+        </div>
+
+      </div><!-- /cft-grid -->
+
+      <!-- ── Bottom bar ── -->
+      <div class="cft-bottom">
+        {%- if cft_pol_menu.links.size > 0 -%}
+          <ul class="cft-bottom__policies" role="list">
+            {%- for link in cft_pol_menu.links -%}
+              <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+        <p class="cft-copyright">{{ cft_copyright | escape }}</p>
+      </div>
+
+    </div><!-- /cft-card -->
+  </div><!-- /cft-outer -->
+</div><!-- /cft-section -->
+
+{% stylesheet %}
+/* ---- Custom Footer (Pet Center / Tailand) ---- */
+
+/* Outer wrapper fills the .section center column edge-to-edge; no extra padding needed */
+.cft-outer {
+  overflow: visible;
+  padding-bottom: 14px;
+}
+
+/* Main footer card */
+.cft-card {
+  background: var(--pc-cream, #F7DFB8);
+  border: 3px solid var(--pc-text, #2B1B12);
+  border-radius: 24px;
+  box-shadow: 8px 10px 0 rgba(43, 27, 18, 0.82);
+  padding: 48px 44px 36px;
+  box-sizing: border-box;
+}
+
+/* ── Main grid: brand | links | newsletter ── */
+.cft-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1.8fr 1.5fr;
+  gap: 48px;
+  align-items: start;
+}
+
+/* Prevent any column from blowing out its grid track */
+.cft-col {
+  min-width: 0;
+}
+
+@media screen and (max-width: 1099px) {
+  .cft-grid {
+    grid-template-columns: 1fr 1.6fr;
+    gap: 36px;
+  }
+  .cft-col--newsletter {
+    grid-column: 1 / -1;
+    max-width: 520px;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .cft-outer {
+    padding-bottom: 10px;
+  }
+  .cft-card {
+    padding: 32px 22px 28px;
+  }
+  .cft-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .cft-col--newsletter {
+    max-width: 100%;
+  }
+  .cft-nl-desc {
+    word-break: break-word;
+  }
+}
+
+/* ── Brand column ── */
+.cft-logo {
+  margin-bottom: 14px;
+}
+
+.cft-logo__img {
+  max-width: 160px;
+  height: auto;
+  display: block;
+}
+
+.cft-logo__text {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.cft-tagline {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  line-height: 1.5;
+  margin: 0 0 20px;
+  max-width: 220px;
+}
+
+/* Social buttons */
+.cft-social {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cft-social__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--pc-white, #fff);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  color: var(--pc-text, #2B1B12);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.cft-social__btn:hover {
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff);
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── Links column ── */
+.cft-col--links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media screen and (max-width: 479px) {
+  /* Tighter card on small phones — defined before this block at line 189, safe here */
+  .cft-card {
+    padding: 24px 16px 20px;
+    box-shadow: 5px 7px 0 rgba(43, 27, 18, 0.82);
+    border-radius: 20px;
+  }
+
+  /* Links: single column — defined before this block at line 304, safe here */
+  .cft-col--links {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cft-col-heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  margin: 0 0 14px;
+  line-height: 1.2;
+}
+
+.cft-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cft-links-list a {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  text-decoration: none;
+  opacity: 0.75;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.cft-links-list a:hover {
+  color: var(--pc-orange, #EE7B28);
+  opacity: 1;
+}
+
+/* ── Newsletter column ── */
+.cft-nl-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+
+.cft-nl-wrap {
+  display: flex;
+  margin-top: 16px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  background: var(--pc-white, #fff);
+}
+
+.cft-nl-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 48px;
+  padding: 0 18px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--pc-text, #2B1B12);
+}
+
+.cft-nl-input::placeholder {
+  color: rgba(43, 27, 18, 0.4);
+}
+
+.cft-nl-btn {
+  flex: 0 0 auto;
+  height: 48px;
+  padding: 0 22px;
+  background: var(--pc-green, #4F8A2F);
+  color: var(--pc-white, #fff);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  border-radius: 0 999px 999px 0;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.cft-nl-btn:hover {
+  background: var(--pc-green-dark, #3E6F25);
+}
+
+.cft-nl-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--pc-green, #4F8A2F);
+}
+
+.cft-nl-error {
+  margin-top: 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #b00;
+}
+
+/* Trust badges */
+.cft-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.cft-trust__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: var(--pc-white, #fff);
+  border: 2px solid rgba(43, 27, 18, 0.3);
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.85;
+}
+
+/* ── Bottom bar ── */
+.cft-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 2px solid rgba(43, 27, 18, 0.18);
+}
+
+.cft-bottom__policies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cft-bottom__policies a {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  text-decoration: none;
+  opacity: 0.55;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.cft-bottom__policies a:hover {
+  opacity: 1;
+  color: var(--pc-orange, #EE7B28);
+}
+
+.cft-copyright {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.5;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+@media screen and (max-width: 749px) {
+  .cft-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+}
+
+/* ── Mobile newsletter + secondary overrides ──────────────────────────────── */
+/* This block is placed LAST so it wins the cascade over all base styles above */
+@media screen and (max-width: 479px) {
+  /* Dissolve the shared pill wrapper — each element becomes its own shape */
+  .cft-nl-wrap {
+    flex-direction: column;
+    gap: 10px;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+    background: transparent;
+  }
+
+  /* Input: standalone white field with brand border + shadow */
+  .cft-nl-input {
+    flex: none;
+    width: 100%;
+    height: 50px;
+    padding: 0 18px;
+    border: 2.5px solid var(--pc-text, #2B1B12);
+    border-radius: 12px;
+    box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+    background: var(--pc-white, #fff);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+  }
+
+  /* Button: standalone green pill with brand border + shadow */
+  .cft-nl-btn {
+    flex: none;
+    width: 100%;
+    height: 50px;
+    padding: 0;
+    border: 2.5px solid var(--pc-text, #2B1B12);
+    border-radius: 12px;
+    box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    white-space: normal;
+    box-sizing: border-box;
+  }
+
+  /* Trust badges: tighter gap on narrow screens */
+  .cft-trust {
+    gap: 6px;
+    margin-top: 16px;
+  }
+
+  .cft-trust__badge {
+    font-size: 0.72rem;
+    padding: 4px 10px;
+  }
+
+  /* Bottom bar: tighter spacing */
+  .cft-bottom {
+    margin-top: 24px;
+    padding-top: 18px;
+  }
+
+  .cft-copyright,
+  .cft-bottom__policies a {
+    font-size: 0.72rem;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Custom Footer",
+  "tag": "section",
+  "class": "section",
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image (optional — leave blank to show brand name text)"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand name (shown when no logo)",
+      "default": "Tailand"
+    },
+    {
+      "type": "text",
+      "id": "brand_description",
+      "label": "Brand tagline",
+      "default": "Playful picks for happy pets and their humans."
+    },
+    {
+      "type": "header",
+      "content": "Social Links"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_url",
+      "label": "TikTok URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "quick_links_menu",
+      "label": "Quick Links menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "text",
+      "id": "quick_links_heading",
+      "label": "Quick Links heading",
+      "default": "Quick Links"
+    },
+    {
+      "type": "link_list",
+      "id": "customer_care_menu",
+      "label": "Customer Care menu"
+    },
+    {
+      "type": "text",
+      "id": "customer_care_heading",
+      "label": "Customer Care heading",
+      "default": "Customer Care"
+    },
+    {
+      "type": "link_list",
+      "id": "policies_menu",
+      "label": "Policies menu (bottom bar)"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Heading",
+      "default": "Join the pack"
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_text",
+      "label": "Description",
+      "default": "Get pet deals, new drops, and cozy picks straight to your inbox."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_btn",
+      "label": "Button text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "header",
+      "content": "Trust Badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust",
+      "label": "Show trust badges",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Bottom Bar"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright text",
+      "default": "© 2026 Tailand. All rights reserved."
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "footer_bg",
+      "label": "Footer background color",
+      "default": "#EE7B28"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 56
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Footer"
+    }
+  ]
+}
+{% endschema %}

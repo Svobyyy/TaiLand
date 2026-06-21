@@ -53,6 +53,62 @@
         "right_bottom_overlay_opacity": 0
       }
     },
+    "trust_benefits_xDUQGH": {
+      "type": "trust-benefits",
+      "blocks": {
+        "benefit_QJLidf": {
+          "type": "benefit",
+          "settings": {
+            "title": "Free Shipping",
+            "text": "Get free shipping on all orders over $60. No code needed.",
+            "icon": "shipping",
+            "link": ""
+          }
+        },
+        "benefit_p3iEDk": {
+          "type": "benefit",
+          "settings": {
+            "title": "Secure Checkout",
+            "text": "Safe, encrypted payments every time you shop with us.",
+            "icon": "secure",
+            "link": ""
+          }
+        },
+        "benefit_ezpAr6": {
+          "type": "benefit",
+          "settings": {
+            "title": "Easy Returns",
+            "text": "Not happy? We make returns simple, fast, and hassle-free.",
+            "icon": "returns",
+            "link": ""
+          }
+        },
+        "benefit_xQhDyN": {
+          "type": "benefit",
+          "settings": {
+            "title": "Track Your Order",
+            "text": "Follow your order every step of the way from us to your door.",
+            "icon": "tracking",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "benefit_QJLidf",
+        "benefit_p3iEDk",
+        "benefit_ezpAr6",
+        "benefit_xQhDyN"
+      ],
+      "name": "Trust Benefits",
+      "settings": {
+        "show_heading": true,
+        "heading_plain": "Why pet parents",
+        "heading_highlighted": "trust Tailand",
+        "bg_color": "#ffffff",
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
+    },
     "pets_love_these_EdKa9C": {
       "type": "pets-love-these",
       "name": "Pets Love These",
@@ -87,15 +143,77 @@
         "show_view_all": true,
         "view_all_text": "View All Deals",
         "view_all_link": "",
-        "bg_color": "#FFFFFF",
+        "bg_color": "#ffffff",
         "padding_top": 52,
         "padding_bottom": 52
+      }
+    },
+    "before_after_transformations_VKk6Lj": {
+      "type": "before-after-transformations",
+      "blocks": {
+        "card_AyWmyD": {
+          "type": "card",
+          "settings": {
+            "before_image": "shopify://shop_images/e3b9aab7-fdbb-4cef-876b-9c8fa30b5592.jpg",
+            "after_image": "shopify://shop_images/ce98d0ec-81ab-4a52-b26c-91e4d2466e9a.jpg",
+            "label_before": "Before",
+            "label_after": "After",
+            "title": "From bored to playful",
+            "description": "Turn quiet afternoons into happy playtime with toys pets actually love.",
+            "btn_text": "",
+            "btn_link": ""
+          }
+        },
+        "card_UwBJAa": {
+          "type": "card",
+          "settings": {
+            "before_image": "shopify://shop_images/279e7b10-f165-4f13-a296-2906badea6f2.jpg",
+            "after_image": "shopify://shop_images/0cdd2089-2622-4412-a474-5287f7dec77a.jpg",
+            "label_before": "Before",
+            "label_after": "After",
+            "title": "From restless to cozy",
+            "description": "Give your pet a softer, calmer space to relax every day.",
+            "btn_text": "",
+            "btn_link": ""
+          }
+        },
+        "card_W4kTMM": {
+          "type": "card",
+          "settings": {
+            "before_image": "shopify://shop_images/4e67f85d-acd4-4676-8c60-5900b9728fdf.jpg",
+            "after_image": "shopify://shop_images/d9927013-8786-4f8c-8589-cbb99402c2c2.jpg",
+            "label_before": "Before",
+            "label_after": "After",
+            "title": "From messy to fresh",
+            "description": "Simple pet essentials that make daily care easier for humans too.",
+            "btn_text": "",
+            "btn_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "card_AyWmyD",
+        "card_UwBJAa",
+        "card_W4kTMM"
+      ],
+      "name": "Before & After",
+      "settings": {
+        "show_heading": true,
+        "heading_plain": "From",
+        "heading_highlighted": "Bored to Happy",
+        "subheading": "",
+        "columns": "3",
+        "bg_color": "#ffffff",
+        "padding_top": 64,
+        "padding_bottom": 64
       }
     }
   },
   "order": [
     "custom_hero_grid_nUcLEb",
+    "trust_benefits_xDUQGH",
     "pets_love_these_EdKa9C",
-    "deals_ending_soon_TPLVik"
+    "deals_ending_soon_TPLVik",
+    "before_after_transformations_VKk6Lj"
   ]
 }

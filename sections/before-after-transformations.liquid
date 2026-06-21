@@ -1,0 +1,635 @@
+{%- if section.blocks.size > 0 -%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color }};
+    --bat-cols: {{ section.settings.columns }};
+  }
+{% endstyle %}
+
+<section class="bat-section">
+  <div class="bat-container">
+
+    {%- if section.settings.show_heading -%}
+      <div class="bat-header">
+        <h2 class="bat-heading">
+          {%- if section.settings.heading_plain != blank -%}
+            <span class="bat-heading__plain">{{ section.settings.heading_plain | escape }}&nbsp;</span>
+          {%- endif -%}
+          {%- if section.settings.heading_highlighted != blank -%}
+            <span class="bat-heading__highlight">
+              {{ section.settings.heading_highlighted | escape }}
+              <svg class="bat-underline-svg" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="var(--pc-green, #5BB870)" stroke-width="4" fill="none" stroke-linecap="round"/>
+              </svg>
+            </span>
+          {%- endif -%}
+        </h2>
+        {%- if section.settings.subheading != blank -%}
+          <p class="bat-subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="bat-grid">
+      {%- for block in section.blocks -%}
+        <article class="bat-card" {{ block.shopify_attributes }}>
+
+          {%- assign bat_has_before = false -%}
+          {%- assign bat_has_after = false -%}
+          {%- if block.settings.before_image != blank -%}{%- assign bat_has_before = true -%}{%- endif -%}
+          {%- if block.settings.after_image != blank -%}{%- assign bat_has_after = true -%}{%- endif -%}
+
+          {%- if bat_has_before or bat_has_after -%}
+            <div class="bat-comparison" data-bat-slider>
+
+              {%- if bat_has_after -%}
+                {%- assign bat_after_alt = block.settings.title | append: ' after' | escape -%}
+                {{-
+                  block.settings.after_image
+                  | image_url: width: 800
+                  | image_tag:
+                    class: 'bat-img bat-img--after',
+                    alt: bat_after_alt,
+                    loading: 'lazy'
+                -}}
+              {%- else -%}
+                <div class="bat-img bat-img--after bat-img--placeholder"></div>
+              {%- endif -%}
+
+              {%- if bat_has_before -%}
+                {%- assign bat_before_alt = block.settings.title | append: ' before' | escape -%}
+                {{-
+                  block.settings.before_image
+                  | image_url: width: 800
+                  | image_tag:
+                    class: 'bat-img bat-img--before',
+                    alt: bat_before_alt,
+                    loading: 'lazy',
+                    style: 'clip-path: inset(0 50% 0 0)'
+                -}}
+              {%- endif -%}
+
+              <div class="bat-handle" data-bat-handle style="left: 50%">
+                <button class="bat-handle__btn" aria-label="Drag to compare before and after">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="7,2 2,7 7,12"/>
+                    <polyline points="13,2 18,7 13,12"/>
+                  </svg>
+                </button>
+              </div>
+
+              {%- if block.settings.label_before != blank -%}
+                <span class="bat-label bat-label--before" aria-hidden="true">{{ block.settings.label_before | escape }}</span>
+              {%- endif -%}
+              {%- if block.settings.label_after != blank -%}
+                <span class="bat-label bat-label--after" aria-hidden="true">{{ block.settings.label_after | escape }}</span>
+              {%- endif -%}
+
+            </div>
+          {%- else -%}
+            <div class="bat-comparison bat-comparison--empty">
+              <span class="bat-empty-hint">Add Before &amp; After images in the editor</span>
+            </div>
+          {%- endif -%}
+
+          <div class="bat-card__body">
+            {%- if block.settings.title != blank -%}
+              <h3 class="bat-card__title">{{ block.settings.title | escape }}</h3>
+            {%- endif -%}
+            {%- if block.settings.description != blank -%}
+              <p class="bat-card__desc">{{ block.settings.description | escape }}</p>
+            {%- endif -%}
+            {%- if block.settings.btn_text != blank and block.settings.btn_link != blank -%}
+              <a href="{{ block.settings.btn_link }}" class="bat-card__btn">{{ block.settings.btn_text | escape }}</a>
+            {%- endif -%}
+          </div>
+
+        </article>
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+{%- endif -%}
+
+{% stylesheet %}
+  .bat-section {
+    overflow: visible;
+  }
+
+  .bat-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-inline: var(--page-margin, 16px);
+  }
+
+  /* ---- Heading ---- */
+  .bat-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .bat-heading {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--pc-text, #2B1B12);
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  .bat-heading__plain {
+    font-weight: 400;
+  }
+
+  .bat-heading__highlight {
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+  }
+
+  .bat-underline-svg {
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 100%;
+    height: 14px;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .bat-subheading {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--pc-text, #2B1B12);
+    opacity: 0.65;
+    margin: 18px 0 0;
+    line-height: 1.5;
+  }
+
+  /* ---- Grid ---- */
+  .bat-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--bat-cols, 3), 1fr);
+    gap: 28px;
+    padding: 8px 0 16px 0;
+  }
+
+  /* ---- Card ---- */
+  .bat-card {
+    background: var(--pc-cream, #F7DFB8);
+    border: 3px solid var(--pc-text, #2B1B12);
+    border-radius: 20px;
+    box-shadow: 6px 8px 0 rgba(43, 27, 18, 0.82);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- Comparison area ---- */
+  .bat-comparison {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    cursor: ew-resize;
+    user-select: none;
+    touch-action: none;
+    flex-shrink: 0;
+  }
+
+  .bat-comparison--empty {
+    background: rgba(43, 27, 18, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+  }
+
+  .bat-empty-hint {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--pc-text, #2B1B12);
+    opacity: 0.4;
+    text-align: center;
+    padding: 0 16px;
+  }
+
+  .bat-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    display: block;
+  }
+
+  .bat-img--after {
+    z-index: 1;
+  }
+
+  .bat-img--before {
+    z-index: 2;
+  }
+
+  .bat-img--placeholder {
+    background: rgba(43, 27, 18, 0.08);
+  }
+
+  /* ---- Slider handle ---- */
+  .bat-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .bat-handle__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    background: var(--pc-orange, #EE7B28);
+    border: 2.5px solid var(--pc-text, #2B1B12);
+    border-radius: 50%;
+    box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+    cursor: ew-resize;
+    pointer-events: auto;
+    color: #fff;
+    flex-shrink: 0;
+    padding: 0;
+  }
+
+  .bat-handle__btn svg {
+    width: 22px;
+    height: 16px;
+    display: block;
+  }
+
+  /* ---- Before / After labels ---- */
+  .bat-label {
+    position: absolute;
+    top: 14px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 2px solid var(--pc-text, #2B1B12);
+    box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+    z-index: 4;
+    pointer-events: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .bat-label--before {
+    left: 14px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--pc-text, #2B1B12);
+  }
+
+  .bat-label--after {
+    right: 14px;
+    background: var(--pc-orange, #EE7B28);
+    color: #fff;
+  }
+
+  /* ---- Card body ---- */
+  .bat-card__body {
+    padding: 22px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .bat-card__title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--pc-text, #2B1B12);
+    margin: 0 0 10px;
+    line-height: 1.2;
+  }
+
+  .bat-card__desc {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--pc-text, #2B1B12);
+    opacity: 0.7;
+    line-height: 1.55;
+    margin: 0;
+    flex: 1;
+  }
+
+  .bat-card__btn {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--pc-text, #2B1B12);
+    background: var(--pc-green, #5BB870);
+    border: 2px solid var(--pc-text, #2B1B12);
+    border-radius: 999px;
+    box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+    padding: 11px 24px;
+    text-decoration: none;
+    margin-top: 20px;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  .bat-card__btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--pc-text, #2B1B12);
+    text-decoration: none;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 1099px) {
+    .bat-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .bat-heading {
+      font-size: 2.2rem;
+    }
+  }
+
+  @media (max-width: 749px) {
+    .bat-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .bat-heading {
+      font-size: 1.9rem;
+    }
+
+    .bat-header {
+      margin-bottom: 32px;
+    }
+
+    .bat-card__body {
+      padding: 20px 20px 22px;
+    }
+
+    .bat-card__title {
+      font-size: 1.15rem;
+    }
+
+    .bat-card__desc {
+      font-size: 0.9rem;
+    }
+
+    .bat-card__btn {
+      font-size: 0.95rem;
+      padding: 10px 20px;
+    }
+
+    .bat-label {
+      font-size: 0.8rem;
+      padding: 5px 12px;
+    }
+
+    .bat-handle__btn {
+      width: 44px;
+      height: 44px;
+    }
+  }
+{% endstylesheet %}
+
+<script>
+(function () {
+  'use strict';
+
+  function initSlider(el) {
+    var beforeImg = el.querySelector('.bat-img--before');
+    var handle = el.querySelector('[data-bat-handle]');
+    if (!beforeImg || !handle) return;
+
+    var dragging = false;
+
+    function setPosition(clientX) {
+      var rect = el.getBoundingClientRect();
+      var pct = Math.min(100, Math.max(0, (clientX - rect.left) / rect.width * 100));
+      beforeImg.style.clipPath = 'inset(0 ' + (100 - pct).toFixed(2) + '% 0 0)';
+      handle.style.left = pct.toFixed(2) + '%';
+    }
+
+    el.addEventListener('mousedown', function (e) {
+      dragging = true;
+      setPosition(e.clientX);
+      e.preventDefault();
+    });
+
+    el.addEventListener('touchstart', function (e) {
+      dragging = true;
+      setPosition(e.touches[0].clientX);
+    }, { passive: true });
+
+    el.addEventListener('touchmove', function (e) {
+      if (!dragging) return;
+      setPosition(e.touches[0].clientX);
+    }, { passive: true });
+
+    el.addEventListener('touchend', function () {
+      dragging = false;
+    });
+
+    window.addEventListener('mousemove', function (e) {
+      if (dragging) setPosition(e.clientX);
+    });
+
+    window.addEventListener('mouseup', function () {
+      dragging = false;
+    });
+  }
+
+  function initSection(root) {
+    root.querySelectorAll('[data-bat-slider]').forEach(function (el) {
+      initSlider(el);
+    });
+  }
+
+  var sectionEl = document.getElementById('shopify-section-{{ section.id }}');
+  if (sectionEl) initSection(sectionEl);
+
+  document.addEventListener('shopify:section:load', function (e) {
+    if (e.detail && e.detail.sectionId === '{{ section.id }}') {
+      initSection(e.target);
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Before & After",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Show heading",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading (plain part)",
+      "default": "From"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlighted",
+      "label": "Heading (highlighted part with underline)",
+      "default": "Bored to Happy"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading (optional)"
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Cards per row (desktop)",
+      "options": [
+        { "value": "2", "label": "2 cards" },
+        { "value": "3", "label": "3 cards" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Before & After card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "before_image",
+          "label": "Before image"
+        },
+        {
+          "type": "image_picker",
+          "id": "after_image",
+          "label": "After image"
+        },
+        {
+          "type": "text",
+          "id": "label_before",
+          "label": "Before label text",
+          "default": "Before"
+        },
+        {
+          "type": "text",
+          "id": "label_after",
+          "label": "After label text",
+          "default": "After"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Card title",
+          "default": "From bored to playful"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Card description",
+          "default": "Turn quiet afternoons into happy playtime with toys pets actually love."
+        },
+        {
+          "type": "text",
+          "id": "btn_text",
+          "label": "Button text"
+        },
+        {
+          "type": "url",
+          "id": "btn_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Before & After",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "label_before": "Before",
+            "label_after": "After",
+            "title": "From bored to playful",
+            "description": "Turn quiet afternoons into happy playtime with toys pets actually love."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "label_before": "Before",
+            "label_after": "After",
+            "title": "From restless to cozy",
+            "description": "Give your pet a softer, calmer space to relax every day."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "label_before": "Before",
+            "label_after": "After",
+            "title": "From messy to fresh",
+            "description": "Simple pet essentials that make daily care easier for humans too."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
