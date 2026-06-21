@@ -424,6 +424,305 @@ h4, h5, h6,
 
 
 /* =========================================================
+   4b. Header Action Overrides
+   Account icon is hidden — customer accounts are disabled for this store.
+   Header search icon is hidden on desktop only — the inline search bar
+   replaces it there. On mobile it is shown on the right side with the
+   Track Order and Cart icons (see 4c grid rules below).
+   ========================================================= */
+
+/* Account icon — always hidden */
+.account-button {
+  display: none !important;
+}
+
+/* Header search icon — hidden everywhere.
+   Desktop: the inline search bar (pc-search-inline) replaces it.
+   Mobile/tablet: search lives inside the hamburger drawer. */
+.search-action {
+  display: none !important;
+}
+
+
+/* =========================================================
+   4c. Mobile Header  (≤749px)
+   =========================================================
+   ISSUE 1 — Hover white flash:
+   background_color_top is unset in header-group.json, so
+   Liquid reads its .alpha as nil (nil ≠ 1 → top_transparent=true).
+   The theme therefore sets data-transparent-background='top' on
+   #header-component. The theme's hover/focus-within rule then
+   writes --color-background-top-row: var(--color-background) on
+   the underlay elements directly — turning the header white.
+   Fix: set the variable with !important on the underlay elements
+   themselves so hover can never override it at mobile.
+
+   ISSUE 2 — Icon overlap + search clutter:
+   Horizon places header-actions in rightB (44px) — too narrow for two icons.
+   Search has been moved into the hamburger drawer, so the mobile header only
+   needs to hold Track Order + Cart (88px).
+   Fix: 3-column mobile grid leftA(44) | center(1fr) | rightB(88). Horizon's
+   own 'header-actions { grid-area: rightB }' rule places the action icons in
+   the 88px column automatically. Logo is absolutely centered so the 44/88
+   asymmetry does not push it left.
+   ========================================================= */
+
+/* -- Orange branded background at mobile/small ----------- */
+@media screen and (max-width: 749px) {
+  /* The nav is in the drawer on mobile; the bottom row container still
+     renders (menu_row=bottom) but is empty and shows a second orange
+     strip. Hide it completely. */
+  .header__row--bottom {
+    display: none !important;
+  }
+
+  #header-component {
+    --color-background-top-row: rgba(238, 123, 40, 1) !important;
+  }
+
+  .header__row--top {
+    --color-foreground: #FFFFFF !important;
+    --color-foreground-rgb: 255, 255, 255 !important;
+    --color-account-icon: #FFFFFF !important;
+  }
+
+  .header__row--top .header-logo {
+    color: #FFFFFF !important;
+  }
+
+  /* Lock the underlay elements directly so the theme's
+     data-transparent-background hover/focus-within rule cannot
+     reset --color-background-top-row to var(--color-background) */
+  .header__underlay-closed,
+  .header__underlay-open {
+    --color-background-top-row: rgba(238, 123, 40, 1) !important;
+  }
+}
+
+/* -- Redefine mobile grid: 3 zones, logo absolute-centered ------------- */
+/* Layout: leftA(44) | center(1fr) | rightB(88)
+             hamburger | logo space  | track+cart
+   Search is in the hamburger drawer, not the header bar.
+   Horizon's own 'header-actions { grid-area: rightB }' places Track Order
+   + Cart in the 88px rightB column automatically — no override needed.
+   Logo is absolutely centered to compensate for the 44/88 asymmetry. */
+@media screen and (max-width: 749px) {
+  .header__columns,
+  #header-component[data-menu-style='drawer'] .header__columns {
+    grid-template-columns: 44px 1fr 88px !important;
+    grid-template-areas: 'leftA center rightB' !important;
+    position: relative; /* Containing block for the absolute logo */
+  }
+
+  /* Truly center the logo across the full header width */
+  .header__columns .header-logo,
+  #header-component[data-menu-style='drawer'] .header__columns .header-logo {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1;
+    max-width: calc(100% - 148px); /* 44px left + 88px right + 16px margins */
+    text-align: center;
+  }
+}
+
+/* -- Track order + cart icon gap: desktop only ----------- */
+@media screen and (min-width: 750px) {
+  .header__row--top header-actions {
+    gap: 2px;
+  }
+}
+
+
+/* =========================================================
+   4d. Hamburger Drawer — Brand Styles
+   =========================================================
+   Applies to the .menu-drawer panel (left-slide-in drawer).
+   Adds: branded search form at the top, card-style category
+   links with per-category icon chips (Dogs / Cats / Sale / Summer).
+   Only touches .pc-* classes and .menu-drawer selectors to avoid
+   conflicting with Horizon's base drawer mechanics.
+   ========================================================= */
+
+/* -- Drawer close button --------------------------------- */
+/* The global .button rule applies pc-green here. Override it
+   to an orange circle with a white X — strong contrast, clearly
+   intentional, matches the brand card style with an offset shadow.
+   margin pushes it away from the flush drawer edge. */
+.menu-drawer .menu-drawer__close-button {
+  align-self: flex-start;        /* Don't stretch across full flex column */
+  margin: 14px 0 8px 14px;      /* Space from top and left drawer edges */
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  background-color: var(--pc-orange) !important;
+  color: var(--pc-white) !important;
+  border: 2.5px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 2px 0 var(--pc-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.menu-drawer .menu-drawer__close-button:hover {
+  background-color: var(--pc-orange-dark) !important;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--pc-text);
+}
+
+.menu-drawer .menu-drawer__close-button .svg-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-drawer .menu-drawer__close-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* -- In-drawer search form ------------------------------- */
+.pc-drawer-search {
+  padding: 16px 20px 12px;
+  border-bottom: 2px solid var(--pc-cream);
+  flex-shrink: 0;
+}
+
+.pc-drawer-search form {
+  margin: 0;
+}
+
+.pc-drawer-search__wrap {
+  display: flex;
+  align-items: stretch;
+  border: 2.5px solid var(--pc-text);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 3px 3px 0 var(--pc-text);
+  background: var(--pc-white);
+}
+
+.pc-drawer-search__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 46px;
+  padding: 0 16px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--pc-text);
+}
+
+.pc-drawer-search__input::placeholder {
+  color: #b0a090;
+}
+
+.pc-drawer-search__button {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  background: var(--pc-orange);
+  border: none;
+  color: var(--pc-white);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.pc-drawer-search__button:hover {
+  background: var(--pc-orange-dark);
+}
+
+.pc-drawer-search__button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* -- Category card links --------------------------------- */
+/* .pc-drawer-item is added via Liquid only on simple top-level links
+   (Dogs, Cats, Sale, Summer, and any other flat nav items). */
+a.pc-drawer-item {
+  background: var(--pc-cream);
+  border: 2.5px solid var(--pc-text);
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 var(--pc-text);
+  padding: 12px 18px !important;
+  margin-bottom: 10px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--pc-text) !important;
+  text-decoration: none;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px;
+  min-height: 58px !important;
+  justify-content: flex-start !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+a.pc-drawer-item:hover,
+a.pc-drawer-item:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--pc-text);
+  color: var(--pc-text) !important;
+}
+
+/* Items without an icon (no Dogs/Cats/Sale/Summer match) get a lighter style */
+a.pc-drawer-item:not(:has(.pc-drawer-icon)) {
+  background: var(--pc-white);
+  border-color: var(--pc-cream);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* Reset the Horizon li min-height so card padding drives the height */
+.menu-drawer__menu > .menu-drawer__list-item:has(a.pc-drawer-item) {
+  min-height: auto !important;
+  display: block;
+}
+
+/* Add breathing room at the top of the cards list */
+.menu-drawer__menu.has-submenu:has(a.pc-drawer-item) {
+  padding-top: 12px;
+}
+
+/* -- Category icon chip ---------------------------------- */
+.pc-drawer-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: var(--pc-orange);
+  border-radius: 9px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  color: var(--pc-white);
+}
+
+.pc-drawer-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+}
+
+
+/* =========================================================
    5. Product & UI Typography
    Targets standard Horizon theme classes for product cards,
    prices, and badges. Rules are additive and safe -- they
