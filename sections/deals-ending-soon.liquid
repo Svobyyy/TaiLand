@@ -1,0 +1,662 @@
+{%- liquid
+  assign des_collection   = section.settings.collection
+  assign des_count        = section.settings.products_to_show | default: 4
+  assign des_plain        = section.settings.heading_plain | default: 'Deals'
+  assign des_highlight    = section.settings.heading_highlighted | default: 'Ending Soon'
+  assign des_btn          = section.settings.card_btn_text | default: 'Grab Deal'
+  assign des_show_all     = section.settings.show_view_all
+  assign des_all_text     = section.settings.view_all_text | default: 'View All Deals'
+  assign des_all_link     = section.settings.view_all_link
+  assign des_show_badge   = section.settings.show_badge
+  assign des_badge_text   = section.settings.badge_text | default: 'ENDS SOON'
+  assign des_end_date     = section.settings.sale_end_date
+  assign des_expired_text = section.settings.expired_text | default: 'Sale ended'
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.bg_color }};
+  }
+{% endstyle %}
+
+<section class="des-section" aria-label="{{ des_plain }} {{ des_highlight }}">
+  <div class="des-inner page-width">
+
+    <div class="des-header">
+      <div class="des-heading-row">
+
+        <h2 class="des-heading">
+          {%- if des_plain != blank -%}
+            <span class="des-heading__plain">{{ des_plain | escape }}&nbsp;</span>
+          {%- endif -%}
+          {%- if des_highlight != blank -%}
+            <span class="des-heading__highlight">
+              {{- des_highlight | escape -}}
+              <svg class="des-heading__underline" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          {%- endif -%}
+        </h2>
+
+        {%- if des_end_date != blank -%}
+          <div class="des-countdown" id="des-countdown-{{ section.id }}" data-end="{{ des_end_date | escape }}">
+            <div class="des-timer" aria-live="polite" aria-label="Time remaining">
+              <span class="des-timer__box" data-des-hours>00</span>
+              <span class="des-timer__sep" aria-hidden="true">:</span>
+              <span class="des-timer__box" data-des-mins>00</span>
+              <span class="des-timer__sep" aria-hidden="true">:</span>
+              <span class="des-timer__box" data-des-secs>00</span>
+            </div>
+            <p class="des-expired" hidden>{{ des_expired_text | escape }}</p>
+          </div>
+        {%- endif -%}
+
+      </div>
+    </div>
+
+    {%- if des_collection != blank and des_collection.products.size > 0 -%}
+      <ul class="des-grid" role="list">
+        {%- for product in des_collection.products limit: des_count -%}
+          {%- assign des_img_alt = product.featured_image.alt | escape -%}
+          <li class="des-card">
+            <div class="des-card__media-wrap">
+              <a href="{{ product.url }}" class="des-card__media-link" aria-hidden="true" tabindex="-1">
+                {%- if product.featured_image -%}
+                  {{-
+                    product.featured_image
+                    | image_url: width: 600
+                    | image_tag:
+                      class: 'des-card__img',
+                      alt: des_img_alt,
+                      widths: '300, 450, 600',
+                      sizes: '(max-width: 749px) calc(50vw - 20px), (max-width: 1199px) calc(33vw - 24px), 280px',
+                      loading: 'lazy'
+                  -}}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'des-card__img des-card__img--placeholder' }}
+                {%- endif -%}
+              </a>
+              {%- if des_show_badge -%}
+                <span class="des-badge" aria-label="{{ des_badge_text | escape }}">{{ des_badge_text | escape }}</span>
+              {%- endif -%}
+            </div>
+            <div class="des-card__body">
+              <a href="{{ product.url }}" class="des-card__title-link">
+                <h3 class="des-card__title">{{ product.title | escape }}</h3>
+              </a>
+              <div class="des-card__price">
+                {%- if product.compare_at_price > product.price -%}
+                  <span class="des-card__price-sale">{{ product.price | money }}</span>
+                  <span class="des-card__price-compare">{{ product.compare_at_price | money }}</span>
+                {%- else -%}
+                  <span class="des-card__price-reg">{{ product.price | money }}</span>
+                {%- endif -%}
+              </div>
+              <a href="{{ product.url }}" class="des-card__btn">
+                {{- des_btn -}}<svg aria-hidden="true" focusable="false" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if des_show_all -%}
+        {%- assign des_view_href = des_all_link | default: des_collection.url -%}
+        {%- if des_view_href != blank -%}
+          <div class="des-footer">
+            <a href="{{ des_view_href }}" class="des-view-all">
+              {{- des_all_text -}}<svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+
+    {%- else -%}
+      <p class="des-empty">Select a sale collection in the theme editor to display products here.</p>
+    {%- endif -%}
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var el = document.getElementById('des-countdown-{{ section.id }}');
+  if (!el) return;
+
+  var endDate   = new Date(el.getAttribute('data-end'));
+  if (isNaN(endDate.getTime())) return;
+
+  var timerEl   = el.querySelector('.des-timer');
+  var expiredEl = el.querySelector('.des-expired');
+  var hoursEl   = el.querySelector('[data-des-hours]');
+  var minsEl    = el.querySelector('[data-des-mins]');
+  var secsEl    = el.querySelector('[data-des-secs]');
+
+  function pad(n) { return ('0' + n).slice(-2); }
+
+  function tick() {
+    var diff = Math.max(0, endDate - new Date());
+
+    if (diff === 0) {
+      if (timerEl)   timerEl.style.display = 'none';
+      if (expiredEl) expiredEl.removeAttribute('hidden');
+      return;
+    }
+
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+
+    if (hoursEl) hoursEl.textContent = pad(h);
+    if (minsEl)  minsEl.textContent  = pad(m);
+    if (secsEl)  secsEl.textContent  = pad(s);
+
+    setTimeout(tick, 1000);
+  }
+
+  tick();
+})();
+</script>
+
+{% stylesheet %}
+/* ---- Deals Ending Soon (Pet Center) ---- */
+
+.des-section {
+  overflow: visible;
+}
+
+.des-inner {
+  overflow: visible;
+}
+
+/* --- Header: heading + countdown in one row --- */
+.des-header {
+  margin-bottom: 36px;
+}
+
+.des-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.des-heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.des-heading__highlight {
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  white-space: nowrap;
+  padding-bottom: 8px;
+}
+
+.des-heading__underline {
+  position: absolute;
+  left: -3%;
+  bottom: -2px;
+  width: 106%;
+  height: 12px;
+  color: var(--pc-green, #4F8A2F);
+  pointer-events: none;
+  display: block;
+}
+
+/* --- Countdown timer --- */
+.des-countdown {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.des-timer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.des-timer__box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  padding: 8px 10px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+}
+
+.des-timer__sep {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1;
+  user-select: none;
+}
+
+.des-expired {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.6;
+  margin: 0;
+}
+
+@media screen and (max-width: 749px) {
+  .des-heading-row {
+    gap: 16px;
+  }
+  .des-timer__box {
+    min-width: 44px;
+    padding: 6px 8px;
+    font-size: 1.15rem;
+    border-radius: 8px;
+    box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  }
+  .des-timer__sep {
+    font-size: 1.2rem;
+  }
+}
+
+/* --- Product grid ---
+   Padding keeps card/button box-shadows from clipping at container edges. */
+.des-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 6px 14px 14px 6px;
+}
+
+@media screen and (max-width: 1199px) {
+  .des-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .des-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 4px 10px 12px 4px;
+  }
+}
+
+/* --- Cards --- */
+.des-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--pc-cream, #F7DFB8);
+  border: 3px solid var(--pc-text, #2B1B12);
+  border-radius: 20px;
+  box-shadow: 6px 8px 0 rgba(43, 27, 18, 0.82);
+  overflow: hidden;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.des-card:hover {
+  transform: translate(3px, 4px);
+  box-shadow: 3px 4px 0 rgba(43, 27, 18, 0.82);
+}
+
+/* Positioning context for badge — overflow: visible keeps badge shadow visible */
+.des-card__media-wrap {
+  position: relative;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.des-card__media-link {
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--pc-white, #fff);
+}
+
+.des-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.des-card:hover .des-card__img {
+  transform: scale(1.05);
+}
+
+.des-card__img--placeholder {
+  padding: 20%;
+  box-sizing: border-box;
+  color: rgba(43, 27, 18, 0.2);
+}
+
+/* --- ENDS SOON badge ---
+   Sibling of media-link so it is NOT clipped by the image's overflow: hidden. */
+.des-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  padding: 8px 16px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  line-height: 1.3;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 749px) {
+  .des-badge {
+    font-size: 0.82rem;
+    padding: 6px 12px;
+    top: 8px;
+    right: 8px;
+  }
+}
+
+/* --- Card body --- */
+.des-card__body {
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.des-card__title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.des-card__title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.des-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.des-card__price-reg {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.1;
+}
+
+.des-card__price-sale {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pc-orange, #EE7B28);
+  line-height: 1.1;
+}
+
+.des-card__price-compare {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(43, 27, 18, 0.45);
+  text-decoration: line-through;
+  line-height: 1.1;
+}
+
+.des-card__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  align-self: flex-start;
+  padding: 11px 22px;
+  background: var(--pc-green, #4F8A2F);
+  color: var(--pc-white, #fff) !important;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 2px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.des-card__btn:hover {
+  background: var(--pc-green-dark, #3E6F25);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  color: var(--pc-white, #fff) !important;
+}
+
+@media screen and (max-width: 749px) {
+  .des-card__title      { font-size: 1.05rem; }
+  .des-card__price-reg,
+  .des-card__price-sale { font-size: 1.25rem; }
+  .des-card__price-compare { font-size: 0.875rem; }
+  .des-card__btn        { font-size: 0.9rem; padding: 9px 18px; }
+}
+
+/* --- View All footer --- */
+.des-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  padding-bottom: 8px;
+}
+
+.des-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 32px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff) !important;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.des-view-all:hover {
+  background: #d06a1a;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  color: var(--pc-white, #fff) !important;
+}
+
+/* --- Empty state --- */
+.des-empty {
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.45;
+  padding: 48px 0;
+  margin: 0;
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Deals Ending Soon",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading — plain text",
+      "default": "Deals"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlighted",
+      "label": "Heading — underlined text",
+      "default": "Ending Soon"
+    },
+    {
+      "type": "header",
+      "content": "Countdown Timer"
+    },
+    {
+      "type": "text",
+      "id": "sale_end_date",
+      "label": "Sale end date and time",
+      "info": "Format: 2024-12-31T23:59:59 (local time). Leave blank to hide the countdown."
+    },
+    {
+      "type": "text",
+      "id": "expired_text",
+      "label": "Text shown when sale ends",
+      "default": "Sale ended"
+    },
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Sale collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "Products to show"
+    },
+    {
+      "type": "text",
+      "id": "card_btn_text",
+      "label": "Card button text",
+      "default": "Grab Deal"
+    },
+    {
+      "type": "header",
+      "content": "Deal Badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show badge on every product card",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "ENDS SOON"
+    },
+    {
+      "type": "header",
+      "content": "View All Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show View All button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Button text",
+      "default": "View All Deals"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "Button link (leave blank to use collection URL)"
+    },
+    {
+      "type": "header",
+      "content": "Section Style"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 52
+    }
+  ],
+  "presets": [
+    {
+      "name": "Deals Ending Soon"
+    }
+  ]
+}
+{% endschema %}

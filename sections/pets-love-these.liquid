@@ -1,0 +1,515 @@
+{%- liquid
+  assign plt_collection  = section.settings.collection
+  assign plt_count       = section.settings.products_to_show | default: 4
+  assign plt_plain       = section.settings.heading_plain | default: 'Pets'
+  assign plt_highlight   = section.settings.heading_highlighted | default: 'Love These'
+  assign plt_btn         = section.settings.card_btn_text | default: 'Shop Now'
+  assign plt_show_all    = section.settings.show_view_all
+  assign plt_all_text    = section.settings.view_all_text | default: 'View All'
+  assign plt_all_link    = section.settings.view_all_link
+  assign plt_show_badge  = section.settings.show_badge
+  assign plt_badge_text  = section.settings.badge_text | default: 'BEST SELLER'
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{% endstyle %}
+
+<section class="plt-section" aria-label="{{ plt_plain }} {{ plt_highlight }}">
+  <div class="plt-inner page-width">
+
+    <div class="plt-header">
+      <h2 class="plt-heading">
+        {%- if plt_plain != blank -%}
+          <span class="plt-heading__plain">{{ plt_plain | escape }}&nbsp;</span>
+        {%- endif -%}
+        {%- if plt_highlight != blank -%}
+          <span class="plt-heading__highlight">
+            {{- plt_highlight | escape -}}
+            <svg class="plt-heading__underline" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        {%- endif -%}
+      </h2>
+    </div>
+
+    {%- if plt_collection != blank and plt_collection.products.size > 0 -%}
+      <ul class="plt-grid" role="list">
+        {%- for product in plt_collection.products limit: plt_count -%}
+          {%- assign plt_img_alt = product.featured_image.alt | escape -%}
+          <li class="plt-card">
+            <div class="plt-card__media-wrap">
+              <a href="{{ product.url }}" class="plt-card__media-link" aria-hidden="true" tabindex="-1">
+                {%- if product.featured_image -%}
+                  {{-
+                    product.featured_image
+                    | image_url: width: 600
+                    | image_tag:
+                      class: 'plt-card__img',
+                      alt: plt_img_alt,
+                      widths: '300, 450, 600',
+                      sizes: '(max-width: 749px) calc(50vw - 20px), (max-width: 1199px) calc(33vw - 24px), 280px',
+                      loading: 'lazy'
+                  -}}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'plt-card__img plt-card__img--placeholder' }}
+                {%- endif -%}
+              </a>
+              {%- if plt_show_badge -%}
+                <span class="plt-badge" aria-label="{{ plt_badge_text | escape }}">{{ plt_badge_text | escape }}</span>
+              {%- endif -%}
+            </div>
+            <div class="plt-card__body">
+              <a href="{{ product.url }}" class="plt-card__title-link">
+                <h3 class="plt-card__title">{{ product.title | escape }}</h3>
+              </a>
+              <div class="plt-card__price">
+                {%- if product.compare_at_price > product.price -%}
+                  <span class="plt-card__price-sale">{{ product.price | money }}</span>
+                  <span class="plt-card__price-compare">{{ product.compare_at_price | money }}</span>
+                {%- else -%}
+                  <span class="plt-card__price-reg">{{ product.price | money }}</span>
+                {%- endif -%}
+              </div>
+              <a href="{{ product.url }}" class="plt-card__btn">
+                {{- plt_btn -}}<svg aria-hidden="true" focusable="false" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if plt_show_all -%}
+        {%- assign view_href = plt_all_link | default: plt_collection.url -%}
+        {%- if view_href != blank -%}
+          <div class="plt-footer">
+            <a href="{{ view_href }}" class="plt-view-all">
+              {{- plt_all_text -}}<svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+
+    {%- else -%}
+      <p class="plt-empty">Select a collection in the theme editor to display products here.</p>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% stylesheet %}
+/* ---- Pets Love These (Pet Center) ---- */
+
+/* overflow: visible so card/button box-shadows are never clipped at the section boundary */
+.plt-section {
+  overflow: visible;
+}
+
+/* safety override in case page-width has overflow: hidden */
+.plt-inner {
+  overflow: visible;
+}
+
+/* --- Heading --- */
+.plt-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.plt-heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.plt-heading__highlight {
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  white-space: nowrap;
+  padding-bottom: 8px;
+}
+
+.plt-heading__underline {
+  position: absolute;
+  left: -3%;
+  bottom: -2px;
+  width: 106%;
+  height: 12px;
+  color: var(--pc-green, #4F8A2F);
+  pointer-events: none;
+  display: block;
+}
+
+/* --- Product grid ---
+   Padding gives card shadows room at every edge without horizontal overflow.
+   Card shadow is 6px right / 8px bottom, so right needs ≥6px, bottom ≥8px. */
+.plt-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 6px 14px 14px 6px;
+}
+
+@media screen and (max-width: 1199px) {
+  .plt-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .plt-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 4px 10px 12px 4px;
+  }
+}
+
+/* --- Cards --- */
+.plt-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--pc-cream, #F7DFB8);
+  border: 3px solid var(--pc-text, #2B1B12);
+  border-radius: 20px;
+  box-shadow: 6px 8px 0 rgba(43, 27, 18, 0.82);
+  overflow: hidden;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.plt-card:hover {
+  transform: translate(3px, 4px);
+  box-shadow: 3px 4px 0 rgba(43, 27, 18, 0.82);
+}
+
+/* Media wrap: positioning context for the badge.
+   overflow: visible so the badge shadow is not clipped by the wrap. */
+.plt-card__media-wrap {
+  position: relative;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.plt-card__media-link {
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--pc-white, #fff);
+}
+
+.plt-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.plt-card:hover .plt-card__img {
+  transform: scale(1.05);
+}
+
+.plt-card__img--placeholder {
+  padding: 20%;
+  box-sizing: border-box;
+  color: rgba(43, 27, 18, 0.2);
+}
+
+/* --- BEST SELLER badge ---
+   Positioned over the top-right of the image.
+   Sibling of media-link (not child), so it is NOT clipped by media-link's overflow: hidden. */
+.plt-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  padding: 8px 16px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  line-height: 1.3;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 749px) {
+  .plt-badge {
+    font-size: 0.82rem;
+    padding: 6px 12px;
+    top: 8px;
+    right: 8px;
+  }
+}
+
+/* --- Card body --- */
+.plt-card__body {
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.plt-card__title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.plt-card__title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.plt-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.plt-card__price-reg {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.1;
+}
+
+.plt-card__price-sale {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pc-orange, #EE7B28);
+  line-height: 1.1;
+}
+
+.plt-card__price-compare {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(43, 27, 18, 0.45);
+  text-decoration: line-through;
+  line-height: 1.1;
+}
+
+.plt-card__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  align-self: flex-start;
+  padding: 11px 22px;
+  background: var(--pc-green, #4F8A2F);
+  color: var(--pc-white, #fff) !important;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 2px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.plt-card__btn:hover {
+  background: var(--pc-green-dark, #3E6F25);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  color: var(--pc-white, #fff) !important;
+}
+
+@media screen and (max-width: 749px) {
+  .plt-card__title {
+    font-size: 1.05rem;
+  }
+  .plt-card__price-reg,
+  .plt-card__price-sale {
+    font-size: 1.25rem;
+  }
+  .plt-card__price-compare {
+    font-size: 0.875rem;
+  }
+  .plt-card__btn {
+    font-size: 0.9rem;
+    padding: 9px 18px;
+  }
+}
+
+/* --- View All footer ---
+   padding-bottom gives the button's 4px shadow room before the section ends. */
+.plt-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  padding-bottom: 8px;
+}
+
+.plt-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 32px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff) !important;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.plt-view-all:hover {
+  background: #d06a1a;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  color: var(--pc-white, #fff) !important;
+}
+
+/* --- Empty state --- */
+.plt-empty {
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.45;
+  padding: 48px 0;
+  margin: 0;
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Pets Love These",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading — plain text",
+      "default": "Pets"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlighted",
+      "label": "Heading — underlined text",
+      "default": "Love These"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "Products to show"
+    },
+    {
+      "type": "text",
+      "id": "card_btn_text",
+      "label": "Card button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "header",
+      "content": "Best Seller Badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show badge on every product card",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "BEST SELLER"
+    },
+    {
+      "type": "header",
+      "content": "View All Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View All' button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Button text",
+      "default": "View All"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "Button link (leave blank to use collection URL)"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 52
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pets Love These"
+    }
+  ]
+}
+{% endschema %}
