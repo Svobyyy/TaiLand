@@ -1,0 +1,661 @@
+{%- liquid
+  assign cpr_heading_plain     = section.settings.heading_plain | default: 'Loved by'
+  assign cpr_heading_highlight = section.settings.heading_highlighted | default: 'Pet Parents'
+  assign cpr_subheading        = section.settings.subheading
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color }};
+  }
+{% endstyle %}
+
+<section class="cpr-section">
+  <div class="cpr-container">
+
+    {%- if cpr_heading_plain != blank or cpr_heading_highlight != blank -%}
+      <div class="cpr-header">
+        <h2 class="cpr-heading">
+          {%- if cpr_heading_plain != blank -%}
+            <span class="cpr-heading__plain">{{ cpr_heading_plain | escape }}&nbsp;</span>
+          {%- endif -%}
+          {%- if cpr_heading_highlight != blank -%}
+            <span class="cpr-heading__highlight">
+              {{- cpr_heading_highlight | escape -}}
+              <svg class="cpr-heading__underline" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          {%- endif -%}
+        </h2>
+        {%- if cpr_subheading != blank -%}
+          <p class="cpr-subheading">{{ cpr_subheading | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="cpr-grid" role="list">
+        {%- for block in section.blocks -%}
+          {%- assign cpr_rating = block.settings.rating | default: 5 -%}
+          <li class="cpr-card" {{ block.shopify_attributes }}>
+
+            <!-- ── Photo duo: Pet Parent + Best Friend ── -->
+            <div class="cpr-photo-duo">
+
+              <div class="cpr-photo-wrap">
+                {%- if block.settings.customer_photo != blank -%}
+                  {%- assign cpr_customer_alt = block.settings.customer_photo_alt | default: block.settings.customer_name -%}
+                  {{-
+                    block.settings.customer_photo
+                    | image_url: width: 160
+                    | image_tag:
+                      class: 'cpr-photo',
+                      alt: cpr_customer_alt,
+                      loading: 'lazy',
+                      width: 80,
+                      height: 80
+                  -}}
+                {%- else -%}
+                  <div class="cpr-photo cpr-photo--placeholder" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <circle cx="12" cy="8" r="4"/>
+                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                    </svg>
+                  </div>
+                {%- endif -%}
+                <span class="cpr-photo-label">Pet Parent</span>
+              </div>
+
+              <div class="cpr-photo-connector" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="18" height="18" aria-hidden="true">
+                  <path d="M10 17.3s-7.5-4.8-7.5-9.2a4.5 4.5 0 0 1 7.5-3.3 4.5 4.5 0 0 1 7.5 3.3c0 4.4-7.5 9.2-7.5 9.2z"/>
+                </svg>
+              </div>
+
+              <div class="cpr-photo-wrap">
+                {%- if block.settings.pet_photo != blank -%}
+                  {%- assign cpr_pet_alt = block.settings.pet_photo_alt | default: 'Pet photo' -%}
+                  {{-
+                    block.settings.pet_photo
+                    | image_url: width: 160
+                    | image_tag:
+                      class: 'cpr-photo',
+                      alt: cpr_pet_alt,
+                      loading: 'lazy',
+                      width: 80,
+                      height: 80
+                  -}}
+                {%- else -%}
+                  <div class="cpr-photo cpr-photo--placeholder cpr-photo--pet-placeholder" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <ellipse cx="12" cy="15.5" rx="5" ry="4.5"/>
+                      <ellipse cx="5.5" cy="11" rx="2" ry="2.5"/>
+                      <ellipse cx="18.5" cy="11" rx="2" ry="2.5"/>
+                      <ellipse cx="8.5" cy="8" rx="1.8" ry="2.2"/>
+                      <ellipse cx="15.5" cy="8" rx="1.8" ry="2.2"/>
+                    </svg>
+                  </div>
+                {%- endif -%}
+                <span class="cpr-photo-label cpr-photo-label--pet">Best Friend</span>
+              </div>
+
+            </div>
+
+            <!-- ── Star rating ── -->
+            <div class="cpr-stars" role="img" aria-label="{{ cpr_rating }} out of 5 stars">
+              {%- for i in (1..5) -%}
+                {%- if i <= cpr_rating -%}
+                  <svg class="cpr-star cpr-star--filled" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <polygon points="10,2 12.9,7.3 19,8.2 14.5,12.6 15.6,18.7 10,15.6 4.4,18.7 5.5,12.6 1,8.2 7.1,7.3" fill="currentColor"/>
+                  </svg>
+                {%- else -%}
+                  <svg class="cpr-star cpr-star--empty" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <polygon points="10,2 12.9,7.3 19,8.2 14.5,12.6 15.6,18.7 10,15.6 4.4,18.7 5.5,12.6 1,8.2 7.1,7.3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+
+            <!-- ── Review content ── -->
+            <div class="cpr-review-body">
+              {%- if block.settings.review_title != blank -%}
+                <h3 class="cpr-review-title">{{ block.settings.review_title | escape }}</h3>
+              {%- endif -%}
+              {%- if block.settings.review_text != blank -%}
+                <p class="cpr-review-text">&ldquo;{{ block.settings.review_text | escape }}&rdquo;</p>
+              {%- endif -%}
+            </div>
+
+            <!-- ── Card footer: name + badge + optional CTA ── -->
+            <div class="cpr-card-footer">
+              <div class="cpr-footer-top">
+                {%- if block.settings.customer_name != blank -%}
+                  <span class="cpr-customer-name">{{ block.settings.customer_name | escape }}</span>
+                {%- endif -%}
+                {%- if block.settings.badge_text != blank -%}
+                  <span class="cpr-badge">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    {{ block.settings.badge_text | escape }}
+                  </span>
+                {%- endif -%}
+              </div>
+              {%- if block.settings.btn_text != blank and block.settings.product_link != blank -%}
+                <a href="{{ block.settings.product_link }}" class="cpr-card-btn">
+                  {{ block.settings.btn_text | escape }}
+                  <svg aria-hidden="true" focusable="false" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              {%- endif -%}
+            </div>
+
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% stylesheet %}
+/* ---- Customer + Pet Reviews (Tailand) ---- */
+
+.cpr-section {
+  overflow: visible;
+}
+
+.cpr-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-inline: var(--page-margin, 16px);
+}
+
+/* ── Heading ── */
+.cpr-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.cpr-heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.cpr-heading__plain {
+  font-weight: 400;
+}
+
+.cpr-heading__highlight {
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  white-space: nowrap;
+  padding-bottom: 8px;
+}
+
+.cpr-heading__underline {
+  position: absolute;
+  left: -3%;
+  bottom: -2px;
+  width: 106%;
+  height: 12px;
+  color: var(--pc-green, #4F8A2F);
+  pointer-events: none;
+  display: block;
+}
+
+.cpr-subheading {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.65;
+  margin: 20px 0 0;
+  line-height: 1.5;
+}
+
+/* ── Review grid ── */
+.cpr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  list-style: none;
+  margin: 0;
+  padding: 6px 0 14px 0;
+}
+
+/* ── Card ── */
+.cpr-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--pc-cream, #F7DFB8);
+  border: 3px solid var(--pc-text, #2B1B12);
+  border-radius: 24px;
+  box-shadow: 6px 8px 0 rgba(43, 27, 18, 0.82);
+  padding: 28px 24px 24px;
+  box-sizing: border-box;
+}
+
+/* ── Photo duo ── */
+.cpr-photo-duo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.cpr-photo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.cpr-photo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  display: block;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.cpr-photo--placeholder {
+  background: rgba(43, 27, 18, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(43, 27, 18, 0.25);
+}
+
+.cpr-photo--placeholder svg {
+  width: 36px;
+  height: 36px;
+}
+
+.cpr-photo--pet-placeholder {
+  background: rgba(238, 123, 40, 0.08);
+  color: rgba(238, 123, 40, 0.4);
+}
+
+.cpr-photo-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.5;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.cpr-photo-label--pet {
+  color: var(--pc-green, #4F8A2F);
+  opacity: 1;
+}
+
+/* Heart connector between photos */
+.cpr-photo-connector {
+  display: flex;
+  align-items: center;
+  padding-top: 22px;
+  color: var(--pc-orange, #EE7B28);
+  flex-shrink: 0;
+}
+
+/* ── Stars ── */
+.cpr-stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 14px;
+}
+
+.cpr-star {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.cpr-star--filled {
+  color: var(--pc-orange, #EE7B28);
+}
+
+.cpr-star--empty {
+  color: rgba(43, 27, 18, 0.2);
+}
+
+/* ── Review body ── */
+.cpr-review-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cpr-review-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.cpr-review-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.72;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── Card footer ── */
+.cpr-card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-top: 2px solid rgba(43, 27, 18, 0.12);
+  padding-top: 16px;
+  margin-top: auto;
+}
+
+.cpr-footer-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cpr-customer-name {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1;
+}
+
+/* Verified buyer badge */
+.cpr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--pc-white, #fff);
+  border: 2px solid var(--pc-green, #4F8A2F);
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--pc-green, #4F8A2F);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cpr-badge svg {
+  flex-shrink: 0;
+}
+
+/* Optional CTA button */
+.cpr-card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 10px 22px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff) !important;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 2px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.cpr-card-btn:hover {
+  background: #d06a1a;
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  color: var(--pc-white, #fff) !important;
+}
+
+/* ── Tablet: 2 columns ── */
+@media screen and (max-width: 1099px) {
+  .cpr-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .cpr-heading {
+    font-size: 2.2rem;
+  }
+}
+
+/* ── Mobile: single column ── */
+@media screen and (max-width: 749px) {
+  .cpr-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 4px 0 12px 0;
+  }
+  .cpr-header {
+    margin-bottom: 36px;
+  }
+  .cpr-heading {
+    font-size: 1.8rem;
+  }
+  .cpr-card {
+    padding: 24px 20px 20px;
+  }
+  .cpr-photo {
+    width: 72px;
+    height: 72px;
+  }
+  .cpr-review-title {
+    font-size: 1.1rem;
+  }
+  .cpr-review-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .cpr-photo {
+    width: 66px;
+    height: 66px;
+  }
+  .cpr-review-title {
+    font-size: 1.05rem;
+  }
+  .cpr-photo-connector {
+    padding-top: 18px;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Customer Reviews",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading — plain text",
+      "default": "Loved by"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlighted",
+      "label": "Heading — highlighted text",
+      "default": "Pet Parents"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading (optional)"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review Card",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Photos"
+        },
+        {
+          "type": "image_picker",
+          "id": "customer_photo",
+          "label": "Customer photo"
+        },
+        {
+          "type": "text",
+          "id": "customer_photo_alt",
+          "label": "Customer photo alt text"
+        },
+        {
+          "type": "image_picker",
+          "id": "pet_photo",
+          "label": "Pet photo"
+        },
+        {
+          "type": "text",
+          "id": "pet_photo_alt",
+          "label": "Pet photo alt text"
+        },
+        {
+          "type": "header",
+          "content": "Review"
+        },
+        {
+          "type": "text",
+          "id": "review_title",
+          "label": "Review title",
+          "default": "My cat plays every day now"
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review text",
+          "default": "She used to ignore most toys, but now she runs straight to her new favorite toy every morning."
+        },
+        {
+          "type": "text",
+          "id": "customer_name",
+          "label": "Customer name",
+          "default": "Mia R."
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Star rating",
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Verified badge text",
+          "default": "Verified Buyer"
+        },
+        {
+          "type": "header",
+          "content": "Optional CTA"
+        },
+        {
+          "type": "url",
+          "id": "product_link",
+          "label": "Product link"
+        },
+        {
+          "type": "text",
+          "id": "btn_text",
+          "label": "Button text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Reviews",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "review_title": "My cat plays every day now",
+            "review_text": "She used to ignore most toys, but now she runs straight to her new favorite toy every morning.",
+            "customer_name": "Mia R.",
+            "rating": 5,
+            "badge_text": "Verified Buyer"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "review_title": "Our dog loves it",
+            "review_text": "The toy kept him busy and happy for hours. It instantly became part of his daily routine.",
+            "customer_name": "James K.",
+            "rating": 5,
+            "badge_text": "Verified Buyer"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "review_title": "Cute products and fast delivery",
+            "review_text": "Everything looked even better in person. My pet loved it and I loved how easy the order was.",
+            "customer_name": "Sophie L.",
+            "rating": 5,
+            "badge_text": "Verified Buyer"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

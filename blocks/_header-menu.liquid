@@ -954,6 +954,84 @@
       "id": "drawer_dividers",
       "label": "t:settings.dividers",
       "default": false
+    },
+    {
+      "type": "header",
+      "content": "Best Sellers in Menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_best_sellers",
+      "label": "Show Best Sellers section",
+      "default": true
+    },
+    {
+      "type": "collection",
+      "id": "best_sellers_collection",
+      "label": "Best Sellers collection"
+    },
+    {
+      "type": "range",
+      "id": "best_sellers_count",
+      "label": "Number of products",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "visible_if": "{{ block.settings.show_best_sellers }}"
+    },
+    {
+      "type": "text",
+      "id": "best_sellers_heading",
+      "label": "Section heading",
+      "default": "Best Sellers",
+      "visible_if": "{{ block.settings.show_best_sellers }}"
+    },
+    {
+      "type": "text",
+      "id": "best_sellers_subtitle",
+      "label": "Section subtitle",
+      "default": "Pets love these picks",
+      "visible_if": "{{ block.settings.show_best_sellers }}"
+    },
+    {
+      "type": "header",
+      "content": "Sale Deals in Menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_deals",
+      "label": "Show Sale Deals section",
+      "default": true
+    },
+    {
+      "type": "collection",
+      "id": "sale_deals_collection",
+      "label": "Sale Deals collection"
+    },
+    {
+      "type": "range",
+      "id": "sale_deals_count",
+      "label": "Number of products",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "visible_if": "{{ block.settings.show_sale_deals }}"
+    },
+    {
+      "type": "text",
+      "id": "sale_deals_heading",
+      "label": "Section heading",
+      "default": "Sale Deals",
+      "visible_if": "{{ block.settings.show_sale_deals }}"
+    },
+    {
+      "type": "text",
+      "id": "sale_deals_subtitle",
+      "label": "Section subtitle",
+      "default": "Limited-time pet deals",
+      "visible_if": "{{ block.settings.show_sale_deals }}"
     }
   ]
 }

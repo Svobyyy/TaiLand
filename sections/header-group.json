@@ -18,11 +18,13 @@
           "type": "_announcement",
           "settings": {
             "text": "Free shipping on orders over $60",
+            "link": "",
             "font": "var(--font-body--family)",
             "font_size": "0.875rem",
+            "weight": "",
             "letter_spacing": "normal",
             "case": "none",
-            "text_color": "#FFFFFF"
+            "text_color": "#ffffff"
           },
           "blocks": {}
         }
@@ -34,8 +36,9 @@
       "settings": {
         "speed": 5,
         "section_width": "page-width",
-        "background_color": "#4F8A2F",
+        "background_color": "#4f8a2f",
         "divider_width": 0,
+        "divider_color": "",
         "padding-block-start": 22,
         "padding-block-end": 22
       }
@@ -58,18 +61,32 @@
           "static": true,
           "settings": {
             "menu": "main-menu",
+            "background_color": "{{ settings.color_palette.background }}",
+            "text_color": "",
             "type_font_primary_size": "0.875rem",
             "menu_font_style": "inverse",
             "type_font_primary_link": "body",
             "type_case_primary_link": "none",
-            "menu_style": "featured_products",
+            "menu_style": "text",
             "featured_products_aspect_ratio": "4 / 5",
             "featured_collections_aspect_ratio": "16 / 9",
             "image_border_radius": 0,
             "navigation_bar": false,
+            "background_color_navigation_bar": "{{ settings.color_palette.background }}",
+            "text_color_navigation_bar": "",
             "drawer_accordion": false,
             "drawer_accordion_expand_first": false,
-            "drawer_dividers": false
+            "drawer_dividers": false,
+            "show_best_sellers": true,
+            "best_sellers_collection": "frontpage",
+            "best_sellers_count": 4,
+            "best_sellers_heading": "Best Sellers",
+            "best_sellers_subtitle": "Pets love these picks",
+            "show_sale_deals": true,
+            "sale_deals_collection": "frontpage",
+            "sale_deals_count": 4,
+            "sale_deals_heading": "Sale Deals",
+            "sale_deals_subtitle": "Limited-time pet deals"
           },
           "blocks": {}
         }
@@ -78,9 +95,11 @@
         "logo_position": "left",
         "menu_position": "left",
         "menu_row": "bottom",
+        "customer_account_menu": "customer-account-main-menu",
         "show_search": true,
         "search_position": "right",
         "search_row": "top",
+        "track_order_url": "",
         "show_country": true,
         "country_selector_style": false,
         "show_language": true,
@@ -93,15 +112,29 @@
         "enable_sticky_header": "always",
         "divider_width": 0,
         "divider_size": "page-width",
+        "divider_color": "",
         "border_width": 0,
-        "background_color_bottom": "#EE7B28",
-        "text_color_bottom": "#FFFFFF",
+        "bottom_border_color": "",
+        "actions_display_style": "icon",
+        "actions_font_size": "0.875rem",
+        "actions_font": "body",
+        "actions_text_case": "none",
+        "background_color_top": "",
+        "text_color_top": "",
+        "background_color_bottom": "#ee7b28",
+        "text_color_bottom": "#ffffff",
         "bubble_style": "custom",
-        "bubble_background_color": "#5FAE3D",
-        "bubble_text_color": "#FFFFFF",
+        "bubble_background_color": "#5fae3d",
+        "bubble_text_color": "#ffffff",
         "enable_transparent_header_home": false,
+        "home_inverse_logo": false,
+        "text_color_transparent_home": "",
         "enable_transparent_header_product": false,
-        "enable_transparent_header_collection": false
+        "product_inverse_logo": false,
+        "text_color_transparent_product": "",
+        "enable_transparent_header_collection": false,
+        "collection_inverse_logo": false,
+        "text_color_transparent_collection": ""
       }
     }
   },

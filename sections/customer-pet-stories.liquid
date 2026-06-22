@@ -1,0 +1,681 @@
+{%- liquid
+  assign cps_plain     = section.settings.heading_plain | default: 'Loved by'
+  assign cps_highlight = section.settings.heading_highlighted | default: 'Pet Parents'
+  assign cps_sub       = section.settings.subheading
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color }};
+  }
+{% endstyle %}
+
+<section class="cps-section">
+  <div class="cps-container">
+
+    {%- if cps_plain != blank or cps_highlight != blank -%}
+      <div class="cps-header">
+        <h2 class="cps-heading">
+          {%- if cps_plain != blank -%}
+            <span class="cps-heading__plain">{{ cps_plain | escape }}&nbsp;</span>
+          {%- endif -%}
+          {%- if cps_highlight != blank -%}
+            <span class="cps-heading__highlight">
+              {{- cps_highlight | escape -}}
+              <svg class="cps-heading__underline" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          {%- endif -%}
+        </h2>
+        {%- if cps_sub != blank -%}
+          <p class="cps-subheading">{{ cps_sub | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="cps-stories">
+        {%- for block in section.blocks -%}
+          {%- assign cps_rating = block.settings.rating | default: 5 -%}
+          {%- assign cps_flip   = forloop.index0 | modulo: 2 -%}
+          <article
+            class="cps-story{%- if cps_flip == 1 %} cps-story--flip{%- endif %}"
+            {{ block.shopify_attributes }}
+          >
+
+            <!-- ── Overlapping photo duo ── -->
+            <div class="cps-duo-wrap">
+              <div class="cps-duo">
+
+                {%- if block.settings.customer_photo != blank -%}
+                  {%- assign cps_owner_alt = block.settings.customer_photo_alt | default: block.settings.customer_name -%}
+                  {{-
+                    block.settings.customer_photo
+                    | image_url: width: 200
+                    | image_tag:
+                      class: 'cps-photo cps-photo--owner',
+                      alt: cps_owner_alt,
+                      loading: 'lazy',
+                      width: 88,
+                      height: 88
+                  -}}
+                {%- else -%}
+                  <div class="cps-photo cps-photo--owner cps-photo--empty" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                    </svg>
+                  </div>
+                {%- endif -%}
+
+                {%- if block.settings.pet_photo != blank -%}
+                  {%- assign cps_pet_alt = block.settings.pet_photo_alt | default: 'Pet photo' -%}
+                  {{-
+                    block.settings.pet_photo
+                    | image_url: width: 200
+                    | image_tag:
+                      class: 'cps-photo cps-photo--pet',
+                      alt: cps_pet_alt,
+                      loading: 'lazy',
+                      width: 88,
+                      height: 88
+                  -}}
+                {%- else -%}
+                  <div class="cps-photo cps-photo--pet cps-photo--empty cps-photo--empty-pet" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <ellipse cx="12" cy="15.5" rx="5" ry="4.5"/>
+                      <ellipse cx="5.5" cy="11" rx="2" ry="2.5"/>
+                      <ellipse cx="18.5" cy="11" rx="2" ry="2.5"/>
+                      <ellipse cx="8.5" cy="8" rx="1.8" ry="2.2"/>
+                      <ellipse cx="15.5" cy="8" rx="1.8" ry="2.2"/>
+                    </svg>
+                  </div>
+                {%- endif -%}
+
+              </div>
+              <div class="cps-duo-labels" aria-hidden="true">
+                <span class="cps-duo-label">Pet Parent</span>
+                <span class="cps-duo-label cps-duo-label--pet">Best Friend</span>
+              </div>
+            </div>
+
+            <!-- ── Review content ── -->
+            <div class="cps-content">
+
+              <div class="cps-stars" role="img" aria-label="{{ cps_rating }} out of 5 stars">
+                {%- for i in (1..5) -%}
+                  {%- if i <= cps_rating -%}
+                    <svg class="cps-star cps-star--on" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <polygon points="10,2 12.9,7.3 19,8.2 14.5,12.6 15.6,18.7 10,15.6 4.4,18.7 5.5,12.6 1,8.2 7.1,7.3" fill="currentColor"/>
+                    </svg>
+                  {%- else -%}
+                    <svg class="cps-star cps-star--off" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <polygon points="10,2 12.9,7.3 19,8.2 14.5,12.6 15.6,18.7 10,15.6 4.4,18.7 5.5,12.6 1,8.2 7.1,7.3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+
+              {%- if block.settings.review_title != blank -%}
+                <h3 class="cps-review-title">{{ block.settings.review_title | escape }}</h3>
+              {%- endif -%}
+
+              {%- if block.settings.review_text != blank -%}
+                <p class="cps-review-text">&ldquo;{{ block.settings.review_text | escape }}&rdquo;</p>
+              {%- endif -%}
+
+              <div class="cps-byline">
+                {%- if block.settings.customer_name != blank -%}
+                  <span class="cps-name">&#8212;&nbsp;{{ block.settings.customer_name | escape }}</span>
+                {%- endif -%}
+                {%- if block.settings.badge_text != blank -%}
+                  <span class="cps-badge">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    {{ block.settings.badge_text | escape }}
+                  </span>
+                {%- endif -%}
+              </div>
+
+              {%- if block.settings.btn_text != blank and block.settings.product_link != blank -%}
+                <a href="{{ block.settings.product_link }}" class="cps-btn">
+                  {{ block.settings.btn_text | escape }}
+                  <svg aria-hidden="true" focusable="false" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              {%- endif -%}
+
+            </div>
+
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% stylesheet %}
+/* ---- Customer Pet Stories — horizontal editorial strips (Tailand) ---- */
+
+.cps-section {
+  overflow: visible;
+}
+
+/* Narrower max-width than product grids — editorial, intimate feel */
+.cps-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding-inline: var(--page-margin, 16px);
+}
+
+/* ── Heading ── */
+.cps-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.cps-heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.cps-heading__plain {
+  font-weight: 400;
+}
+
+.cps-heading__highlight {
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  white-space: nowrap;
+  padding-bottom: 8px;
+}
+
+.cps-heading__underline {
+  position: absolute;
+  left: -3%;
+  bottom: -2px;
+  width: 106%;
+  height: 12px;
+  color: var(--pc-green, #4F8A2F);
+  pointer-events: none;
+  display: block;
+}
+
+.cps-subheading {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.65;
+  margin: 20px 0 0;
+  line-height: 1.5;
+}
+
+/* ── Stories: vertical stack of horizontal strips ── */
+.cps-stories {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Story strip ──
+   Intentionally lighter than product cards:
+   soft cream wash, whisper border, NO offset shadow.
+   These are horizontal rows — not card grids. */
+.cps-story {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  padding: 36px 40px;
+  background: rgba(247, 223, 184, 0.42);
+  border-radius: 20px;
+  border: 1.5px solid rgba(43, 27, 18, 0.1);
+}
+
+/* Alternate: even stories flip photos to the right */
+.cps-story--flip .cps-duo-wrap { order: 2; }
+.cps-story--flip .cps-content  { order: 1; }
+
+/* ── Overlapping diagonal photo duo ──
+   Owner: top-left, z-index 2 (on top of the overlap).
+   Pet:   bottom-right, z-index 1 (behind at the overlap). */
+.cps-duo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.cps-duo {
+  position: relative;
+  width: 148px;
+  height: 148px;
+}
+
+.cps-photo {
+  position: absolute;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--pc-text, #2B1B12);
+  box-sizing: border-box;
+  display: block;
+}
+
+.cps-photo--owner {
+  top: 0;
+  left: 0;
+  z-index: 2;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+}
+
+.cps-photo--pet {
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+  box-shadow: -2px 3px 0 var(--pc-text, #2B1B12);
+}
+
+.cps-photo--empty {
+  background: rgba(43, 27, 18, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(43, 27, 18, 0.25);
+}
+
+.cps-photo--empty svg {
+  width: 34px;
+  height: 34px;
+}
+
+.cps-photo--empty-pet {
+  background: rgba(238, 123, 40, 0.09);
+  color: rgba(238, 123, 40, 0.4);
+}
+
+/* Labels aligned to each photo's position in the diagonal */
+.cps-duo-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 148px;
+  margin-top: 10px;
+}
+
+.cps-duo-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.45;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.cps-duo-label--pet {
+  color: var(--pc-green, #4F8A2F);
+  opacity: 1;
+}
+
+/* ── Review content — editorial sizing ── */
+.cps-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Stars */
+.cps-stars {
+  display: flex;
+  gap: 3px;
+}
+
+.cps-star {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.cps-star--on  { color: var(--pc-orange, #EE7B28); }
+.cps-star--off { color: rgba(43, 27, 18, 0.18); }
+
+/* Review title — larger than product card titles */
+.cps-review-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.25;
+}
+
+/* Review quote — more breathing room than card text */
+.cps-review-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.72;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Byline */
+.cps-byline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cps-name {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1;
+}
+
+/* Verified badge */
+.cps-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--pc-white, #fff);
+  border: 2px solid var(--pc-green, #4F8A2F);
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--pc-green, #4F8A2F);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cps-badge svg {
+  flex-shrink: 0;
+}
+
+/* Optional CTA */
+.cps-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 11px 24px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff) !important;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 2px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+  margin-top: 4px;
+}
+
+.cps-btn:hover {
+  background: #d06a1a;
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  color: var(--pc-white, #fff) !important;
+}
+
+/* ── Tablet ── */
+@media screen and (max-width: 1099px) {
+  .cps-story {
+    gap: 32px;
+    padding: 32px;
+  }
+  .cps-heading {
+    font-size: 2.2rem;
+  }
+}
+
+/* ── Mobile — stack vertically, reset zigzag ── */
+@media screen and (max-width: 749px) {
+  .cps-header {
+    margin-bottom: 36px;
+  }
+  .cps-heading {
+    font-size: 1.8rem;
+  }
+  .cps-story {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 28px 22px;
+  }
+  /* Reset alternating order — photos always on top on mobile */
+  .cps-story--flip .cps-duo-wrap,
+  .cps-story--flip .cps-content {
+    order: unset;
+  }
+  .cps-duo {
+    width: 132px;
+    height: 132px;
+  }
+  .cps-photo {
+    width: 80px;
+    height: 80px;
+  }
+  .cps-duo-labels {
+    width: 132px;
+  }
+  .cps-review-title {
+    font-size: 1.25rem;
+  }
+  .cps-review-text {
+    font-size: 0.95rem;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .cps-story {
+    padding: 24px 18px;
+  }
+  .cps-duo {
+    width: 120px;
+    height: 120px;
+  }
+  .cps-photo {
+    width: 74px;
+    height: 74px;
+  }
+  .cps-duo-labels {
+    width: 120px;
+  }
+  .cps-review-title {
+    font-size: 1.15rem;
+  }
+  .cps-review-text {
+    font-size: 0.9rem;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Pet Parent Stories",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading — plain text",
+      "default": "Loved by"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlighted",
+      "label": "Heading — highlighted text",
+      "default": "Pet Parents"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading (optional)"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "story",
+      "name": "Pet Parent Story",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Photos"
+        },
+        {
+          "type": "image_picker",
+          "id": "customer_photo",
+          "label": "Customer photo"
+        },
+        {
+          "type": "text",
+          "id": "customer_photo_alt",
+          "label": "Customer photo alt text"
+        },
+        {
+          "type": "image_picker",
+          "id": "pet_photo",
+          "label": "Pet photo"
+        },
+        {
+          "type": "text",
+          "id": "pet_photo_alt",
+          "label": "Pet photo alt text"
+        },
+        {
+          "type": "header",
+          "content": "Review"
+        },
+        {
+          "type": "text",
+          "id": "review_title",
+          "label": "Review title",
+          "default": "My cat plays every day now"
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review text",
+          "default": "She used to ignore most toys, but now she runs straight to her new favorite toy every morning."
+        },
+        {
+          "type": "text",
+          "id": "customer_name",
+          "label": "Customer name",
+          "default": "Mia R."
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Star rating",
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Verified badge text",
+          "default": "Verified Buyer"
+        },
+        {
+          "type": "header",
+          "content": "Optional CTA"
+        },
+        {
+          "type": "url",
+          "id": "product_link",
+          "label": "Product link"
+        },
+        {
+          "type": "text",
+          "id": "btn_text",
+          "label": "Button text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pet Parent Stories",
+      "blocks": [
+        {
+          "type": "story",
+          "settings": {
+            "review_title": "My cat plays every day now",
+            "review_text": "She used to ignore most toys, but now she runs straight to her new favorite toy every morning.",
+            "customer_name": "Mia R.",
+            "rating": 5,
+            "badge_text": "Verified Buyer"
+          }
+        },
+        {
+          "type": "story",
+          "settings": {
+            "review_title": "Our dog loves it",
+            "review_text": "The toy kept him busy and happy for hours. It instantly became part of his daily routine.",
+            "customer_name": "James K.",
+            "rating": 5,
+            "badge_text": "Verified Buyer"
+          }
+        },
+        {
+          "type": "story",
+          "settings": {
+            "review_title": "Cute products and fast delivery",
+            "review_text": "Everything looked even better in person. My pet loved it and I loved how easy the order was.",
+            "customer_name": "Sophie L.",
+            "rating": 5,
+            "badge_text": "Verified Buyer"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
