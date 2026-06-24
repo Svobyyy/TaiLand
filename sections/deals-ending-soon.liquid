@@ -80,7 +80,9 @@
                 {%- endif -%}
               </a>
               {%- if des_show_badge and product.compare_at_price > product.price -%}
-                <span class="des-badge" aria-label="{{ des_badge_text | escape }}">{{ des_badge_text | escape }}</span>
+                <div class="des-badge-group">
+                  <span class="des-badge" aria-label="{{ des_badge_text | escape }}">{{ des_badge_text | escape }}</span>
+                </div>
               {%- endif -%}
             </div>
             <div class="des-card__body">
@@ -321,11 +323,13 @@
   box-shadow: 3px 4px 0 rgba(43, 27, 18, 0.82);
 }
 
-/* Positioning context for badge — overflow: visible keeps badge shadow visible */
+/* Positioning context for badge; named container for any future dual-badge sizing queries. */
 .des-card__media-wrap {
   position: relative;
   flex-shrink: 0;
   overflow: visible;
+  container-type: inline-size;
+  container-name: des-card-media;
 }
 
 .des-card__media-link {
@@ -353,8 +357,15 @@
   color: rgba(43, 27, 18, 0.2);
 }
 
-/* --- ENDS SOON badge ---
-   Sibling of media-link so it is NOT clipped by the image's overflow: hidden. */
+/* --- Badge group: positioning context spanning the image area --- */
+.des-badge-group {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* --- ENDS SOON badge --- */
 .des-badge {
   position: absolute;
   top: 10px;
@@ -382,6 +393,24 @@
     padding: 6px 12px;
     top: 8px;
     left: 8px;
+  }
+}
+
+@media screen and (min-width: 750px) and (max-width: 1000px) {
+  .des-badge {
+    font-size: 0.82rem;
+    padding: 5px 11px;
+    top: 8px;
+    left: 8px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .des-badge {
+    font-size: 0.72rem;
+    padding: 4px 9px;
+    top: 7px;
+    left: 7px;
   }
 }
 

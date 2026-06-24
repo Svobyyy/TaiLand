@@ -1,0 +1,27 @@
+{
+  "sections": {
+    "tailand_contact_main": {
+      "type": "tailand-contact",
+      "settings": {
+        "heading_plain": "Contact",
+        "heading_highlighted": "Tailand",
+        "intro_text": "Have a question about your order, shipping, returns, or one of our pet picks? We're here to help.",
+        "contact_email": "support@tailand.store",
+        "response_time": "We usually reply within 1–2 business days.",
+        "support_hours": "Monday–Friday",
+        "instagram_url": "",
+        "tiktok_url": "",
+        "facebook_url": "",
+        "faq_heading": "Need answers fast?",
+        "faq_text": "Check our most common questions about shipping, returns, tracking, and product safety.",
+        "faq_btn_text": "View FAQ",
+        "faq_btn_url": "/pages/faq",
+        "show_help_cards": true,
+        "show_trust_badges": true,
+        "padding_top": 48,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": ["tailand_contact_main"]
+}

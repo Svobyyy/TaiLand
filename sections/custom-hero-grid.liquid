@@ -261,6 +261,11 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.3s ease;
+}
+
+.hero-grid__card:hover .hero-grid__image {
+  transform: scale(1.05);
 }
 
 /* Fallback focus points — overridden per-instance by {% style %} block above */

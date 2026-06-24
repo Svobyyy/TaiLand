@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "tailand_collection_main": {
+      "type": "tailand-collection",
+      "settings": {
+        "heading_plain": "Shop",
+        "heading_highlighted": "",
+        "show_description": true,
+        "show_tabs": true,
+        "nav_menu": "main-menu",
+        "show_sort": true,
+        "show_badges": true,
+        "show_best_seller_badge": false,
+        "best_seller_badge_text": "Best Seller",
+        "card_btn_text": "Shop Now",
+        "products_per_page": 16,
+        "padding_top": 48,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": ["tailand_collection_main"]
+}

@@ -133,16 +133,15 @@
 
 /* FAQ item */
 .tfq-item {
-  background: var(--pc-white, #fff);
-  border: 1.5px solid rgba(43, 27, 18, 0.12);
+  background: var(--pc-cream, #fffbf0);
+  border: 2.5px solid var(--pc-text, #2B1B12);
   border-radius: 16px;
   overflow: hidden;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition: box-shadow 0.2s ease;
 }
 
 .tfq-item[open] {
-  background: rgba(247, 223, 184, 0.35);
-  border-color: rgba(43, 27, 18, 0.2);
+  box-shadow: 5px 5px 0 var(--pc-text, #2B1B12);
 }
 
 /* Summary row */
@@ -182,32 +181,22 @@
   color: var(--pc-orange, #EE7B28);
 }
 
-/* Chevron button */
+/* Chevron — bare orange SVG, no box, matching product page style */
 .tfq-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  background: var(--pc-cream, #F7DFB8);
-  border: 2px solid var(--pc-text, #2B1B12);
-  border-radius: 10px;
-  color: var(--pc-text, #2B1B12);
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  width: 20px;
+  height: 20px;
+  color: var(--pc-orange, #EE7B28);
 }
 
 .tfq-icon svg {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   display: block;
-  transition: transform 0.28s ease;
-}
-
-.tfq-item[open] .tfq-icon {
-  background: var(--pc-orange, #EE7B28);
-  color: var(--pc-white, #fff);
-  border-color: var(--pc-orange, #EE7B28);
+  transition: transform 0.25s ease;
 }
 
 .tfq-item[open] .tfq-icon svg {
@@ -231,14 +220,14 @@
 
 .tfq-answer {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 0.95rem;
+  font-size: 1.02rem;
   font-weight: 600;
   color: var(--pc-text, #2B1B12);
-  opacity: 0.72;
+  opacity: 0.85;
   line-height: 1.75;
   margin: 0;
   padding: 4px 24px 22px;
-  border-top: 1.5px solid rgba(43, 27, 18, 0.1);
+  border-top: 1.5px solid rgba(43, 27, 18, 0.12);
 }
 
 /* Mobile */
@@ -254,17 +243,8 @@
     font-size: 1.05rem;
   }
   .tfq-answer {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     padding: 4px 20px 20px;
-  }
-  .tfq-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-  }
-  .tfq-icon svg {
-    width: 14px;
-    height: 14px;
   }
 }
 

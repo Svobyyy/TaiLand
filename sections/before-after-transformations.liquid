@@ -41,6 +41,9 @@
           {%- assign bat_has_after = false -%}
           {%- if block.settings.before_image != blank -%}{%- assign bat_has_before = true -%}{%- endif -%}
           {%- if block.settings.after_image != blank -%}{%- assign bat_has_after = true -%}{%- endif -%}
+          {%- assign bat_initial_pct = block.settings.initial_position | default: 50 -%}
+          {%- assign bat_clip_pct = 100 | minus: bat_initial_pct -%}
+          {%- assign bat_clip_style = 'clip-path: inset(0 ' | append: bat_clip_pct | append: '% 0 0)' -%}
 
           {%- if bat_has_before or bat_has_after -%}
             <div class="bat-comparison" data-bat-slider>
@@ -68,11 +71,11 @@
                     class: 'bat-img bat-img--before',
                     alt: bat_before_alt,
                     loading: 'lazy',
-                    style: 'clip-path: inset(0 50% 0 0)'
+                    style: bat_clip_style
                 -}}
               {%- endif -%}
 
-              <div class="bat-handle" data-bat-handle style="left: 50%">
+              <div class="bat-handle" data-bat-handle style="left: {{ bat_initial_pct }}%">
                 <button class="bat-handle__btn" aria-label="Drag to compare before and after">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polyline points="7,2 2,7 7,12"/>
@@ -593,6 +596,17 @@
           "type": "url",
           "id": "btn_link",
           "label": "Button link"
+        },
+        {
+          "type": "range",
+          "id": "initial_position",
+          "label": "Initial slider position",
+          "info": "How much of the Before image is visible on page load. 0 = all After, 100 = all Before.",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 50
         }
       ]
     }
@@ -607,7 +621,8 @@
             "label_before": "Before",
             "label_after": "After",
             "title": "From bored to playful",
-            "description": "Turn quiet afternoons into happy playtime with toys pets actually love."
+            "description": "Turn quiet afternoons into happy playtime with toys pets actually love.",
+            "initial_position": 20
           }
         },
         {
@@ -616,7 +631,8 @@
             "label_before": "Before",
             "label_after": "After",
             "title": "From restless to cozy",
-            "description": "Give your pet a softer, calmer space to relax every day."
+            "description": "Give your pet a softer, calmer space to relax every day.",
+            "initial_position": 80
           }
         },
         {
@@ -625,7 +641,8 @@
             "label_before": "Before",
             "label_after": "After",
             "title": "From messy to fresh",
-            "description": "Simple pet essentials that make daily care easier for humans too."
+            "description": "Simple pet essentials that make daily care easier for humans too.",
+            "initial_position": 20
           }
         }
       ]

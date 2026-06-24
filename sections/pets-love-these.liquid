@@ -59,12 +59,16 @@
                   {{ 'product-1' | placeholder_svg_tag: 'plt-card__img plt-card__img--placeholder' }}
                 {%- endif -%}
               </a>
-              {%- if plt_show_badge -%}
-                <span class="plt-badge" aria-label="{{ plt_badge_text | escape }}">{{ plt_badge_text | escape }}</span>
-              {%- endif -%}
-              {%- if product.compare_at_price > product.price -%}
-                <span class="plt-sale-badge" aria-label="Ends soon">ENDS SOON</span>
-              {%- endif -%}
+              {%- assign plt_has_sale = false -%}
+              {%- if product.compare_at_price > product.price -%}{%- assign plt_has_sale = true -%}{%- endif -%}
+              <div class="plt-badge-group{% if plt_show_badge and plt_has_sale %} plt-badge-group--dual{% endif %}">
+                {%- if plt_has_sale -%}
+                  <span class="plt-sale-badge" aria-label="Ends soon">ENDS SOON</span>
+                {%- endif -%}
+                {%- if plt_show_badge -%}
+                  <span class="plt-badge" aria-label="{{ plt_badge_text | escape }}">{{ plt_badge_text | escape }}</span>
+                {%- endif -%}
+              </div>
             </div>
             <div class="plt-card__body">
               <a href="{{ product.url }}" class="plt-card__title-link">
@@ -194,12 +198,14 @@
   box-shadow: 3px 4px 0 rgba(43, 27, 18, 0.82);
 }
 
-/* Media wrap: positioning context for the badge.
-   overflow: visible so the badge shadow is not clipped by the wrap. */
+/* Media wrap: positioning context for badges; named container so @container queries
+   respond to actual card width rather than viewport width. */
 .plt-card__media-wrap {
   position: relative;
   flex-shrink: 0;
   overflow: visible;
+  container-type: inline-size;
+  container-name: plt-card-media;
 }
 
 .plt-card__media-link {
@@ -227,9 +233,40 @@
   color: rgba(43, 27, 18, 0.2);
 }
 
-/* --- BEST SELLER badge ---
-   Positioned over the top-right of the image.
-   Sibling of media-link (not child), so it is NOT clipped by media-link's overflow: hidden. */
+/* --- Badge group: transparent overlay spanning the image.
+   Single-badge: badges use position: absolute (top/left/right).
+   Dual mode (--dual): group becomes a flex row with wrap — the browser places both
+   badges side-by-side when there is room, and wraps BEST SELLER to a second row
+   (stacking) when there is not. No hardcoded breakpoints needed for this decision. */
+.plt-badge-group {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* justify-content: space-between pushes ENDS SOON to the left edge and BEST SELLER
+   to the right edge of the card when both fit on one row.
+   When they cannot fit, flex-wrap stacks BEST SELLER below ENDS SOON, both left-aligned. */
+.plt-badge-group--dual {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: flex-start;
+  padding: 10px;
+  gap: 6px;
+}
+
+/* Badges must be in-flow (static) so the flex algorithm can measure their widths
+   and decide when to wrap. The top/left/right from the base styles have no effect
+   when position is static. */
+.plt-badge-group--dual .plt-badge,
+.plt-badge-group--dual .plt-sale-badge {
+  position: static;
+}
+
+/* --- BEST SELLER badge (orange, top-right when alone) --- */
 .plt-badge {
   position: absolute;
   top: 10px;
@@ -260,8 +297,7 @@
   }
 }
 
-/* --- Sale badge (auto-shown when compare_at_price > price) ---
-   Top-left of image; sibling of media-link so shadow is not clipped. */
+/* --- ENDS SOON badge (red, top-left when alone) --- */
 .plt-sale-badge {
   position: absolute;
   top: 10px;
@@ -289,6 +325,63 @@
     padding: 6px 12px;
     top: 8px;
     left: 8px;
+  }
+}
+
+/* 750–1000px: 3-col cards are medium-width — drop to 0.82rem */
+@media screen and (min-width: 750px) and (max-width: 1000px) {
+  .plt-badge {
+    font-size: 0.82rem;
+    padding: 5px 11px;
+    top: 8px;
+    right: 8px;
+  }
+  .plt-sale-badge {
+    font-size: 0.82rem;
+    padding: 5px 11px;
+    top: 8px;
+    left: 8px;
+  }
+  .plt-badge-group--dual {
+    padding: 8px;
+    gap: 5px;
+  }
+}
+
+/* 0–480px: narrowest mobile — drop further so badges don't dominate the card */
+@media screen and (max-width: 480px) {
+  .plt-badge {
+    font-size: 0.72rem;
+    padding: 4px 9px;
+    top: 7px;
+    right: 7px;
+  }
+  .plt-sale-badge {
+    font-size: 0.72rem;
+    padding: 4px 9px;
+    top: 7px;
+    left: 7px;
+  }
+  .plt-badge-group--dual {
+    padding: 7px;
+    gap: 4px;
+  }
+}
+
+/* On very narrow cards (stacked layout already active) reduce badge size so the
+   badge text does not overflow the container's inner width. */
+@container plt-card-media (max-width: 170px) {
+  .plt-badge-group--dual {
+    padding: 8px;
+    gap: 4px;
+  }
+  .plt-badge-group--dual .plt-badge,
+  .plt-badge-group--dual .plt-sale-badge {
+    font-size: 0.7rem;
+    padding: 3px 7px;
+    border-width: 2px;
+    box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+    letter-spacing: 0.02em;
   }
 }
 

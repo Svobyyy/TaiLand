@@ -1,0 +1,1609 @@
+{% stylesheet %}
+/* ============================================================
+   TAILAND PRODUCT PAGE — tp-* prefix
+   ============================================================ */
+
+/* ---- Layout ---- */
+.tp-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--tp-pt, 48px) 1.5rem 0;
+}
+
+.tp-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+@media screen and (max-width: 899px) {
+  .tp-main { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+/* ============================================================
+   GALLERY
+   ============================================================ */
+
+/* Sticky only on desktop.
+   align-self: start is mandatory — without it the grid item stretches
+   to the full column height and sticky never activates.
+   top is set to 20px here as a safe fallback; JS overrides it at
+   runtime with the actual rendered header height. */
+@media screen and (min-width: 900px) {
+  .tp-gallery {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+    overflow: visible; /* never clip box-shadow of child elements */
+  }
+}
+
+.tp-gallery__main {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  box-shadow: 6px 6px 0 var(--pc-text, #2d2d2d);
+  /* Do NOT use overflow:hidden or overflow:clip here —
+     either can create an implicit scroll container that breaks
+     position:sticky on the parent in certain Shopify theme wrappers.
+     The image is kept away from corners via padding + object-fit:contain,
+     so no clipping is needed for the border-radius to look correct. */
+  overflow: visible;
+  background: var(--pc-cream, #fffbf0);
+  position: relative;
+  padding: 1.25rem;
+}
+
+.tp-gallery__main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 14px;
+  transition: opacity 0.2s ease;
+}
+.tp-gallery__main-img.tp-fade { opacity: 0; }
+
+.tp-gallery__badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--pc-sale-red, #e8372b);
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 2px solid var(--pc-text, #2d2d2d);
+  box-shadow: 2px 2px 0 var(--pc-text, #2d2d2d);
+  text-transform: uppercase;
+}
+
+.tp-gallery__thumbs {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.tp-gallery__thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
+  overflow: hidden;
+  background: var(--pc-cream, #fffbf0);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  flex-shrink: 0;
+}
+
+.tp-gallery__thumb:hover,
+.tp-gallery__thumb.tp-active {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
+}
+
+.tp-gallery__thumb.tp-active { border-color: var(--pc-orange, #f59f2b); }
+
+.tp-gallery__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ============================================================
+   INFO PANEL
+   ============================================================ */
+.tp-info { display: flex; flex-direction: column; gap: 1.125rem; }
+
+/* Breadcrumb */
+.tp-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.875rem;
+  color: var(--pc-text, #2d2d2d);
+  opacity: 0.6;
+  flex-wrap: wrap;
+}
+.tp-breadcrumb a { color: inherit; text-decoration: none; }
+.tp-breadcrumb a:hover { opacity: 1; text-decoration: underline; }
+
+/* Paw rating */
+.tp-paw-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.tp-paws { display: flex; gap: 3px; }
+
+.tp-paw { width: 22px; height: 22px; }
+.tp-paw--on  { color: var(--pc-orange, #f59f2b); }
+.tp-paw--off { color: var(--pc-text, #2d2d2d); opacity: 0.2; }
+
+.tp-paw-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--pc-text, #2d2d2d);
+  opacity: 0.75;
+}
+
+/* Title */
+.tp-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.75rem, 3.5vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--pc-text, #2d2d2d);
+  margin: 0;
+}
+
+/* Subtitle */
+.tp-subtitle {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+  color: var(--pc-text, #2d2d2d);
+  opacity: 0.7;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Price */
+.tp-price-row { display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
+
+.tp-price {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 2.1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2d2d2d);
+}
+.tp-price--sale { color: var(--pc-sale-red, #e8372b); }
+
+.tp-compare {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.1rem;
+  color: var(--pc-text, #2d2d2d);
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.tp-savings {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--pc-sale-red, #e8372b);
+  background: #ffeeed;
+  border: 1.5px solid var(--pc-sale-red, #e8372b);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+/* Description — text only, strip embedded media */
+.tp-description {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--pc-text, #2d2d2d);
+  opacity: 0.85;
+}
+
+/* Hide any images / video / embeds inside product description.
+   Product images belong in the gallery only. */
+.tp-description img,
+.tp-description video,
+.tp-description iframe,
+.tp-description figure,
+.tp-description .shopify-block--image,
+.tp-description [data-mce-fragment] img {
+  display: none !important;
+}
+
+/* Also collapse empty paragraphs Shopify wraps around removed images */
+.tp-description p:empty { display: none; }
+
+/* Variants */
+.tp-variants { display: flex; flex-direction: column; gap: 1rem; }
+
+.tp-option-group { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.tp-option-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--pc-text, #2d2d2d);
+}
+.tp-option-label em {
+  font-style: normal;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.65;
+  margin-left: 6px;
+}
+
+.tp-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.tp-pill {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 7px 18px;
+  border-radius: 999px;
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
+  background: var(--pc-cream, #fffbf0);
+  color: var(--pc-text, #2d2d2d);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.tp-pill:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d); }
+.tp-pill.tp-selected {
+  background: var(--pc-orange, #f59f2b);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
+}
+.tp-pill.tp-unavailable { opacity: 0.3; cursor: not-allowed; pointer-events: none; box-shadow: none; }
+
+.tp-variant-select-native { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
+
+/* Quantity */
+.tp-qty-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+
+.tp-qty-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--pc-text, #2d2d2d);
+}
+
+.tp-qty {
+  display: flex;
+  align-items: center;
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
+  background: var(--pc-cream, #fffbf0);
+  overflow: hidden;
+}
+
+.tp-qty__btn {
+  width: 42px; height: 42px;
+  background: none; border: none;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.4rem; font-weight: 600;
+  color: var(--pc-text, #2d2d2d);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+  transition: background 0.12s;
+}
+.tp-qty__btn:hover { background: rgba(0,0,0,0.06); }
+
+.tp-qty__input {
+  width: 44px; text-align: center;
+  border: none;
+  border-left: 2px solid var(--pc-text, #2d2d2d);
+  border-right: 2px solid var(--pc-text, #2d2d2d);
+  background: none;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.1rem; font-weight: 600;
+  color: var(--pc-text, #2d2d2d);
+  height: 42px; padding: 0;
+  -moz-appearance: textfield;
+}
+.tp-qty__input::-webkit-inner-spin-button,
+.tp-qty__input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+/* Promo box */
+.tp-promo {
+  background: var(--pc-cream, #fffbf0);
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 16px;
+  box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
+  padding: 16px 18px;
+}
+
+.tp-promo__head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.tp-promo__emoji { font-size: 1.3rem; line-height: 1; }
+.tp-promo__title { font-family: 'Fredoka', sans-serif; font-size: 1.15rem; font-weight: 600; color: var(--pc-text, #2d2d2d); }
+.tp-promo__text { font-family: 'Nunito Sans', sans-serif; font-size: 0.9rem; color: var(--pc-text, #2d2d2d); opacity: 0.75; margin-bottom: 10px; }
+
+/* Countdown */
+.tp-countdown { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.tp-countdown__label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--pc-text, #2d2d2d); opacity: 0.6;
+}
+
+.tp-countdown__units { display: flex; gap: 6px; align-items: center; }
+
+.tp-countdown__unit {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--pc-orange, #f59f2b);
+  border: 2px solid var(--pc-text, #2d2d2d);
+  border-radius: 8px;
+  box-shadow: 2px 2px 0 var(--pc-text, #2d2d2d);
+  min-width: 38px; padding: 4px 6px 3px;
+}
+
+.tp-countdown__num { font-family: 'Fredoka', sans-serif; font-size: 1.15rem; font-weight: 600; color: #fff; line-height: 1; }
+.tp-countdown__sub { font-family: 'Nunito Sans', sans-serif; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #fff; opacity: 0.85; line-height: 1; margin-top: 1px; }
+.tp-countdown__sep { font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--pc-text, #2d2d2d); opacity: 0.5; }
+.tp-countdown__expired { font-family: 'Nunito Sans', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--pc-sale-red, #e8372b); }
+
+/* Benefit bullets */
+.tp-benefits { display: flex; flex-direction: column; gap: 7px; list-style: none; margin: 0; padding: 0; }
+
+.tp-benefit {
+  display: flex; align-items: center; gap: 9px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.92rem; font-weight: 700;
+  color: var(--pc-text, #2d2d2d);
+}
+
+.tp-benefit__dot {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--pc-green, #2eaa5f);
+  border: 2px solid var(--pc-text, #2d2d2d);
+  box-shadow: 2px 2px 0 var(--pc-text, #2d2d2d);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: #fff;
+}
+.tp-benefit__dot svg { width: 11px; height: 11px; }
+
+/* Free shipping bar */
+.tp-ship-bar {
+  background: var(--pc-cream, #fffbf0);
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 var(--pc-text, #2d2d2d);
+  padding: 12px 16px;
+}
+
+.tp-ship-bar__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 700;
+  color: var(--pc-text, #2d2d2d);
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.tp-ship-bar__text svg { width: 18px; height: 18px; color: var(--pc-green, #2eaa5f); flex-shrink: 0; }
+
+.tp-ship-bar__track { height: 8px; background: rgba(45,45,45,0.12); border-radius: 999px; overflow: hidden; }
+.tp-ship-bar__fill { height: 100%; background: var(--pc-green, #2eaa5f); border-radius: 999px; }
+
+/* Multibuy */
+.tp-multibuy {
+  background: linear-gradient(135deg, #fff8e7 0%, #fff3d5 100%);
+  border: 2px dashed var(--pc-orange, #f59f2b);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 700;
+  color: var(--pc-text, #2d2d2d);
+}
+.tp-multibuy__emoji { font-size: 1.3rem; flex-shrink: 0; }
+
+/* Bundle upsell */
+.tp-upsell {
+  background: var(--pc-cream, #fffbf0);
+  border: 2.5px solid var(--pc-orange, #f59f2b);
+  border-radius: 16px;
+  box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.tp-upsell__icon { font-size: 2rem; flex-shrink: 0; line-height: 1; }
+.tp-upsell__body { flex: 1; }
+.tp-upsell__title { font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: var(--pc-text, #2d2d2d); margin-bottom: 2px; }
+.tp-upsell__text { font-family: 'Nunito Sans', sans-serif; font-size: 0.82rem; color: var(--pc-text, #2d2d2d); opacity: 0.7; }
+
+.tp-upsell__btn {
+  font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 600;
+  color: var(--pc-white, #ffffff);
+  background: var(--pc-orange, #f59f2b);
+  border: 2px solid var(--pc-text, #2d2d2d);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--pc-text, #2d2d2d);
+  padding: 6px 14px;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  display: inline-flex; align-items: center;
+}
+.tp-upsell__btn:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--pc-text, #2d2d2d); }
+
+/* CTA */
+.tp-cta { display: flex; flex-direction: column; gap: 10px; }
+
+.tp-btn-cart {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 16px 24px;
+  font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 600;
+  color: var(--pc-white, #ffffff);
+  background: var(--pc-green, #2eaa5f);
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 999px;
+  box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.tp-btn-cart:hover:not(:disabled) { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--pc-text, #2d2d2d); background: var(--pc-green-dark, #228a4a); }
+.tp-btn-cart:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.shopify-payment-button__button {
+  border-radius: 999px !important;
+  font-family: 'Fredoka', sans-serif !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+}
+
+/* Trust badges */
+.tp-trust {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  padding: 14px;
+  background: var(--pc-cream, #fffbf0);
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 var(--pc-text, #2d2d2d);
+}
+.tp-trust__item { display: flex; align-items: center; gap: 7px; font-family: 'Nunito Sans', sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--pc-text, #2d2d2d); }
+.tp-trust__icon { width: 24px; height: 24px; flex-shrink: 0; color: var(--pc-green, #2eaa5f); }
+
+/* ============================================================
+   PRODUCT DESCRIPTION (below two-column section)
+   ============================================================ */
+.tp-desc-section {
+  max-width: 860px;
+  margin: 2.5rem auto 0;
+  padding: 0 1.5rem;
+}
+
+/* Description text — brand-styled, no images */
+.tp-desc-section .tp-description {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--pc-text, #2d2d2d);
+  opacity: 0.85;
+}
+
+/* Hide all media inside product description — images belong in gallery only */
+.tp-description img,
+.tp-description video,
+.tp-description iframe,
+.tp-description figure,
+.tp-description .shopify-block--image {
+  display: none !important;
+}
+.tp-description p:empty { display: none; }
+
+/* Nice formatting for description content */
+.tp-description p { margin: 0 0 0.85rem; }
+.tp-description p:last-child { margin-bottom: 0; }
+.tp-description ul, .tp-description ol {
+  padding-left: 1.4rem;
+  margin: 0 0 0.85rem;
+}
+.tp-description li { margin-bottom: 0.3rem; }
+.tp-description strong { font-weight: 800; }
+.tp-description h2, .tp-description h3, .tp-description h4 {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  color: var(--pc-text, #2d2d2d);
+  margin: 1.25rem 0 0.5rem;
+}
+
+/* ============================================================
+   LOWER CONTENT
+   ============================================================ */
+.tp-lower { max-width: 1280px; margin: 0 auto; padding: 3rem 1.5rem 0; }
+
+/* Accordions */
+.tp-accordions { display: flex; flex-direction: column; gap: 10px; max-width: 820px; margin: 0 auto; }
+
+.tp-acc {
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
+  background: var(--pc-cream, #fffbf0);
+}
+.tp-acc[open] { box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d); }
+
+.tp-acc summary {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; cursor: pointer; list-style: none;
+  font-family: 'Fredoka', sans-serif; font-size: 1.1rem; font-weight: 600;
+  color: var(--pc-text, #2d2d2d);
+  gap: 1rem; user-select: none;
+}
+.tp-acc summary::-webkit-details-marker { display: none; }
+
+.tp-acc__chev {
+  width: 20px; height: 20px; flex-shrink: 0;
+  color: var(--pc-orange, #f59f2b);
+  transition: transform 0.2s ease;
+}
+.tp-acc[open] .tp-acc__chev { transform: rotate(180deg); }
+
+.tp-acc__body {
+  padding: 14px 20px 16px;
+  border-top: 1.5px solid rgba(45,45,45,0.12);
+  font-family: 'Nunito Sans', sans-serif; font-size: 1rem; line-height: 1.65;
+  color: var(--pc-text, #2d2d2d); opacity: 0.85;
+}
+.tp-acc__body p { margin: 0 0 0.75rem; }
+.tp-acc__body p:last-child { margin-bottom: 0; }
+
+/* ---- Product Story ---- */
+.tp-story { max-width: 1280px; margin: 3.5rem auto 0; padding: 0 1.5rem; }
+
+.tp-story__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 600;
+  color: var(--pc-text, #2d2d2d);
+  text-align: center; margin-bottom: 2rem;
+}
+
+.tp-story__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+}
+@media screen and (max-width: 899px) { .tp-story__grid { grid-template-columns: 1fr 1fr; } }
+@media screen and (max-width: 599px) { .tp-story__grid { grid-template-columns: 1fr; } }
+
+.tp-story__card {
+  background: var(--pc-cream, #fffbf0);
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 18px; box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
+  overflow: hidden; display: flex; flex-direction: column;
+}
+
+.tp-story__img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+
+.tp-story__card-body { padding: 16px 18px 18px; }
+.tp-story__emoji { font-size: 1.6rem; margin-bottom: 8px; display: block; }
+.tp-story__card-title { font-family: 'Fredoka', sans-serif; font-size: 1.15rem; font-weight: 600; color: var(--pc-text, #2d2d2d); margin-bottom: 6px; }
+.tp-story__card-text { font-family: 'Nunito Sans', sans-serif; font-size: 0.92rem; line-height: 1.6; color: var(--pc-text, #2d2d2d); opacity: 0.75; }
+
+/* ---- Specs table ---- */
+.tp-specs { max-width: 820px; margin: 3rem auto 0; padding: 0 1.5rem; }
+
+.tp-specs__heading {
+  font-family: 'Fredoka', sans-serif; font-size: 1.4rem; font-weight: 600;
+  color: var(--pc-text, #2d2d2d); text-align: center; margin-bottom: 1rem;
+}
+
+.tp-specs__table {
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 4px 4px 0 var(--pc-text, #2d2d2d);
+}
+
+.tp-specs__row {
+  display: grid; grid-template-columns: 1fr 2fr;
+  border-bottom: 1.5px solid rgba(45,45,45,0.12);
+}
+.tp-specs__row:last-child { border-bottom: none; }
+.tp-specs__row:nth-child(even) { background: rgba(245,159,43,0.07); }
+
+.tp-specs__key {
+  padding: 12px 16px;
+  font-family: 'Nunito Sans', sans-serif; font-size: 0.78rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--pc-text, #2d2d2d); opacity: 0.6;
+}
+.tp-specs__val {
+  padding: 12px 16px;
+  font-family: 'Nunito Sans', sans-serif; font-size: 0.92rem;
+  color: var(--pc-text, #2d2d2d);
+}
+
+/* ---- Related products ---- */
+.tp-related { max-width: 1280px; margin: 3rem auto 0; padding: 0 1.5rem; }
+
+.tp-related__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 600;
+  color: var(--pc-text, #2d2d2d); text-align: center; margin-bottom: 1.5rem;
+}
+
+.tp-related__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+@media screen and (max-width: 1024px) { .tp-related__grid { grid-template-columns: repeat(3, 1fr); } }
+@media screen and (max-width: 749px) { .tp-related__grid { grid-template-columns: repeat(2, 1fr); gap: 0.875rem; } }
+
+.tp-rel-card {
+  background: var(--pc-cream, #fffbf0);
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 18px; box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
+  overflow: hidden; display: flex; flex-direction: column;
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.tp-rel-card:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--pc-text, #2d2d2d); }
+
+.tp-rel-card__img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: var(--pc-cream, #fffbf0); }
+.tp-rel-card__img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
+.tp-rel-card:hover .tp-rel-card__img { transform: scale(1.04); }
+
+.tp-rel-card__body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.tp-rel-card__title { font-family: 'Fredoka', sans-serif; font-size: 1.05rem; font-weight: 600; color: var(--pc-text, #2d2d2d); line-height: 1.25; }
+
+.tp-rel-card__price { font-family: 'Nunito Sans', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--pc-text, #2d2d2d); }
+.tp-rel-card__price--sale { color: var(--pc-sale-red, #e8372b); }
+.tp-rel-card__compare { font-size: 0.82rem; text-decoration: line-through; opacity: 0.4; margin-left: 5px; }
+
+.tp-rel-card__btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; padding: 9px 16px; margin-top: auto;
+  font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600;
+  color: var(--pc-white, #ffffff); background: var(--pc-green, #2eaa5f);
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 999px; box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.tp-rel-card:hover .tp-rel-card__btn { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d); background: var(--pc-green-dark, #228a4a); }
+
+/* ---- FAQ ---- */
+.tp-faq {
+  max-width: 820px;
+  margin: 4rem auto 0;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.tp-faq__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 600;
+  color: var(--pc-text, #2d2d2d);
+  margin: 0 0 0.5rem;
+  line-height: 1.1;
+}
+
+/* SVG wave underline matching landing page hero sections */
+.tp-faq__wave {
+  display: block;
+  width: 180px;
+  margin: 0 auto 2.25rem;
+  overflow: visible;
+}
+
+.tp-faq__items { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+
+/* FAQ accordions are slightly taller than product accordions for readability */
+.tp-faq .tp-acc summary {
+  padding: 16px 22px;
+  font-size: 1.15rem;
+}
+
+.tp-faq .tp-acc__body {
+  padding: 14px 22px 18px;
+  font-size: 1.02rem;
+}
+
+/* ---- Sticky mobile bar ---- */
+.tp-sticky-bar {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  background: var(--pc-cream, #fffbf0);
+  border-top: 2.5px solid var(--pc-text, #2d2d2d);
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
+  padding: 10px 16px;
+  align-items: center; gap: 12px;
+}
+@media screen and (max-width: 899px) {
+  .tp-sticky-bar { display: flex; }
+  .tp-sticky-bar.tp-hidden { display: none; }
+}
+
+.tp-sticky-bar__info { flex: 1; min-width: 0; }
+.tp-sticky-bar__title { font-family: 'Fredoka', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--pc-text, #2d2d2d); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tp-sticky-bar__price { font-family: 'Nunito Sans', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--pc-text, #2d2d2d); }
+.tp-sticky-bar__price--sale { color: var(--pc-sale-red, #e8372b); }
+
+.tp-sticky-bar__btn {
+  flex-shrink: 0; padding: 11px 22px;
+  font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600;
+  color: var(--pc-white, #ffffff); background: var(--pc-green, #2eaa5f);
+  border: 2px solid var(--pc-text, #2d2d2d);
+  border-radius: 999px; box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
+  cursor: pointer; white-space: nowrap;
+}
+
+/* ---- Bottom spacing ---- */
+.tp-section-end { padding-bottom: var(--tp-pb, 64px); }
+
+/* ---- Mobile tightening ---- */
+@media screen and (max-width: 749px) {
+  .tp-wrap, .tp-desc-section, .tp-lower, .tp-story, .tp-specs, .tp-related, .tp-faq {
+    padding-left: 1rem; padding-right: 1rem;
+  }
+}
+{% endstylesheet %}
+
+{%- liquid
+  assign tp_product       = product
+  assign tp_variant       = tp_product.selected_or_first_available_variant
+  assign tp_on_sale       = false
+  if tp_variant.compare_at_price > tp_variant.price
+    assign tp_on_sale = true
+  endif
+  assign tp_pt = section.settings.padding_top  | append: 'px'
+  assign tp_pb = section.settings.padding_bottom | append: 'px'
+
+  assign tp_threshold_cents = section.settings.free_shipping_threshold | times: 100
+  assign tp_cart_cents      = cart.total_price
+  assign tp_progress        = 0
+  if tp_threshold_cents > 0
+    if tp_cart_cents >= tp_threshold_cents
+      assign tp_progress = 100
+    else
+      assign tp_progress = tp_cart_cents | times: 100 | divided_by: tp_threshold_cents
+    endif
+  endif
+  assign tp_remaining = tp_threshold_cents | minus: tp_cart_cents | money
+-%}
+
+<style>
+  #tp-{{ section.id }} { --tp-pt: {{ tp_pt }}; --tp-pb: {{ tp_pb }}; }
+</style>
+
+<section id="tp-{{ section.id }}">
+  {%- form 'product', tp_product, id: 'tp-form' -%}
+
+    <div class="tp-wrap">
+      <div class="tp-main">
+
+        <!-- ======== GALLERY ======== -->
+        <div class="tp-gallery">
+          <div class="tp-gallery__main">
+
+            {%- if section.settings.show_sale_badge and tp_on_sale -%}
+              <div class="tp-gallery__badge">{{ section.settings.sale_badge_text }}</div>
+            {%- endif -%}
+
+            {%- assign tp_main_media = tp_variant.featured_media | default: tp_product.featured_media -%}
+            {%- if tp_main_media != blank -%}
+              {%- assign tp_main_alt = tp_main_media.alt | default: tp_product.title | escape -%}
+              {%- assign tp_main_src = tp_main_media.preview_image -%}
+            {%- else -%}
+              {%- assign tp_main_alt = tp_product.title | escape -%}
+              {%- assign tp_main_src = tp_product.featured_image -%}
+            {%- endif -%}
+
+            {%- if tp_main_src != blank -%}
+              {{- tp_main_src | image_url: width: 900 | image_tag: id: 'tp-main-img', class: 'tp-gallery__main-img', alt: tp_main_alt, loading: 'eager', width: 900, height: 900 -}}
+            {%- endif -%}
+
+          </div>
+
+          {%- if tp_product.media.size > 1 -%}
+            <div class="tp-gallery__thumbs">
+              {%- for media in tp_product.media limit: 8 -%}
+                {%- assign tp_th_alt = media.alt | default: tp_product.title | escape -%}
+                {%- assign tp_th_full = media.preview_image | image_url: width: 900 -%}
+                <button type="button"
+                  class="tp-gallery__thumb{% if forloop.first %} tp-active{% endif %}"
+                  data-src="{{ tp_th_full }}"
+                  aria-label="View image {{ forloop.index }}">
+                  {{- media.preview_image | image_url: width: 144 | image_tag: alt: tp_th_alt, loading: 'lazy', width: 72, height: 72 -}}
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+        <!-- /gallery -->
+
+        <!-- ======== INFO PANEL ======== -->
+        <div class="tp-info">
+
+          <!-- Breadcrumb -->
+          <nav class="tp-breadcrumb" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <span aria-hidden="true">/</span>
+            {%- if tp_product.collections.size > 0 -%}
+              <a href="{{ tp_product.collections.first.url }}">{{ tp_product.collections.first.title }}</a>
+              <span aria-hidden="true">/</span>
+            {%- endif -%}
+            <span>{{ tp_product.title }}</span>
+          </nav>
+
+          <!-- Paw rating -->
+          {%- if section.settings.show_paw_rating -%}
+            {%- assign tp_paw_n = section.settings.paw_rating_score -%}
+            <div class="tp-paw-row">
+              <div class="tp-paws" role="img" aria-label="{{ tp_paw_n }} out of 5">
+                {%- for i in (1..5) -%}
+                  {%- if i <= tp_paw_n -%}
+                    <svg class="tp-paw tp-paw--on" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
+                      <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
+                      <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
+                      <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
+                      <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
+                    </svg>
+                  {%- else -%}
+                    <svg class="tp-paw tp-paw--off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
+                      <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
+                      <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
+                      <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
+                      <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
+                    </svg>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+              <span class="tp-paw-text">{{ section.settings.paw_rating_text }}</span>
+            </div>
+          {%- endif -%}
+
+          <!-- Title -->
+          <h1 class="tp-title">{{ tp_product.title }}</h1>
+
+          <!-- Subtitle -->
+          {%- if section.settings.subtitle != blank -%}
+            <p class="tp-subtitle">{{ section.settings.subtitle }}</p>
+          {%- endif -%}
+
+          <!-- Price -->
+          <div class="tp-price-row" id="tp-price-row">
+            {%- if tp_on_sale -%}
+              <span class="tp-price tp-price--sale" id="tp-price">{{ tp_variant.price | money }}</span>
+              <span class="tp-compare" id="tp-compare">{{ tp_variant.compare_at_price | money }}</span>
+              {%- assign tp_save_amt = tp_variant.compare_at_price | minus: tp_variant.price -%}
+              <span class="tp-savings" id="tp-savings">Save {{ tp_save_amt | money }}</span>
+            {%- else -%}
+              <span class="tp-price" id="tp-price">{{ tp_variant.price | money }}</span>
+              <span class="tp-compare" id="tp-compare" style="display:none"></span>
+              <span class="tp-savings" id="tp-savings" style="display:none"></span>
+            {%- endif -%}
+          </div>
+
+          <!-- Variant pills -->
+          {%- unless tp_product.has_only_default_variant -%}
+            <div class="tp-variants">
+              {%- for option in tp_product.options_with_values -%}
+                {%- assign tp_oi = forloop.index0 -%}
+                <div class="tp-option-group" data-option-index="{{ tp_oi }}">
+                  <div class="tp-option-label">
+                    {{ option.name }}<em id="tp-sel-{{ tp_oi }}">{{ option.selected_value }}</em>
+                  </div>
+                  <div class="tp-pills" role="group" aria-label="{{ option.name }}">
+                    {%- for value in option.values -%}
+                      {%- if option.selected_value == value -%}
+                        {%- assign tp_pill_on = true -%}
+                      {%- else -%}
+                        {%- assign tp_pill_on = false -%}
+                      {%- endif -%}
+                      <button type="button"
+                        class="tp-pill{% if tp_pill_on %} tp-selected{% endif %}"
+                        data-option-index="{{ tp_oi }}"
+                        data-value="{{ value | escape }}"
+                        aria-pressed="{{ tp_pill_on }}"
+                      >{{ value }}</button>
+                    {%- endfor -%}
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endunless -%}
+
+          <!-- Hidden native select -->
+          <select name="id" id="tp-variant-select" class="tp-variant-select-native" aria-hidden="true">
+            {%- for variant in tp_product.variants -%}
+              {%- assign tp_var_alt = variant.featured_media.alt | default: tp_product.title | escape -%}
+              {%- if variant.featured_media != blank -%}
+                {%- assign tp_var_img = variant.featured_media.preview_image | image_url: width: 900 -%}
+              {%- else -%}
+                {%- assign tp_var_img = '' -%}
+              {%- endif -%}
+              <option
+                value="{{ variant.id }}"
+                {% if variant == tp_variant %}selected{% endif %}
+                {% unless variant.available %}disabled{% endunless %}
+                data-price="{{ variant.price }}"
+                data-compare="{{ variant.compare_at_price | default: 0 }}"
+                data-img="{{ tp_var_img }}"
+                data-alt="{{ tp_var_alt }}"
+              >{{ variant.title }}</option>
+            {%- endfor -%}
+          </select>
+
+          <!-- Quantity -->
+          <div class="tp-qty-row">
+            <span class="tp-qty-label">Qty</span>
+            <div class="tp-qty">
+              <button type="button" class="tp-qty__btn" id="tp-minus" aria-label="Decrease">&#8722;</button>
+              <input type="number" name="quantity" id="tp-qty" class="tp-qty__input" value="1" min="1" aria-label="Quantity">
+              <button type="button" class="tp-qty__btn" id="tp-plus" aria-label="Increase">&#43;</button>
+            </div>
+          </div>
+
+          <!-- Promo box -->
+          {%- if section.settings.promo_title != blank -%}
+            <div class="tp-promo">
+              <div class="tp-promo__head">
+                {%- if section.settings.promo_emoji != blank -%}
+                  <span class="tp-promo__emoji">{{ section.settings.promo_emoji }}</span>
+                {%- endif -%}
+                <span class="tp-promo__title">{{ section.settings.promo_title }}</span>
+              </div>
+              {%- if section.settings.promo_text != blank -%}
+                <p class="tp-promo__text">{{ section.settings.promo_text }}</p>
+              {%- endif -%}
+              {%- if section.settings.countdown_end != blank -%}
+                <div class="tp-countdown" id="tp-cd" data-end="{{ section.settings.countdown_end }}" data-expired="{{ section.settings.countdown_expired | default: 'Deal ended' }}">
+                  <span class="tp-countdown__label">Ends in</span>
+                  <div class="tp-countdown__units" id="tp-cd-units">
+                    <div class="tp-countdown__unit"><span class="tp-countdown__num" id="tp-cd-h">--</span><span class="tp-countdown__sub">Hrs</span></div>
+                    <span class="tp-countdown__sep">:</span>
+                    <div class="tp-countdown__unit"><span class="tp-countdown__num" id="tp-cd-m">--</span><span class="tp-countdown__sub">Min</span></div>
+                    <span class="tp-countdown__sep">:</span>
+                    <div class="tp-countdown__unit"><span class="tp-countdown__num" id="tp-cd-s">--</span><span class="tp-countdown__sub">Sec</span></div>
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          <!-- Benefit bullets -->
+          {%- assign tp_has_bens = false -%}
+          {%- for i in (1..5) -%}
+            {%- assign tp_bk = 'benefit_' | append: i -%}
+            {%- if section.settings[tp_bk] != blank -%}{%- assign tp_has_bens = true -%}{%- endif -%}
+          {%- endfor -%}
+          {%- if tp_has_bens -%}
+            <ul class="tp-benefits">
+              {%- for i in (1..5) -%}
+                {%- assign tp_bk = 'benefit_' | append: i -%}
+                {%- assign tp_bv = section.settings[tp_bk] -%}
+                {%- if tp_bv != blank -%}
+                  <li class="tp-benefit">
+                    <span class="tp-benefit__dot">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    {{ tp_bv }}
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          <!-- Free shipping bar -->
+          {%- if section.settings.show_free_shipping -%}
+            <div class="tp-ship-bar">
+              <div class="tp-ship-bar__text">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                {%- if tp_progress >= 100 -%}
+                  <span>You unlocked <strong>free shipping!</strong> &#127881;</span>
+                {%- else -%}
+                  <span>{{ section.settings.free_shipping_prefix }} <strong>{{ tp_remaining }}</strong> {{ section.settings.free_shipping_suffix }}</span>
+                {%- endif -%}
+              </div>
+              <div class="tp-ship-bar__track">
+                <div class="tp-ship-bar__fill" style="width:{{ tp_progress }}%"></div>
+              </div>
+            </div>
+          {%- endif -%}
+
+          <!-- Multi-buy -->
+          {%- if section.settings.multibuy_text != blank -%}
+            <div class="tp-multibuy">
+              <span class="tp-multibuy__emoji">🐾</span>
+              <span>{{ section.settings.multibuy_text }}</span>
+            </div>
+          {%- endif -%}
+
+          <!-- Bundle upsell -->
+          {%- if section.settings.upsell_title != blank -%}
+            <div class="tp-upsell">
+              <span class="tp-upsell__icon">🎁</span>
+              <div class="tp-upsell__body">
+                <div class="tp-upsell__title">{{ section.settings.upsell_title }}</div>
+                {%- if section.settings.upsell_text != blank -%}
+                  <div class="tp-upsell__text">{{ section.settings.upsell_text }}</div>
+                {%- endif -%}
+              </div>
+              {%- if section.settings.upsell_link_url != blank -%}
+                <a href="{{ section.settings.upsell_link_url }}" class="tp-upsell__btn">{{ section.settings.upsell_link_text | default: 'Add' }}</a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          <!-- Add to Cart -->
+          <div class="tp-cta">
+            <button type="submit" name="add" id="tp-add-btn" class="tp-btn-cart"
+              {% unless tp_variant.available %}disabled{% endunless %}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              <span id="tp-btn-text">
+                {%- if tp_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+              </span>
+            </button>
+            {%- if tp_variant.available -%}
+              <div>{{ form | payment_button }}</div>
+            {%- endif -%}
+          </div>
+
+          <!-- Trust badges -->
+          {%- if section.settings.show_trust_badges -%}
+            <div class="tp-trust">
+              <div class="tp-trust__item">
+                <svg class="tp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>{{ section.settings.trust_1 | default: 'Secure Checkout' }}</span>
+              </div>
+              <div class="tp-trust__item">
+                <svg class="tp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.52"/></svg>
+                <span>{{ section.settings.trust_2 | default: 'Easy Returns' }}</span>
+              </div>
+              <div class="tp-trust__item">
+                <svg class="tp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <span>{{ section.settings.trust_3 | default: 'Track Your Order' }}</span>
+              </div>
+              <div class="tp-trust__item">
+                <svg class="tp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span>{{ section.settings.trust_4 | default: 'Pet-Friendly Pick' }}</span>
+              </div>
+            </div>
+          {%- endif -%}
+
+        </div>
+        <!-- /info panel -->
+
+      </div>
+    </div>
+
+  {%- endform -%}
+
+  <!-- ======== PRODUCT DESCRIPTION (below two-column) ======== -->
+  {%- if tp_product.description != blank -%}
+    <div class="tp-desc-section">
+      <div class="tp-description">{{ tp_product.description }}</div>
+    </div>
+  {%- endif -%}
+
+  <!-- ======== LOWER CONTENT ======== -->
+  <div class="tp-lower">
+
+    {%- if section.settings.show_accordions -%}
+      <div class="tp-accordions">
+        {%- assign tp_acc_ids   = 'accordion_1,accordion_2,accordion_3,accordion_4,accordion_5' | split: ',' -%}
+        {%- assign tp_acc_icons = '📋,🚚,🐾,💡,📦' | split: ',' -%}
+        {%- for acc in tp_acc_ids -%}
+          {%- assign tp_at = acc | append: '_title' -%}
+          {%- assign tp_ab = acc | append: '_content' -%}
+          {%- assign tp_ae = tp_acc_icons[forloop.index0] -%}
+          {%- assign tp_at_val = section.settings[tp_at] -%}
+          {%- assign tp_ab_val = section.settings[tp_ab] -%}
+          {%- if tp_at_val != blank and tp_ab_val != blank -%}
+            <details class="tp-acc">
+              <summary>
+                <span style="display:flex;align-items:center;gap:10px;">
+                  <span aria-hidden="true">{{ tp_ae }}</span>{{ tp_at_val }}
+                </span>
+                <svg class="tp-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div class="tp-acc__body">{{ tp_ab_val }}</div>
+            </details>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+
+  <!-- ======== PRODUCT STORY ======== -->
+  {%- assign tp_has_story = false -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'story_card' -%}{%- assign tp_has_story = true -%}{%- endif -%}
+  {%- endfor -%}
+
+  {%- if tp_has_story -%}
+    <div class="tp-story">
+      {%- if section.settings.story_heading != blank -%}
+        <h2 class="tp-story__heading">{{ section.settings.story_heading }}</h2>
+      {%- endif -%}
+      <div class="tp-story__grid">
+        {%- for block in section.blocks -%}
+          {%- if block.type != 'story_card' -%}{%- continue -%}{%- endif -%}
+          <div class="tp-story__card" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              {%- assign tp_sc_alt = block.settings.image.alt | default: block.settings.title | escape -%}
+              {{- block.settings.image | image_url: width: 600 | image_tag: class: 'tp-story__img', alt: tp_sc_alt, loading: 'lazy', width: 600, height: 450 -}}
+            {%- endif -%}
+            <div class="tp-story__card-body">
+              {%- if block.settings.emoji != blank -%}
+                <span class="tp-story__emoji" aria-hidden="true">{{ block.settings.emoji }}</span>
+              {%- endif -%}
+              {%- if block.settings.title != blank -%}
+                <div class="tp-story__card-title">{{ block.settings.title }}</div>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}
+                <div class="tp-story__card-text">{{ block.settings.text }}</div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <!-- ======== SPECS ======== -->
+  {%- assign tp_has_specs = false -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'spec_row' -%}{%- assign tp_has_specs = true -%}{%- endif -%}
+  {%- endfor -%}
+
+  {%- if tp_has_specs -%}
+    <div class="tp-specs">
+      {%- if section.settings.specs_heading != blank -%}
+        <h2 class="tp-specs__heading">{{ section.settings.specs_heading }}</h2>
+      {%- endif -%}
+      <div class="tp-specs__table">
+        {%- for block in section.blocks -%}
+          {%- if block.type != 'spec_row' -%}{%- continue -%}{%- endif -%}
+          <div class="tp-specs__row" {{ block.shopify_attributes }}>
+            <div class="tp-specs__key">{{ block.settings.spec_key }}</div>
+            <div class="tp-specs__val">{{ block.settings.spec_val }}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <!-- ======== RELATED PRODUCTS ======== -->
+  {%- if section.settings.show_related -%}
+    {%- assign tp_rel_col = collections[section.settings.related_collection] -%}
+    {%- if tp_rel_col == blank and tp_product.collections.size > 0 -%}
+      {%- assign tp_rel_col = tp_product.collections.first -%}
+    {%- endif -%}
+    {%- if tp_rel_col != blank -%}
+      {%- assign tp_rel_lim = section.settings.related_count -%}
+      {%- assign tp_rel_cnt = 0 -%}
+      {%- for rp in tp_rel_col.products -%}
+        {%- if rp.handle != tp_product.handle -%}
+          {%- assign tp_rel_cnt = tp_rel_cnt | plus: 1 -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if tp_rel_cnt > 0 -%}
+        <div class="tp-related">
+          <h2 class="tp-related__heading">{{ section.settings.related_heading }}</h2>
+          <div class="tp-related__grid">
+            {%- assign tp_shown = 0 -%}
+            {%- for rp in tp_rel_col.products -%}
+              {%- if rp.handle == tp_product.handle -%}{%- continue -%}{%- endif -%}
+              {%- if tp_shown >= tp_rel_lim -%}{%- break -%}{%- endif -%}
+              {%- assign tp_shown = tp_shown | plus: 1 -%}
+              {%- assign tp_rp_sale = false -%}
+              {%- if rp.compare_at_price > rp.price -%}{%- assign tp_rp_sale = true -%}{%- endif -%}
+              {%- assign tp_rp_alt = rp.featured_image.alt | default: rp.title | escape -%}
+              <a href="{{ rp.url }}" class="tp-rel-card">
+                <div class="tp-rel-card__img-wrap">
+                  {{- rp.featured_image | image_url: width: 500 | image_tag: class: 'tp-rel-card__img', alt: tp_rp_alt, loading: 'lazy', width: 500, height: 500 -}}
+                </div>
+                <div class="tp-rel-card__body">
+                  <div class="tp-rel-card__title">{{ rp.title }}</div>
+                  <div class="tp-rel-card__price{% if tp_rp_sale %} tp-rel-card__price--sale{% endif %}">
+                    {{ rp.price | money }}
+                    {%- if tp_rp_sale -%}<span class="tp-rel-card__compare">{{ rp.compare_at_price | money }}</span>{%- endif -%}
+                  </div>
+                  <span class="tp-rel-card__btn">View Product</span>
+                </div>
+              </a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  <!-- ======== FAQ ======== -->
+  {%- assign tp_has_faq = false -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'faq_item' -%}{%- assign tp_has_faq = true -%}{%- endif -%}
+  {%- endfor -%}
+
+  {%- if tp_has_faq -%}
+    <div class="tp-faq">
+      <h2 class="tp-faq__heading">{{ section.settings.faq_heading | default: 'Common Questions' }}</h2>
+      <svg class="tp-faq__wave" viewBox="0 0 180 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M2 9 C 30 2, 60 16, 90 9 S 150 2, 178 9" stroke="var(--pc-green, #2eaa5f)" stroke-width="5" stroke-linecap="round" fill="none"/>
+      </svg>
+      <div class="tp-faq__items">
+        {%- for block in section.blocks -%}
+          {%- if block.type != 'faq_item' -%}{%- continue -%}{%- endif -%}
+          <details class="tp-acc" {{ block.shopify_attributes }}>
+            <summary>
+              <span>{{ block.settings.question }}</span>
+              <svg class="tp-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </summary>
+            <div class="tp-acc__body">{{ block.settings.answer }}</div>
+          </details>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="tp-section-end"></div>
+
+</section>
+
+<!-- Sticky mobile bar (outside section, fixed position) -->
+<div class="tp-sticky-bar tp-hidden" id="tp-sticky" aria-hidden="true">
+  <div class="tp-sticky-bar__info">
+    <div class="tp-sticky-bar__title">{{ tp_product.title | truncate: 42 }}</div>
+    <div class="tp-sticky-bar__price{% if tp_on_sale %} tp-sticky-bar__price--sale{% endif %}" id="tp-sticky-price">
+      {{ tp_variant.price | money }}
+    </div>
+  </div>
+  <button type="button" class="tp-sticky-bar__btn" id="tp-sticky-btn">Add to Cart</button>
+</div>
+
+<script>
+(function () {
+  /* --- Qty stepper --- */
+  var qty = document.getElementById('tp-qty');
+  document.getElementById('tp-minus').addEventListener('click', function () { var v = parseInt(qty.value,10); if (v > 1) qty.value = v - 1; });
+  document.getElementById('tp-plus').addEventListener('click', function () { qty.value = parseInt(qty.value,10) + 1; });
+
+  /* --- Gallery thumbnails --- */
+  var mainImg = document.getElementById('tp-main-img');
+
+  function tpSwapImage(img, src, alt) {
+    if (!img || !src) return;
+    img.classList.add('tp-fade');
+    setTimeout(function () {
+      /* Shopify image_tag outputs srcset — browsers prefer srcset over src,
+         so we must clear both attributes before assigning the new src,
+         otherwise the displayed image never changes. */
+      img.removeAttribute('srcset');
+      img.removeAttribute('sizes');
+      img.src = src;
+      if (alt) img.alt = alt;
+      img.classList.remove('tp-fade');
+    }, 180);
+  }
+
+  document.querySelectorAll('.tp-gallery__thumb').forEach(function (thumb) {
+    thumb.addEventListener('click', function () {
+      document.querySelectorAll('.tp-gallery__thumb').forEach(function (t) { t.classList.remove('tp-active'); });
+      thumb.classList.add('tp-active');
+      tpSwapImage(mainImg, thumb.getAttribute('data-src'), null);
+    });
+  });
+
+  /* --- Variant pills --- */
+  var varSel = document.getElementById('tp-variant-select');
+  var selOpts = [];
+  if (varSel) {
+    var initOpt = varSel.options[varSel.selectedIndex];
+    if (initOpt) {
+      initOpt.text.split(' / ').forEach(function (v, i) { selOpts[i] = v.trim(); });
+    }
+  }
+
+  document.querySelectorAll('.tp-option-group').forEach(function (group) {
+    var idx = parseInt(group.getAttribute('data-option-index'), 10);
+    group.querySelectorAll('.tp-pill').forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        group.querySelectorAll('.tp-pill').forEach(function (p) { p.classList.remove('tp-selected'); p.setAttribute('aria-pressed','false'); });
+        pill.classList.add('tp-selected');
+        pill.setAttribute('aria-pressed', 'true');
+        selOpts[idx] = pill.getAttribute('data-value');
+        var lbl = document.getElementById('tp-sel-' + idx);
+        if (lbl) lbl.textContent = selOpts[idx];
+        updateVariant();
+      });
+    });
+  });
+
+  function updateVariant() {
+    if (!varSel) return;
+    for (var i = 0; i < varSel.options.length; i++) {
+      var opt = varSel.options[i];
+      var parts = opt.text.split(' / ').map(function (s) { return s.trim(); });
+      var match = parts.every(function (p, j) { return !selOpts[j] || selOpts[j] === p; });
+      if (!match) continue;
+      varSel.selectedIndex = i;
+
+      var price   = parseInt(opt.getAttribute('data-price'),   10) || 0;
+      var compare = parseInt(opt.getAttribute('data-compare'), 10) || 0;
+      var avail   = !opt.disabled;
+      var onSale  = compare > price;
+
+      /* price display */
+      var priceEl   = document.getElementById('tp-price');
+      var compareEl = document.getElementById('tp-compare');
+      var savingsEl = document.getElementById('tp-savings');
+      if (priceEl) { priceEl.textContent = fmtMoney(price); priceEl.classList.toggle('tp-price--sale', onSale); }
+      if (compareEl) { compareEl.textContent = onSale ? fmtMoney(compare) : ''; compareEl.style.display = onSale ? '' : 'none'; }
+      if (savingsEl) { savingsEl.textContent = onSale ? 'Save ' + fmtMoney(compare - price) : ''; savingsEl.style.display = onSale ? '' : 'none'; }
+
+      /* sticky price */
+      var sp = document.getElementById('tp-sticky-price');
+      if (sp) { sp.textContent = fmtMoney(price); sp.classList.toggle('tp-sticky-bar__price--sale', onSale); }
+
+      /* button state */
+      var addBtn  = document.getElementById('tp-add-btn');
+      var btnText = document.getElementById('tp-btn-text');
+      if (addBtn) addBtn.disabled = !avail;
+      if (btnText) btnText.textContent = avail ? 'Add to Cart' : 'Sold Out';
+
+      /* variant image */
+      var imgSrc = opt.getAttribute('data-img');
+      var imgAlt = opt.getAttribute('data-alt');
+      if (mainImg && imgSrc) {
+        tpSwapImage(mainImg, imgSrc, imgAlt);
+        document.querySelectorAll('.tp-gallery__thumb').forEach(function (t) { t.classList.remove('tp-active'); });
+      }
+      break;
+    }
+  }
+
+  function fmtMoney(cents) {
+    return (Math.round(cents) / 100).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' Kč';
+  }
+
+  /* --- AJAX add to cart --- */
+  var form = document.getElementById('tp-form');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var addBtn  = document.getElementById('tp-add-btn');
+      var btnText = document.getElementById('tp-btn-text');
+      if (addBtn && addBtn.disabled) return;
+      if (addBtn) addBtn.disabled = true;
+      if (btnText) btnText.textContent = 'Adding…';
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ id: varSel ? varSel.value : '', quantity: parseInt(qty.value, 10) || 1 })
+      }).then(function (r) { return r.json(); }).then(function (data) {
+        if (btnText) btnText.textContent = data.status ? 'Error' : 'Added! ✓';
+        document.dispatchEvent(new CustomEvent('cart:updated', { bubbles: true }));
+        setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Add to Cart'; }, 1800);
+      }).catch(function () {
+        if (btnText) btnText.textContent = 'Error – retry';
+        setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Add to Cart'; }, 2000);
+      });
+    });
+  }
+
+  /* --- Sticky bar visibility --- */
+  var stickyBar = document.getElementById('tp-sticky');
+  var stickyBtn = document.getElementById('tp-sticky-btn');
+  var addBtnEl  = document.getElementById('tp-add-btn');
+
+  if (stickyBar && addBtnEl && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        stickyBar.classList.toggle('tp-hidden', entry.isIntersecting);
+        stickyBar.setAttribute('aria-hidden', entry.isIntersecting ? 'true' : 'false');
+      });
+    }, { threshold: 0.5 });
+    io.observe(addBtnEl);
+  }
+
+  if (stickyBtn) {
+    stickyBtn.addEventListener('click', function () { if (addBtnEl) addBtnEl.click(); });
+  }
+
+  /* --- Sticky gallery: set top = actual header height + 16px gap ---
+     CSS top:20px is a safe fallback; JS overrides it on load so the
+     gallery never disappears under the header regardless of its height. */
+  var tpGallery = document.querySelector('.tp-gallery');
+  if (tpGallery && window.matchMedia('(min-width: 900px)').matches) {
+    function updateGalleryTop() {
+      /* Try common Horizon / Shopify header selectors, widest to narrowest */
+      var hdr = document.querySelector('#shopify-section-header .header__wrapper')
+             || document.querySelector('.header-wrapper')
+             || document.querySelector('header.header')
+             || document.querySelector('#shopify-section-header')
+             || document.querySelector('header');
+      if (hdr) {
+        var h = hdr.getBoundingClientRect().height;
+        tpGallery.style.top = Math.max(Math.round(h) + 16, 20) + 'px';
+      }
+    }
+    updateGalleryTop();
+    window.addEventListener('resize', updateGalleryTop);
+  }
+
+  /* --- Countdown timer --- */
+  var cdEl = document.getElementById('tp-cd');
+  if (cdEl) {
+    var endMs      = new Date(cdEl.getAttribute('data-end')).getTime();
+    var expTxt     = cdEl.getAttribute('data-expired') || 'Deal ended';
+    var cdUnitsEl  = document.getElementById('tp-cd-units');
+    var cdH = document.getElementById('tp-cd-h');
+    var cdM = document.getElementById('tp-cd-m');
+    var cdS = document.getElementById('tp-cd-s');
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function tick() {
+      var diff = endMs - Date.now();
+      if (diff <= 0) {
+        if (cdUnitsEl) cdUnitsEl.innerHTML = '<span class="tp-countdown__expired">' + expTxt + '</span>';
+        return;
+      }
+      var h = Math.floor(diff / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      if (cdH) cdH.textContent = pad(h);
+      if (cdM) cdM.textContent = pad(m);
+      if (cdS) cdS.textContent = pad(s);
+      setTimeout(tick, 1000);
+    }
+
+    if (endMs) tick();
+  }
+
+}());
+</script>
+
+{% schema %}
+{
+  "name": "Tailand Product",
+  "tag": "div",
+  "class": "tp-section-outer",
+  "settings": [
+    { "type": "header", "content": "Paw Rating" },
+    { "type": "checkbox", "id": "show_paw_rating", "label": "Show paw rating row", "default": true },
+    { "type": "range", "id": "paw_rating_score", "label": "Filled paws (1–5)", "min": 1, "max": 5, "step": 1, "default": 5 },
+    { "type": "text", "id": "paw_rating_text", "label": "Rating label", "default": "4.8 • 120 happy pets" },
+
+    { "type": "header", "content": "Product Info" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle / value proposition", "info": "Short tagline below the title." },
+
+    { "type": "header", "content": "Sale Badge" },
+    { "type": "checkbox", "id": "show_sale_badge", "label": "Show sale badge on image", "default": true },
+    { "type": "text", "id": "sale_badge_text", "label": "Sale badge text", "default": "ENDS SOON" },
+
+    { "type": "header", "content": "Benefit Bullets" },
+    { "type": "text", "id": "benefit_1", "label": "Benefit 1", "default": "Pet-friendly pick" },
+    { "type": "text", "id": "benefit_2", "label": "Benefit 2", "default": "Easy everyday use" },
+    { "type": "text", "id": "benefit_3", "label": "Benefit 3", "default": "Great for playful moments" },
+    { "type": "text", "id": "benefit_4", "label": "Benefit 4", "default": "Secure checkout" },
+    { "type": "text", "id": "benefit_5", "label": "Benefit 5", "default": "Track your order" },
+
+    { "type": "header", "content": "Promo Box" },
+    { "type": "text", "id": "promo_emoji", "label": "Promo icon (emoji)", "default": "🐾" },
+    { "type": "text", "id": "promo_title", "label": "Promo box title", "default": "Today’s Pet Deal" },
+    { "type": "text", "id": "promo_text", "label": "Promo box text", "default": "Free shipping on orders over 799 Kč. Limited-time offer." },
+
+    { "type": "header", "content": "Countdown Timer" },
+    { "type": "text", "id": "countdown_end", "label": "Countdown end (ISO format)", "info": "Example: 2026-06-30T23:59:59. Leave blank to hide." },
+    { "type": "text", "id": "countdown_expired", "label": "Expired message", "default": "Deal ended" },
+
+    { "type": "header", "content": "Free Shipping Bar" },
+    { "type": "checkbox", "id": "show_free_shipping", "label": "Show free shipping bar", "default": true },
+    { "type": "number", "id": "free_shipping_threshold", "label": "Threshold (main currency, e.g. 799)", "default": 799 },
+    { "type": "text", "id": "free_shipping_prefix", "label": "Text before amount", "default": "You are" },
+    { "type": "text", "id": "free_shipping_suffix", "label": "Text after amount", "default": "away from free shipping" },
+
+    { "type": "header", "content": "Multi-Buy Suggestion" },
+    { "type": "text", "id": "multibuy_text", "label": "Multi-buy text", "default": "Buy 2 and keep one as a backup — perfect for multi-pet homes!" },
+
+    { "type": "header", "content": "Bundle Upsell" },
+    { "type": "text", "id": "upsell_title", "label": "Upsell title", "default": "Complete the Pet Setup" },
+    { "type": "text", "id": "upsell_text", "label": "Upsell text", "default": "Grab the matching accessory and save on your next order." },
+    { "type": "text", "id": "upsell_link_text", "label": "Upsell button text", "default": "Add" },
+    { "type": "url", "id": "upsell_link_url", "label": "Upsell button link" },
+
+    { "type": "header", "content": "Trust Badges" },
+    { "type": "checkbox", "id": "show_trust_badges", "label": "Show trust badges", "default": true },
+    { "type": "text", "id": "trust_1", "label": "Badge 1", "default": "Secure Checkout" },
+    { "type": "text", "id": "trust_2", "label": "Badge 2", "default": "Easy Returns" },
+    { "type": "text", "id": "trust_3", "label": "Badge 3", "default": "Track Your Order" },
+    { "type": "text", "id": "trust_4", "label": "Badge 4", "default": "Pet-Friendly Pick" },
+
+    { "type": "header", "content": "Product Accordions" },
+    { "type": "checkbox", "id": "show_accordions", "label": "Show accordions", "default": true },
+    { "type": "text", "id": "accordion_1_title", "label": "Accordion 1 title", "default": "Product Details" },
+    { "type": "richtext", "id": "accordion_1_content", "label": "Accordion 1 content", "default": "<p>Made with pet-safe, non-toxic materials designed for everyday play and lasting joy.</p>" },
+    { "type": "text", "id": "accordion_2_title", "label": "Accordion 2 title", "default": "Shipping & Returns" },
+    { "type": "richtext", "id": "accordion_2_content", "label": "Accordion 2 content", "default": "<p>Orders are processed within 1–3 business days. Tracking details are sent as soon as your order ships.</p>" },
+    { "type": "text", "id": "accordion_3_title", "label": "Accordion 3 title", "default": "Pet Safety" },
+    { "type": "richtext", "id": "accordion_3_content", "label": "Accordion 3 content", "default": "<p>Always supervise your pet when introducing new toys, accessories, or products.</p>" },
+    { "type": "text", "id": "accordion_4_title", "label": "Accordion 4 title", "default": "How to Use" },
+    { "type": "richtext", "id": "accordion_4_content", "label": "Accordion 4 content", "default": "<p>Introduce the product slowly and let your pet explore it at their own pace.</p>" },
+    { "type": "text", "id": "accordion_5_title", "label": "Accordion 5 title", "default": "What’s Included" },
+    { "type": "richtext", "id": "accordion_5_content", "label": "Accordion 5 content", "default": "<p>Check the product photos and description for what comes in the package.</p>" },
+
+    { "type": "header", "content": "Product Story Section" },
+    { "type": "text", "id": "story_heading", "label": "Story heading", "default": "Why Pets Love It" },
+
+    { "type": "header", "content": "Specifications" },
+    { "type": "text", "id": "specs_heading", "label": "Specs heading", "default": "Product Specifications" },
+
+    { "type": "header", "content": "Related Products" },
+    { "type": "checkbox", "id": "show_related", "label": "Show related products", "default": true },
+    { "type": "text", "id": "related_heading", "label": "Related heading", "default": "You May Also Like" },
+    { "type": "collection", "id": "related_collection", "label": "Related products collection", "info": "Leave blank to use the product’s own collection." },
+    { "type": "range", "id": "related_count", "label": "Number of related products", "min": 2, "max": 8, "step": 1, "default": 4 },
+
+    { "type": "header", "content": "FAQ" },
+    { "type": "text", "id": "faq_heading", "label": "FAQ heading", "default": "Common Questions" },
+
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Padding top (px)", "min": 0, "max": 120, "step": 4, "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom (px)", "min": 0, "max": 120, "step": 4, "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "story_card",
+      "name": "Story Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Card image" },
+        { "type": "text", "id": "emoji", "label": "Icon (emoji)", "default": "✨" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Why pets love it" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Designed with your pet’s instincts in mind. Durable, fun, and made to last." }
+      ]
+    },
+    {
+      "type": "spec_row",
+      "name": "Spec Row",
+      "settings": [
+        { "type": "text", "id": "spec_key", "label": "Spec name", "default": "Material" },
+        { "type": "text", "id": "spec_val", "label": "Spec value", "default": "Non-toxic TPR rubber" }
+      ]
+    },
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "How long does shipping take?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Orders are typically delivered within 3–7 business days.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tailand Product",
+      "blocks": [
+        { "type": "faq_item", "settings": { "question": "How long does shipping take?", "answer": "<p>Orders are typically delivered within 3–7 business days depending on your location.</p>" } },
+        { "type": "faq_item", "settings": { "question": "Do you ship worldwide?", "answer": "<p>We currently ship to selected countries. Check checkout for availability in your region.</p>" } },
+        { "type": "faq_item", "settings": { "question": "How can I track my order?", "answer": "<p>You will receive a tracking link by email once your order has been dispatched.</p>" } },
+        { "type": "faq_item", "settings": { "question": "Can I return my order?", "answer": "<p>Yes! We offer easy 30-day returns. Contact us and we will guide you through the process.</p>" } },
+        { "type": "faq_item", "settings": { "question": "Are the products safe for pets?", "answer": "<p>All Tailand products are made with pet-safe, non-toxic materials and tested for safety.</p>" } },
+        { "type": "faq_item", "settings": { "question": "What if my pet does not like the product?", "answer": "<p>Contact our team and we will do our best to find a solution that makes both you and your pet happy.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

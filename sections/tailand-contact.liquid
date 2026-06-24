@@ -1,0 +1,1053 @@
+{%- liquid
+  assign tco_plain    = section.settings.heading_plain | default: 'Contact'
+  assign tco_hi       = section.settings.heading_highlighted | default: 'Tailand'
+  assign tco_intro    = section.settings.intro_text
+  assign tco_email    = section.settings.contact_email | default: 'support@tailand.store'
+  assign tco_resp     = section.settings.response_time | default: 'We usually reply within 1–2 business days.'
+  assign tco_hours    = section.settings.support_hours | default: 'Monday–Friday'
+  assign tco_ig       = section.settings.instagram_url
+  assign tco_tt       = section.settings.tiktok_url
+  assign tco_facebook = section.settings.facebook_url
+  assign tco_fq_h     = section.settings.faq_heading | default: 'Need answers fast?'
+  assign tco_fq_t     = section.settings.faq_text
+  assign tco_fq_btn   = section.settings.faq_btn_text | default: 'View FAQ'
+  assign tco_fq_url   = section.settings.faq_btn_url | default: '/pages/faq'
+  assign tco_cards    = section.settings.show_help_cards
+  assign tco_trust    = section.settings.show_trust_badges
+
+  assign tco_has_social = false
+  if tco_ig != blank or tco_tt != blank or tco_facebook != blank
+    assign tco_has_social = true
+  endif
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: var(--pc-white, #fff);
+  }
+{% endstyle %}
+
+<section class="tco-section">
+  <div class="tco-container">
+
+    <!-- ── Hero / intro ── -->
+    <div class="tco-hero">
+      <h1 class="tco-hero__heading">
+        {%- if tco_plain != blank -%}
+          <span class="tco-hero__plain">{{ tco_plain | escape }}&nbsp;</span>
+        {%- endif -%}
+        {%- if tco_hi != blank -%}
+          <span class="tco-hero__hi">
+            {{- tco_hi | escape -}}
+            <svg class="tco-hero__underline" viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        {%- endif -%}
+      </h1>
+      {%- if tco_intro != blank -%}
+        <p class="tco-hero__intro">{{ tco_intro | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <!-- ── Main: form + sidebar ── -->
+    <div class="tco-main">
+
+      <!-- Contact form -->
+      <div class="tco-form-card">
+        <h2 class="tco-form-card__heading">Send us a message</h2>
+
+        {%- form 'contact' -%}
+
+          {%- if form.posted_successfully? -%}
+
+            <div class="tco-success" role="status">
+              <div class="tco-success__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <h3 class="tco-success__heading">Message sent!</h3>
+              <p class="tco-success__text">Thanks for reaching out. We'll get back to you as soon as possible — usually within 1–2 business days.</p>
+            </div>
+
+          {%- else -%}
+
+            {%- if form.errors -%}
+              <div class="tco-errors" role="alert">
+                {{ form.errors | default_errors }}
+              </div>
+            {%- endif -%}
+
+            <div class="tco-fields">
+
+              <div class="tco-field">
+                <label class="tco-label" for="tco-name-{{ section.id }}">Your name</label>
+                <input
+                  class="tco-input"
+                  id="tco-name-{{ section.id }}"
+                  type="text"
+                  name="contact[name]"
+                  autocomplete="name"
+                  value="{{ form.name }}"
+                  placeholder="e.g. Jan Novák"
+                  required
+                >
+              </div>
+
+              <div class="tco-field">
+                <label class="tco-label" for="tco-email-{{ section.id }}">Email address</label>
+                <input
+                  class="tco-input"
+                  id="tco-email-{{ section.id }}"
+                  type="email"
+                  name="contact[email]"
+                  autocomplete="email"
+                  value="{{ form.email }}"
+                  placeholder="you@example.com"
+                  required
+                >
+              </div>
+
+              <div class="tco-field tco-field--full">
+                <label class="tco-label" for="tco-order-{{ section.id }}">
+                  Order number
+                  <span class="tco-label__opt">(optional)</span>
+                </label>
+                <input
+                  class="tco-input"
+                  id="tco-order-{{ section.id }}"
+                  type="text"
+                  name="contact[order_number]"
+                  placeholder="e.g. #1234"
+                >
+              </div>
+
+              <div class="tco-field tco-field--full">
+                <label class="tco-label" for="tco-msg-{{ section.id }}">Your message</label>
+                <textarea
+                  class="tco-input tco-textarea"
+                  id="tco-msg-{{ section.id }}"
+                  name="contact[body]"
+                  rows="6"
+                  placeholder="Tell us how we can help…"
+                  required
+                >{{ form.body }}</textarea>
+              </div>
+
+            </div>
+
+            <button type="submit" class="tco-submit">
+              Send Message
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+
+          {%- endif -%}
+
+        {%- endform -%}
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="tco-sidebar">
+
+        {%- if tco_cards -%}
+          <div class="tco-help">
+            <h2 class="tco-sidebar__heading">How can we help?</h2>
+            <div class="tco-help__list">
+
+              <div class="tco-help-card">
+                <span class="tco-help-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </span>
+                <div>
+                  <div class="tco-help-card__title">Order Questions</div>
+                  <div class="tco-help-card__text">Need help with your order or tracking?</div>
+                </div>
+              </div>
+
+              <div class="tco-help-card">
+                <span class="tco-help-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                </span>
+                <div>
+                  <div class="tco-help-card__title">Shipping &amp; Delivery</div>
+                  <div class="tco-help-card__text">Check delivery times and shipping updates.</div>
+                </div>
+              </div>
+
+              <div class="tco-help-card">
+                <span class="tco-help-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+                </span>
+                <div>
+                  <div class="tco-help-card__title">Returns &amp; Refunds</div>
+                  <div class="tco-help-card__text">Something not right? We'll help you sort it out.</div>
+                </div>
+              </div>
+
+              <div class="tco-help-card">
+                <span class="tco-help-card__icon tco-help-card__icon--paw" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="17" rx="5.5" ry="5"/><ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="9" cy="7.5" rx="2" ry="2.8"/><ellipse cx="15" cy="7.5" rx="2" ry="2.8"/></svg>
+                </span>
+                <div>
+                  <div class="tco-help-card__title">Product Help</div>
+                  <div class="tco-help-card__text">Questions about which product is right for your pet?</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        {%- endif -%}
+
+        <!-- Support info card -->
+        <div class="tco-info">
+
+          <div class="tco-info__row">
+            <span class="tco-info__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <div>
+              <div class="tco-info__label">Email us</div>
+              <a href="mailto:{{ tco_email }}" class="tco-info__link">{{ tco_email }}</a>
+            </div>
+          </div>
+
+          <div class="tco-info__row">
+            <span class="tco-info__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </span>
+            <div>
+              <div class="tco-info__label">Response time</div>
+              <div class="tco-info__value">{{ tco_resp }}</div>
+            </div>
+          </div>
+
+          <div class="tco-info__row">
+            <span class="tco-info__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </span>
+            <div>
+              <div class="tco-info__label">Support hours</div>
+              <div class="tco-info__value">{{ tco_hours }}</div>
+            </div>
+          </div>
+
+          {%- if tco_has_social -%}
+            <div class="tco-info__social">
+              {%- if tco_ig != blank -%}
+                <a href="{{ tco_ig }}" class="tco-social" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                </a>
+              {%- endif -%}
+              {%- if tco_tt != blank -%}
+                <a href="{{ tco_tt }}" class="tco-social" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.77 1.52V6.75a4.85 4.85 0 0 1-1-.06z"/></svg>
+                </a>
+              {%- endif -%}
+              {%- if tco_facebook != blank -%}
+                <a href="{{ tco_facebook }}" class="tco-social" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                </a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- ── FAQ shortcut ── -->
+    <div class="tco-faq-cta">
+      {%- if tco_fq_h != blank -%}
+        <h2 class="tco-faq-cta__heading">{{ tco_fq_h | escape }}</h2>
+      {%- endif -%}
+      {%- if tco_fq_t != blank -%}
+        <p class="tco-faq-cta__text">{{ tco_fq_t | escape }}</p>
+      {%- endif -%}
+      {%- if tco_fq_btn != blank -%}
+        <a href="{{ tco_fq_url }}" class="tco-faq-cta__btn">
+          {{ tco_fq_btn | escape }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <!-- ── Trust badges ── -->
+    {%- if tco_trust -%}
+      <div class="tco-trust">
+        <div class="tco-trust__badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Secure Checkout
+        </div>
+        <div class="tco-trust__badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Track Your Order
+        </div>
+        <div class="tco-trust__badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+          Easy Returns
+        </div>
+        <div class="tco-trust__badge">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="17" rx="5.5" ry="5"/><ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="9" cy="7.5" rx="2" ry="2.8"/><ellipse cx="15" cy="7.5" rx="2" ry="2.8"/></svg>
+          Pet-Friendly Picks
+        </div>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% stylesheet %}
+/* =========================================================
+   Tailand Contact Page — tco-*
+   ========================================================= */
+
+.tco-section {
+  background: var(--pc-white, #fff);
+}
+
+.tco-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-inline: var(--page-margin, 20px);
+}
+
+/* ── Hero ── */
+.tco-hero {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 52px;
+}
+
+.tco-hero__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.2;
+  margin: 0 0 16px;
+}
+
+.tco-hero__plain {
+  font-weight: 400;
+}
+
+.tco-hero__hi {
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  white-space: nowrap;
+  padding-bottom: 8px;
+}
+
+.tco-hero__underline {
+  position: absolute;
+  left: -3%;
+  bottom: -2px;
+  width: 106%;
+  height: 12px;
+  color: var(--pc-green, #4F8A2F);
+  pointer-events: none;
+  display: block;
+}
+
+.tco-hero__intro {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ── Main 2-column grid ── */
+.tco-main {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* ── Form card ── */
+.tco-form-card {
+  background: var(--pc-cream, #fffbf0);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 20px;
+  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
+  padding: 40px;
+}
+
+.tco-form-card__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.55rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0 0 28px;
+}
+
+/* ── Success state ── */
+.tco-success {
+  text-align: center;
+  padding: 24px 0 8px;
+}
+
+.tco-success__icon {
+  width: 56px;
+  height: 56px;
+  background: var(--pc-green, #4F8A2F);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  color: var(--pc-white, #fff);
+}
+
+.tco-success__icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.tco-success__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0 0 12px;
+}
+
+.tco-success__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ── Error messages ── */
+.tco-errors {
+  background: rgba(214, 60, 60, 0.07);
+  border: 2px solid var(--pc-sale-red, #D63C3C);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--pc-sale-red, #D63C3C);
+}
+
+.tco-errors ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.tco-errors li {
+  margin: 4px 0;
+}
+
+/* ── Form fields layout ── */
+.tco-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.tco-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.tco-field--full {
+  grid-column: 1 / -1;
+}
+
+.tco-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--pc-text, #2B1B12);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tco-label__opt {
+  font-weight: 600;
+  opacity: 0.45;
+  font-size: 0.8rem;
+}
+
+/* ── Inputs & textarea ── */
+.tco-input {
+  width: 100%;
+  padding: 12px 15px;
+  background: var(--pc-white, #fff);
+  border: 2px solid rgba(43, 27, 18, 0.18);
+  border-radius: 12px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.tco-input::placeholder {
+  color: rgba(43, 27, 18, 0.28);
+  font-weight: 500;
+}
+
+.tco-input:focus {
+  outline: none;
+  border-color: var(--pc-orange, #EE7B28);
+  box-shadow: 0 0 0 3px rgba(238, 123, 40, 0.14);
+}
+
+.tco-textarea {
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.6;
+}
+
+/* ── Submit button ── */
+.tco-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 14px 32px;
+  background: var(--pc-green, #4F8A2F);
+  color: var(--pc-white, #fff);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tco-submit svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.tco-submit:hover {
+  background: var(--pc-green-dark, #3E6F25);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
+}
+
+.tco-submit:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+}
+
+.tco-submit:focus-visible {
+  outline: 2.5px solid var(--pc-orange, #EE7B28);
+  outline-offset: 3px;
+}
+
+/* ── Sidebar ── */
+.tco-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tco-sidebar__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0 0 14px;
+}
+
+/* ── Help cards ── */
+.tco-help__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tco-help-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--pc-white, #fff);
+  border: 2px solid rgba(43, 27, 18, 0.1);
+  border-radius: 14px;
+  transition: border-color 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.tco-help-card:hover {
+  border-color: var(--pc-orange, #EE7B28);
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 rgba(43, 27, 18, 0.08);
+}
+
+.tco-help-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  background: var(--pc-cream, #fffbf0);
+  border: 2px solid rgba(43, 27, 18, 0.1);
+  border-radius: 10px;
+  color: var(--pc-orange, #EE7B28);
+}
+
+.tco-help-card__icon--paw {
+  color: var(--pc-green, #4F8A2F);
+}
+
+.tco-help-card__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.tco-help-card__title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+
+.tco-help-card__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.6;
+  line-height: 1.5;
+}
+
+/* ── Support info card ── */
+.tco-info {
+  background: var(--pc-cream, #fffbf0);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tco-info__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.tco-info__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  background: var(--pc-orange, #EE7B28);
+  border-radius: 8px;
+  color: var(--pc-white, #fff);
+}
+
+.tco-info__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.tco-info__label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.45;
+  margin-bottom: 2px;
+}
+
+.tco-info__link {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--pc-orange, #EE7B28);
+  text-decoration: none;
+}
+
+.tco-info__link:hover {
+  text-decoration: underline;
+}
+
+.tco-info__value {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.45;
+}
+
+/* Social row */
+.tco-info__social {
+  display: flex;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1.5px solid rgba(43, 27, 18, 0.1);
+}
+
+.tco-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: var(--pc-white, #fff);
+  border: 2px solid rgba(43, 27, 18, 0.14);
+  border-radius: 10px;
+  color: var(--pc-text, #2B1B12);
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+
+.tco-social svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.tco-social:hover {
+  background: var(--pc-orange, #EE7B28);
+  border-color: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff);
+  transform: translate(-1px, -1px);
+}
+
+/* ── FAQ CTA block ── */
+.tco-faq-cta {
+  text-align: center;
+  max-width: 680px;
+  margin: 56px auto 0;
+  padding: 44px 36px;
+  background: rgba(79, 138, 47, 0.06);
+  border: 2px solid rgba(79, 138, 47, 0.18);
+  border-radius: 20px;
+}
+
+.tco-faq-cta__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0 0 12px;
+}
+
+.tco-faq-cta__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  line-height: 1.65;
+  margin: 0 0 26px;
+}
+
+.tco-faq-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 30px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tco-faq-cta__btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.tco-faq-cta__btn:hover {
+  background: var(--pc-orange-dark, #E58901);
+  color: var(--pc-white, #fff);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
+}
+
+.tco-faq-cta__btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── Trust badges ── */
+.tco-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 48px;
+  padding-top: 40px;
+  border-top: 1.5px solid rgba(43, 27, 18, 0.08);
+}
+
+.tco-trust__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--pc-white, #fff);
+  border: 2px solid rgba(43, 27, 18, 0.12);
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+}
+
+.tco-trust__badge svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--pc-green, #4F8A2F);
+}
+
+/* ── Responsive ── */
+@media screen and (max-width: 899px) {
+  .tco-main {
+    grid-template-columns: 1fr;
+  }
+
+  .tco-hero {
+    margin-bottom: 36px;
+  }
+
+  .tco-form-card {
+    padding: 30px 28px;
+  }
+
+  /* Sidebar goes horizontal on tablet: help cards + info side by side */
+  .tco-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .tco-hero {
+    margin-bottom: 28px;
+  }
+
+  .tco-hero__heading {
+    font-size: 2rem;
+  }
+
+  .tco-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .tco-form-card {
+    padding: 24px 20px;
+    border-radius: 16px;
+    box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  }
+
+  .tco-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .tco-faq-cta {
+    padding: 32px 20px;
+    margin-top: 40px;
+  }
+
+  .tco-trust {
+    gap: 8px;
+    margin-top: 36px;
+    padding-top: 28px;
+  }
+
+  .tco-trust__badge {
+    font-size: 0.82rem;
+    padding: 9px 15px;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .tco-form-card {
+    padding: 20px 16px;
+    border-radius: 14px;
+    box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  }
+
+  .tco-submit {
+    font-size: 0.95rem;
+    padding: 13px 24px;
+  }
+
+  .tco-info {
+    padding: 20px;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Contact Page",
+  "tag": "div",
+  "class": "tco-section-outer",
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading — plain text",
+      "default": "Contact"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlighted",
+      "label": "Heading — highlighted text",
+      "default": "Tailand",
+      "info": "This word gets the green wavy underline."
+    },
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Intro paragraph",
+      "default": "Have a question about your order, shipping, returns, or one of our pet picks? We're here to help."
+    },
+    { "type": "header", "content": "Contact info" },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Support email address",
+      "default": "support@tailand.store",
+      "info": "Shown as a mailto link on the page."
+    },
+    {
+      "type": "text",
+      "id": "response_time",
+      "label": "Response time",
+      "default": "We usually reply within 1–2 business days."
+    },
+    {
+      "type": "text",
+      "id": "support_hours",
+      "label": "Support hours",
+      "default": "Monday–Friday"
+    },
+    { "type": "header", "content": "Social links (leave blank to hide)" },
+    {
+      "type": "text",
+      "id": "instagram_url",
+      "label": "Instagram URL",
+      "info": "e.g. https://instagram.com/tailandstore"
+    },
+    {
+      "type": "text",
+      "id": "tiktok_url",
+      "label": "TikTok URL",
+      "info": "e.g. https://tiktok.com/@tailandstore"
+    },
+    {
+      "type": "text",
+      "id": "facebook_url",
+      "label": "Facebook URL",
+      "info": "e.g. https://facebook.com/tailandstore"
+    },
+    { "type": "header", "content": "FAQ shortcut section" },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "FAQ section heading",
+      "default": "Need answers fast?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_text",
+      "label": "FAQ section text",
+      "default": "Check our most common questions about shipping, returns, tracking, and product safety."
+    },
+    {
+      "type": "text",
+      "id": "faq_btn_text",
+      "label": "FAQ button text",
+      "default": "View FAQ"
+    },
+    {
+      "type": "text",
+      "id": "faq_btn_url",
+      "label": "FAQ button URL",
+      "default": "/pages/faq",
+      "info": "Relative path (e.g. /pages/faq) or full URL."
+    },
+    { "type": "header", "content": "Show / hide sections" },
+    {
+      "type": "checkbox",
+      "id": "show_help_cards",
+      "label": "Show help topic cards",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_badges",
+      "label": "Show trust badges",
+      "default": true
+    },
+    { "type": "header", "content": "Spacing" },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact Page"
+    }
+  ]
+}
+{% endschema %}

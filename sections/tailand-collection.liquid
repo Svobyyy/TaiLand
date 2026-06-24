@@ -1,0 +1,1019 @@
+{%- liquid
+  assign tc_heading_plain    = section.settings.heading_plain
+  assign tc_heading_hi       = section.settings.heading_highlighted
+  assign tc_show_desc        = section.settings.show_description
+  assign tc_show_tabs        = section.settings.show_tabs
+  assign tc_show_sort        = section.settings.show_sort
+  assign tc_show_badges      = section.settings.show_badges
+  assign tc_show_best        = section.settings.show_best_seller_badge
+  assign tc_best_text        = section.settings.best_seller_badge_text | default: 'Best Seller'
+  assign tc_btn              = section.settings.card_btn_text | default: 'Shop Now'
+  assign tc_per_page         = section.settings.products_per_page | default: 16
+  assign tc_highlight        = tc_heading_hi | default: collection.title
+  assign tc_menu_handle      = section.settings.nav_menu | default: 'main-menu'
+  assign tc_linklist         = linklists[tc_menu_handle]
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: var(--pc-white, #fff);
+  }
+{% endstyle %}
+
+<div class="tc-section">
+  <div class="tc-container">
+
+    <!-- ── Hero header ── -->
+    <div class="tc-hero">
+      <h1 class="tc-hero__heading">
+        {%- if tc_heading_plain != blank -%}
+          <span class="tc-hero__plain">{{ tc_heading_plain | escape }}&nbsp;</span>
+        {%- endif -%}
+        {%- if tc_highlight != blank -%}
+          <span class="tc-hero__highlight">
+            {{- tc_highlight | escape -}}
+            <svg class="tc-hero__underline" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        {%- endif -%}
+      </h1>
+      {%- if tc_show_desc and collection.description != blank -%}
+        <div class="tc-hero__desc">{{ collection.description }}</div>
+      {%- endif -%}
+    </div>
+
+    <!-- ── Category tabs — pulled dynamically from Shopify nav menu ── -->
+    {%- if tc_show_tabs and tc_linklist.links.size > 0 -%}
+      <nav class="tc-tabs" aria-label="Browse by category">
+        {%- for link in tc_linklist.links -%}
+          {%- comment %} Extract collection handle from /collections/{handle} URL {%- endcomment -%}
+          {%- assign tc_lh = link.url | split: '/collections/' | last | split: '?' | first | split: '/' | first -%}
+          {%- assign tc_active = false -%}
+          {%- if collection.handle == tc_lh -%}{%- assign tc_active = true -%}{%- endif -%}
+          <a
+            href="{{ link.url }}"
+            class="tc-tab{%- if tc_active %} tc-tab--active{%- endif %}"
+            {%- if tc_active %} aria-current="page"{%- endif %}
+          >
+            <span class="tc-tab__icon" aria-hidden="true">
+              {%- case tc_lh -%}
+                {%- when 'best-sellers', 'best_sellers' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                {%- when 'dogs' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="17" rx="5.5" ry="5"/><ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="9" cy="7.5" rx="2" ry="2.8"/><ellipse cx="15" cy="7.5" rx="2" ry="2.8"/></svg>
+                {%- when 'cats' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V3l4 3h.5a7 7 0 0 1 7 0H16L20 3v3c2 1.5 4 3.5 4 7 0 4-3 8-8.5 8S4 18 4 14c0-3.5 1.5-6 3-7z"/><path d="M9.5 14.5h.01M14.5 14.5h.01"/></svg>
+                {%- when 'sale' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l10 10 10-10L12 2z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg>
+                {%- when 'summer' -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                {%- else -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="17" rx="5.5" ry="5"/><ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="9" cy="7.5" rx="2" ry="2.8"/><ellipse cx="15" cy="7.5" rx="2" ry="2.8"/></svg>
+              {%- endcase -%}
+            </span>
+            <span class="tc-tab__label">{{ link.title | escape }}</span>
+          </a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    <!-- ── Sort + count toolbar ── -->
+    {%- if tc_show_sort -%}
+      <div class="tc-toolbar">
+        <span class="tc-toolbar__count">
+          <svg class="tc-toolbar__count-paw" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="17" rx="5.5" ry="5"/><ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="9" cy="7.5" rx="2" ry="2.8"/><ellipse cx="15" cy="7.5" rx="2" ry="2.8"/></svg>
+          {{ collection.products_count }}
+          {%- if collection.products_count == 1 %} product{%- else %} products{%- endif %}
+        </span>
+        <form method="get" action="{{ collection.url }}" class="tc-sort-form">
+          <label for="tc-sort-{{ section.id }}" class="tc-sort__label">Sort by</label>
+          <div class="tc-sort__wrap">
+            <select id="tc-sort-{{ section.id }}" name="sort_by" class="tc-sort__select" onchange="this.form.submit()">
+              <option value="manual"{%- if collection.sort_by == 'manual' %} selected{%- endif %}>Featured</option>
+              <option value="best-selling"{%- if collection.sort_by == 'best-selling' %} selected{%- endif %}>Best Selling</option>
+              <option value="title-ascending"{%- if collection.sort_by == 'title-ascending' %} selected{%- endif %}>A–Z</option>
+              <option value="title-descending"{%- if collection.sort_by == 'title-descending' %} selected{%- endif %}>Z–A</option>
+              <option value="price-ascending"{%- if collection.sort_by == 'price-ascending' %} selected{%- endif %}>Price: Low → High</option>
+              <option value="price-descending"{%- if collection.sort_by == 'price-descending' %} selected{%- endif %}>Price: High → Low</option>
+              <option value="created-descending"{%- if collection.sort_by == 'created-descending' %} selected{%- endif %}>Newest First</option>
+            </select>
+            <span class="tc-sort__arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+        </form>
+      </div>
+    {%- endif -%}
+
+    <!-- ── Product grid ── -->
+    {%- paginate collection.products by tc_per_page -%}
+
+      {%- if collection.products_count == 0 -%}
+
+        <!-- Empty state -->
+        <div class="tc-empty">
+          <div class="tc-empty__paw" aria-hidden="true">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+              <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
+              <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
+              <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
+              <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
+              <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
+            </svg>
+          </div>
+          <p class="tc-empty__text">No products found here yet.</p>
+          <a href="/collections/all" class="tc-empty__btn">Browse All Products</a>
+        </div>
+
+      {%- else -%}
+
+        <ul class="tc-grid" role="list">
+          {%- for product in collection.products -%}
+            {%- assign tc_has_sale = false -%}
+            {%- if product.compare_at_price > product.price -%}
+              {%- assign tc_has_sale = true -%}
+            {%- endif -%}
+            {%- assign tc_dual = false -%}
+            {%- if tc_show_badges and tc_has_sale and tc_show_best -%}
+              {%- assign tc_dual = true -%}
+            {%- endif -%}
+
+            <li class="tc-card">
+
+              <!-- Image + badges -->
+              <div class="tc-card__media-wrap">
+                <a href="{{ product.url }}" class="tc-card__media-link" tabindex="-1" aria-hidden="true">
+                  {%- if product.featured_image -%}
+                    {%- assign tc_img_alt = product.featured_image.alt | default: product.title | escape -%}
+                    {{-
+                      product.featured_image
+                      | image_url: width: 600
+                      | image_tag:
+                        class: 'tc-card__img',
+                        alt: tc_img_alt,
+                        loading: 'lazy',
+                        width: 600,
+                        height: 600
+                    -}}
+                  {%- else -%}
+                    <div class="tc-card__img tc-card__img--placeholder" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
+                        <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
+                        <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
+                        <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
+                        <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
+                      </svg>
+                    </div>
+                  {%- endif -%}
+                </a>
+
+                {%- if tc_show_badges -%}
+                  <div class="tc-badge-group{%- if tc_dual %} tc-badge-group--dual{%- endif %}">
+                    {%- if tc_has_sale -%}
+                      <span class="tc-sale-badge" aria-label="Ends soon">ENDS SOON</span>
+                    {%- endif -%}
+                    {%- if tc_show_best -%}
+                      <span class="tc-best-badge" aria-label="{{ tc_best_text | escape }}">{{ tc_best_text | escape }}</span>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </div>
+
+              <!-- Card body -->
+              <div class="tc-card__body">
+                <a href="{{ product.url }}" class="tc-card__title-link">
+                  <h2 class="tc-card__title">{{ product.title | escape }}</h2>
+                </a>
+
+                <div class="tc-card__price">
+                  {%- if tc_has_sale -%}
+                    <span class="tc-card__price-sale">{{ product.price | money }}</span>
+                    <span class="tc-card__price-compare">{{ product.compare_at_price | money }}</span>
+                  {%- else -%}
+                    <span class="tc-card__price-reg">{{ product.price | money }}</span>
+                  {%- endif -%}
+                </div>
+
+                <a href="{{ product.url }}" class="tc-card__btn">
+                  {{- tc_btn | escape -}}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        <!-- Pagination -->
+        {%- if paginate.pages > 1 -%}
+          <nav class="tc-pagination" aria-label="Pagination">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="tc-pagination__btn">&#8592; Previous</a>
+            {%- endif -%}
+            <span class="tc-pagination__info">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="tc-pagination__btn">Next &#8594;</a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+
+      {%- endif -%}
+    {%- endpaginate -%}
+
+  </div>
+</div>
+
+{% stylesheet %}
+/* =========================================================
+   Tailand Collection Page — tc-*
+   ========================================================= */
+
+.tc-section {
+  background: var(--pc-white, #fff);
+}
+
+.tc-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding-inline: var(--page-margin, 20px);
+}
+
+/* ── Hero ── */
+.tc-hero {
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+.tc-hero__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.2;
+  margin: 0 0 14px;
+}
+
+.tc-hero__plain {
+  font-weight: 400;
+}
+
+.tc-hero__highlight {
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  white-space: nowrap;
+  padding-bottom: 8px;
+}
+
+.tc-hero__underline {
+  position: absolute;
+  left: -3%;
+  bottom: -2px;
+  width: 106%;
+  height: 12px;
+  color: var(--pc-green, #4F8A2F);
+  pointer-events: none;
+  display: block;
+}
+
+.tc-hero__desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  max-width: 580px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* ── Category tabs ── */
+.tc-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 32px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tc-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tc-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 22px;
+  background: var(--pc-white, #fff);
+  color: var(--pc-text, #2B1B12);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  flex-shrink: 0;
+}
+
+.tc-tab:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  color: var(--pc-text, #2B1B12);
+}
+
+.tc-tab--active {
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff);
+}
+
+.tc-tab--active:hover {
+  color: var(--pc-white, #fff);
+}
+
+.tc-tab__icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.tc-tab__icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* ── Sort toolbar ── */
+.tc-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 28px;
+  padding: 12px 20px;
+  background: rgba(247, 223, 184, 0.38);
+  border: 1.5px solid rgba(43, 27, 18, 0.1);
+  border-radius: 14px;
+}
+
+.tc-toolbar__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.tc-toolbar__count-paw {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.tc-sort-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tc-sort__label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.65;
+  white-space: nowrap;
+}
+
+/* Wrapper gives us a reliable position context for the custom arrow */
+.tc-sort__wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tc-sort__select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 9px 42px 9px 16px;
+  background: var(--pc-cream, #fffbf0);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--pc-text, #2B1B12);
+  cursor: pointer;
+  min-width: 200px;
+  transition: box-shadow 0.12s ease, transform 0.12s ease;
+}
+
+.tc-sort__select:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+}
+
+.tc-sort__select:focus {
+  outline: 2.5px solid var(--pc-orange, #EE7B28);
+  outline-offset: 2px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  transform: none;
+}
+
+/* Custom chevron arrow — sits on top of select, pointer-events:none so clicks pass through */
+.tc-sort__arrow {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--pc-text, #2B1B12);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tc-sort__arrow svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* ── Product grid ── */
+.tc-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* ── Product card ── */
+.tc-card {
+  background: var(--pc-cream, #F7DFB8);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 18px;
+  box-shadow: 5px 5px 0 var(--pc-text, #2B1B12);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tc-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--pc-text, #2B1B12);
+}
+
+/* Card media */
+.tc-card__media-wrap {
+  position: relative;
+  flex-shrink: 0;
+  overflow: visible;
+  container-type: inline-size;
+  container-name: tc-card-media;
+}
+
+.tc-card__media-link {
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--pc-white, #fff);
+}
+
+.tc-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.tc-card:hover .tc-card__img {
+  transform: scale(1.04);
+}
+
+.tc-card__img--placeholder {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: rgba(247, 223, 184, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(43, 27, 18, 0.18);
+}
+
+.tc-card__img--placeholder svg {
+  width: 52px;
+  height: 52px;
+}
+
+/* Badges — mirrors PLT dual-badge system */
+.tc-badge-group {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.tc-badge-group--dual {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: flex-start;
+  padding: 10px;
+  gap: 6px;
+}
+
+.tc-badge-group--dual .tc-sale-badge,
+.tc-badge-group--dual .tc-best-badge {
+  position: static;
+}
+
+.tc-sale-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  padding: 8px 16px;
+  background: var(--pc-sale-red, #D63C3C);
+  color: var(--pc-white, #fff);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  line-height: 1.3;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.tc-best-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  padding: 8px 16px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  line-height: 1.3;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media screen and (min-width: 750px) and (max-width: 1000px) {
+  .tc-sale-badge { font-size: 0.82rem; padding: 5px 11px; top: 8px; left: 8px; }
+  .tc-best-badge { font-size: 0.82rem; padding: 5px 11px; top: 8px; right: 8px; }
+  .tc-badge-group--dual { padding: 8px; gap: 5px; }
+}
+
+@media screen and (max-width: 749px) {
+  .tc-sale-badge { font-size: 0.82rem; padding: 6px 12px; top: 8px; left: 8px; }
+  .tc-best-badge { font-size: 0.82rem; padding: 6px 12px; top: 8px; right: 8px; }
+}
+
+@media screen and (max-width: 480px) {
+  .tc-sale-badge { font-size: 0.72rem; padding: 4px 9px; top: 7px; left: 7px; }
+  .tc-best-badge { font-size: 0.72rem; padding: 4px 9px; top: 7px; right: 7px; }
+  .tc-badge-group--dual { padding: 7px; gap: 4px; }
+}
+
+@container tc-card-media (max-width: 170px) {
+  .tc-badge-group--dual { padding: 8px; gap: 4px; }
+  .tc-badge-group--dual .tc-sale-badge,
+  .tc-badge-group--dual .tc-best-badge {
+    font-size: 0.7rem;
+    padding: 3px 7px;
+    border-width: 2px;
+    box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+    letter-spacing: 0.02em;
+  }
+}
+
+/* Card body */
+.tc-card__body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.tc-card__title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.tc-card__title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tc-card__title-link:hover .tc-card__title {
+  color: var(--pc-orange, #EE7B28);
+}
+
+.tc-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tc-card__price-reg {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--pc-text, #2B1B12);
+}
+
+.tc-card__price-sale {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--pc-sale-red, #D63C3C);
+}
+
+.tc-card__price-compare {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.tc-card__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: var(--pc-green, #4F8A2F);
+  color: var(--pc-white, #fff);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+  margin-top: auto;
+}
+
+.tc-card__btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.tc-card__btn:hover {
+  background: var(--pc-green-dark, #3E6F25);
+  color: var(--pc-white, #fff);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── Empty state ── */
+.tc-empty {
+  text-align: center;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.tc-empty__paw {
+  color: rgba(43, 27, 18, 0.1);
+}
+
+.tc-empty__paw svg {
+  width: 80px;
+  height: 80px;
+}
+
+.tc-empty__text {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.5;
+  margin: 0;
+}
+
+.tc-empty__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 28px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tc-empty__btn:hover {
+  background: var(--pc-orange-dark, #E58901);
+  color: var(--pc-white, #fff);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── Pagination ── */
+.tc-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 52px;
+  flex-wrap: wrap;
+}
+
+.tc-pagination__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 26px;
+  background: var(--pc-white, #fff);
+  color: var(--pc-text, #2B1B12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tc-pagination__btn:hover {
+  color: var(--pc-text, #2B1B12);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+}
+
+.tc-pagination__info {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.5;
+}
+
+/* ── Responsive ── */
+@media screen and (max-width: 1199px) {
+  .tc-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .tc-hero {
+    margin-bottom: 28px;
+  }
+
+  .tc-tabs {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    margin-bottom: 24px;
+  }
+
+  .tc-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .tc-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+
+  .tc-sort-form {
+    width: 100%;
+  }
+
+  .tc-sort__wrap {
+    width: 100%;
+  }
+
+  .tc-sort__select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tc-card__body {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .tc-card__title {
+    font-size: 1rem;
+  }
+
+  .tc-card__btn {
+    font-size: 0.88rem;
+    padding: 9px 16px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .tc-grid {
+    gap: 10px;
+  }
+
+  .tc-card__body {
+    padding: 10px;
+  }
+
+  .tc-card__title {
+    font-size: 0.95rem;
+  }
+
+  .tc-card__btn {
+    font-size: 0.82rem;
+    padding: 8px 12px;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Tailand Collection",
+  "tag": "section",
+  "class": "tailand-collection-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero heading"
+    },
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading — plain text",
+      "default": "Shop"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlighted",
+      "label": "Heading — highlighted text (leave blank to use collection title)",
+      "info": "Shown with the green underline. Leave empty to use the collection's own title."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show collection description",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Category tabs"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tabs",
+      "label": "Show category tabs",
+      "default": true
+    },
+    {
+      "type": "link_list",
+      "id": "nav_menu",
+      "label": "Navigation menu",
+      "default": "main-menu",
+      "info": "Tabs are built automatically from this Shopify menu. Edit the menu in Online Store → Navigation to change tabs and order. Icons are matched by collection handle."
+    },
+    {
+      "type": "header",
+      "content": "Sort bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort",
+      "label": "Show sort + product count bar",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Product cards"
+    },
+    {
+      "type": "text",
+      "id": "card_btn_text",
+      "label": "Card button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Products per page",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badges",
+      "label": "Show sale badge (ENDS SOON)",
+      "default": true,
+      "info": "Shown automatically on products with a compare-at price."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_best_seller_badge",
+      "label": "Show Best Seller badge on all products",
+      "default": false,
+      "info": "Turns on the orange badge for every product in this collection."
+    },
+    {
+      "type": "text",
+      "id": "best_seller_badge_text",
+      "label": "Best Seller badge text",
+      "default": "Best Seller"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tailand Collection"
+    }
+  ]
+}
+{% endschema %}
