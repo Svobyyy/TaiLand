@@ -1,0 +1,529 @@
+{%- liquid
+  assign t4n_plain   = section.settings.heading_plain | default: 'Oops, this page'
+  assign t4n_hi      = section.settings.heading_highlighted | default: 'ran away'
+  assign t4n_sub     = section.settings.subtext
+  assign t4n_p_btn   = section.settings.primary_btn_text | default: 'Back to Home'
+  assign t4n_p_url   = section.settings.primary_btn_url | default: '/'
+  assign t4n_s1_t    = section.settings.btn_sec1_text | default: 'Shop Best Sellers'
+  assign t4n_s1_u    = section.settings.btn_sec1_url | default: '/collections/best-sellers'
+  assign t4n_s2_t    = section.settings.btn_sec2_text | default: 'Shop Dogs'
+  assign t4n_s2_u    = section.settings.btn_sec2_url | default: '/collections/dogs'
+  assign t4n_s3_t    = section.settings.btn_sec3_text | default: 'Shop Cats'
+  assign t4n_s3_u    = section.settings.btn_sec3_url | default: '/collections/cats'
+  assign t4n_s4_t    = section.settings.btn_sec4_text | default: 'Contact Us'
+  assign t4n_s4_u    = section.settings.btn_sec4_url | default: '/pages/contact'
+  assign t4n_search  = section.settings.show_search
+  assign t4n_srch_h  = section.settings.search_heading | default: 'Still searching?'
+  assign t4n_srch_t  = section.settings.search_text
+  assign t4n_srch_ph = section.settings.search_placeholder | default: 'Search for products...'
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: var(--pc-white, #fff);
+  }
+{% endstyle %}
+
+<section class="t4n-section">
+  <div class="t4n-container">
+
+    <!-- ── Illustration ── -->
+    <div class="t4n-illus-wrap" aria-hidden="true">
+      <svg class="t4n-illus" viewBox="0 0 148 148" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <!-- Magnifying glass lens -->
+        <circle cx="60" cy="60" r="50" fill="#FFF4D9" stroke="#2B1B12" stroke-width="4.5"/>
+        <!-- Soft dashed inner ring for depth -->
+        <circle cx="60" cy="60" r="41" fill="none" stroke="#2B1B12" stroke-width="1.5" stroke-dasharray="4 5" opacity="0.18"/>
+        <!-- Handle -->
+        <line x1="100" y1="100" x2="136" y2="136" stroke="#2B1B12" stroke-width="12" stroke-linecap="round"/>
+        <!-- Paw main pad -->
+        <ellipse cx="60" cy="72" rx="17" ry="13.5" fill="#E8A53A"/>
+        <!-- Paw toes -->
+        <circle cx="42" cy="53" r="8" fill="#E8A53A"/>
+        <circle cx="55" cy="46" r="8" fill="#E8A53A"/>
+        <circle cx="68" cy="46" r="8" fill="#E8A53A"/>
+        <circle cx="82" cy="53" r="8" fill="#E8A53A"/>
+      </svg>
+    </div>
+
+    <!-- ── Hero ── -->
+    <div class="t4n-hero">
+      <h1 class="t4n-hero__heading">
+        {%- if t4n_plain != blank -%}
+          <span class="t4n-hero__plain">{{ t4n_plain | escape }}&nbsp;</span>
+        {%- endif -%}
+        {%- if t4n_hi != blank -%}
+          <span class="t4n-hero__hi">
+            {{- t4n_hi | escape -}}
+            <svg class="t4n-hero__underline" viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        {%- endif -%}
+      </h1>
+      {%- if t4n_sub != blank -%}
+        <p class="t4n-hero__subtext">{{ t4n_sub | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <!-- ── Primary CTA ── -->
+    <div class="t4n-actions">
+      <a href="{{ t4n_p_url }}" class="t4n-btn t4n-btn--primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        {{ t4n_p_btn | escape }}
+      </a>
+    </div>
+
+    <!-- ── Secondary CTAs ── -->
+    <div class="t4n-secondary">
+      {%- if t4n_s1_t != blank -%}
+        <a href="{{ t4n_s1_u }}" class="t4n-btn t4n-btn--secondary">{{ t4n_s1_t | escape }}</a>
+      {%- endif -%}
+      {%- if t4n_s2_t != blank -%}
+        <a href="{{ t4n_s2_u }}" class="t4n-btn t4n-btn--secondary">{{ t4n_s2_t | escape }}</a>
+      {%- endif -%}
+      {%- if t4n_s3_t != blank -%}
+        <a href="{{ t4n_s3_u }}" class="t4n-btn t4n-btn--secondary">{{ t4n_s3_t | escape }}</a>
+      {%- endif -%}
+      {%- if t4n_s4_t != blank -%}
+        <a href="{{ t4n_s4_u }}" class="t4n-btn t4n-btn--secondary">{{ t4n_s4_t | escape }}</a>
+      {%- endif -%}
+    </div>
+
+    <!-- ── Search ── -->
+    {%- if t4n_search -%}
+      <div class="t4n-search-card">
+        {%- if t4n_srch_h != blank -%}
+          <h2 class="t4n-search__heading">{{ t4n_srch_h | escape }}</h2>
+        {%- endif -%}
+        {%- if t4n_srch_t != blank -%}
+          <p class="t4n-search__text">{{ t4n_srch_t | escape }}</p>
+        {%- endif -%}
+        <form class="t4n-search__form" action="/search" method="get" role="search">
+          <input type="hidden" name="type" value="product">
+          <input
+            class="t4n-search__input"
+            type="text"
+            name="q"
+            placeholder="{{ t4n_srch_ph | escape }}"
+            aria-label="{{ t4n_srch_ph | escape }}"
+            autocomplete="off"
+          >
+          <button class="t4n-search__btn" type="submit" aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+        </form>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% stylesheet %}
+/* =========================================================
+   Tailand 404 Page — t4n-*
+   ========================================================= */
+
+.t4n-section {
+}
+
+.t4n-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding-inline: var(--page-margin, 20px);
+  text-align: center;
+}
+
+/* ── Illustration ── */
+.t4n-illus-wrap {
+  margin: 0 auto 32px;
+  width: 160px;
+  height: 160px;
+}
+
+.t4n-illus {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Hero ── */
+.t4n-hero {
+  margin-bottom: 40px;
+}
+
+.t4n-hero__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2rem, 5.5vw, 3rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.25;
+  margin: 0 0 18px;
+}
+
+.t4n-hero__plain {
+  font-weight: 400;
+}
+
+.t4n-hero__hi {
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  white-space: nowrap;
+  padding-bottom: 8px;
+}
+
+.t4n-hero__underline {
+  position: absolute;
+  left: -3%;
+  bottom: -2px;
+  width: 106%;
+  height: 12px;
+  color: var(--pc-green, #4F8A2F);
+  pointer-events: none;
+  display: block;
+}
+
+.t4n-hero__subtext {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  line-height: 1.7;
+  margin: 0 auto;
+  max-width: 520px;
+}
+
+/* ── Primary action ── */
+.t4n-actions {
+  margin-bottom: 20px;
+}
+
+/* ── Secondary actions ── */
+.t4n-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 52px;
+}
+
+/* ── Buttons ── */
+.t4n-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 50px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.t4n-btn--primary {
+  background: var(--pc-green, #5BB870);
+  color: var(--pc-white, #fff);
+  font-size: 1.1rem;
+  padding: 14px 34px;
+  box-shadow: 5px 5px 0 var(--pc-text, #2B1B12);
+}
+
+.t4n-btn--primary svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.t4n-btn--primary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--pc-text, #2B1B12);
+  color: var(--pc-white, #fff);
+}
+
+.t4n-btn--primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+}
+
+.t4n-btn--secondary {
+  background: #FFF4D9;
+  color: var(--pc-text, #2B1B12);
+  font-size: 0.95rem;
+  padding: 10px 22px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+}
+
+.t4n-btn--secondary:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  color: var(--pc-text, #2B1B12);
+}
+
+.t4n-btn--secondary:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── Search card ── */
+.t4n-search-card {
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 20px;
+  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
+  padding: 36px 40px;
+}
+
+.t4n-search__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0 0 8px;
+}
+
+.t4n-search__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  margin: 0 0 24px;
+}
+
+.t4n-search__form {
+  display: flex;
+  max-width: 480px;
+  margin-inline: auto;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 50px;
+  overflow: hidden;
+  background: var(--pc-white, #fff);
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+}
+
+.t4n-search__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  padding: 12px 20px;
+  min-width: 0;
+}
+
+.t4n-search__input::placeholder {
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.45;
+}
+
+.t4n-search__btn {
+  background: var(--pc-green, #5BB870);
+  border: none;
+  border-left: 2.5px solid var(--pc-text, #2B1B12);
+  color: var(--pc-white, #fff);
+  padding: 12px 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.t4n-search__btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.t4n-search__btn:hover {
+  background: var(--pc-green-dark, #4A9860);
+}
+
+/* ── Mobile ── */
+@media screen and (max-width: 600px) {
+  .t4n-illus-wrap {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 24px;
+  }
+
+  .t4n-btn--primary {
+    width: 100%;
+    justify-content: center;
+    font-size: 1rem;
+    padding: 13px 24px;
+  }
+
+  .t4n-secondary {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .t4n-btn--secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .t4n-search-card {
+    padding: 28px 20px;
+  }
+}
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "404 Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading — plain text",
+      "default": "Oops, this page"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlighted",
+      "label": "Heading — highlighted word(s)",
+      "default": "ran away"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "We couldn't find the page you were looking for. It may have moved, been removed, or followed a treat trail somewhere else."
+    },
+    {
+      "type": "header",
+      "content": "Primary button"
+    },
+    {
+      "type": "text",
+      "id": "primary_btn_text",
+      "label": "Primary button text",
+      "default": "Back to Home"
+    },
+    {
+      "type": "url",
+      "id": "primary_btn_url",
+      "label": "Primary button link"
+    },
+    {
+      "type": "header",
+      "content": "Secondary buttons"
+    },
+    {
+      "type": "text",
+      "id": "btn_sec1_text",
+      "label": "Button 1 text",
+      "default": "Shop Best Sellers"
+    },
+    {
+      "type": "url",
+      "id": "btn_sec1_url",
+      "label": "Button 1 link"
+    },
+    {
+      "type": "text",
+      "id": "btn_sec2_text",
+      "label": "Button 2 text",
+      "default": "Shop Dogs"
+    },
+    {
+      "type": "url",
+      "id": "btn_sec2_url",
+      "label": "Button 2 link"
+    },
+    {
+      "type": "text",
+      "id": "btn_sec3_text",
+      "label": "Button 3 text",
+      "default": "Shop Cats"
+    },
+    {
+      "type": "url",
+      "id": "btn_sec3_url",
+      "label": "Button 3 link"
+    },
+    {
+      "type": "text",
+      "id": "btn_sec4_text",
+      "label": "Button 4 text",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "btn_sec4_url",
+      "label": "Button 4 link"
+    },
+    {
+      "type": "header",
+      "content": "Search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search box",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_heading",
+      "label": "Search heading",
+      "default": "Still searching?"
+    },
+    {
+      "type": "text",
+      "id": "search_text",
+      "label": "Search subtext",
+      "default": "Try searching for a product instead."
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search input placeholder",
+      "default": "Search for products..."
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "404 Page"
+    }
+  ]
+}
+{% endschema %}

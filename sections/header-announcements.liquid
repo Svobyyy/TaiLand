@@ -1,5 +1,14 @@
 
 
+{% style %}
+  #shopify-section-{{ section.id }} aside,
+  #shopify-section-{{ section.id }} .announcement-bar__slides,
+  #shopify-section-{{ section.id }} .announcement-bar__slide {
+    position: relative;
+    z-index: 1;
+  }
+{% endstyle %}
+
 {% if section.blocks.size > 1 %}
   <script
     src="{{ 'announcement-bar.js' | asset_url }}"

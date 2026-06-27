@@ -1,0 +1,61 @@
+{
+  "sections": {
+    "tailand_track_order_main": {
+      "type": "tailand-track-order",
+      "settings": {
+        "heading_plain": "Track Your",
+        "heading_highlighted": "Order",
+        "intro_text": "Once your order ships, you'll receive a tracking link by email. Use that link to view the latest delivery updates securely.",
+        "show_account_btn": true,
+        "account_btn_text": "Sign in to view your orders",
+        "account_btn_url": "/account",
+        "cta_heading": "Can't find your tracking?",
+        "cta_text": "Send us your name, email, and order number through our contact form and we'll help you check the status.",
+        "cta_btn_text": "Contact Us",
+        "cta_btn_url": "/pages/contact",
+        "faq_heading": "Common Questions",
+        "padding_top": 48,
+        "padding_bottom": 64
+      },
+      "blocks": {
+        "faq_1": {
+          "type": "faq_item",
+          "settings": {
+            "question": "When will I receive my tracking link?",
+            "answer": "Tracking details are sent by email once your order has shipped. If you haven't received it yet, check your spam folder or contact us."
+          }
+        },
+        "faq_2": {
+          "type": "faq_item",
+          "settings": {
+            "question": "My tracking link is not updating. What should I do?",
+            "answer": "Tracking updates can sometimes take time to appear, especially right after shipping. If it has not updated for a while, contact us and we'll help."
+          }
+        },
+        "faq_3": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can I track my order without an account?",
+            "answer": "Yes. Use the tracking link from your shipping confirmation email. No account is needed. If you can't find it, contact us with your order details."
+          }
+        },
+        "faq_4": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Where can I find my order number?",
+            "answer": "Your order number is in your order confirmation email. It usually starts with a # symbol followed by a number."
+          }
+        },
+        "faq_5": {
+          "type": "faq_item",
+          "settings": {
+            "question": "What if I entered the wrong email at checkout?",
+            "answer": "Contact us with your name, shipping address, and approximate order date so we can help locate your order."
+          }
+        }
+      },
+      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4", "faq_5"]
+    }
+  },
+  "order": ["tailand_track_order_main"]
+}

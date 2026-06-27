@@ -1,0 +1,796 @@
+{%- liquid
+  assign trp_plain     = section.settings.heading_plain    | default: 'Returns &'
+  assign trp_hi        = section.settings.heading_hi       | default: 'Refunds'
+  assign trp_intro     = section.settings.intro_text
+  assign trp_c1_t      = section.settings.card1_title      | default: 'Return Window'
+  assign trp_c1_txt    = section.settings.card1_text
+  assign trp_c2_t      = section.settings.card2_title      | default: 'Damaged or Wrong Item'
+  assign trp_c2_txt    = section.settings.card2_text
+  assign trp_c3_t      = section.settings.card3_title      | default: 'Refund Timing'
+  assign trp_c3_txt    = section.settings.card3_text
+  assign trp_c4_t      = section.settings.card4_title      | default: 'Need Help?'
+  assign trp_c4_txt    = section.settings.card4_text
+  assign trp_action_h  = section.settings.action_heading   | default: 'Start with your order details'
+  assign trp_action_t  = section.settings.action_text
+  assign trp_ct_btn    = section.settings.contact_btn_text | default: 'Contact Us'
+  assign trp_ct_url    = section.settings.contact_btn_url  | default: '/pages/contact'
+  assign trp_faq_h     = section.settings.faq_heading      | default: 'Common Questions'
+  assign trp_cta_h     = section.settings.cta_heading
+  assign trp_cta_t     = section.settings.cta_text
+  assign trp_cta_btn   = section.settings.cta_btn_text     | default: 'Contact Us'
+  assign trp_cta_url   = section.settings.cta_btn_url      | default: '/pages/contact'
+
+  assign trp_policy_blocks = section.blocks | where: 'type', 'policy'
+  assign trp_faq_blocks    = section.blocks | where: 'type', 'faq'
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: #FFFFFF;
+  }
+{% endstyle %}
+
+<div class="trp-section">
+  <div class="trp-container">
+
+    <!-- ── Hero ── -->
+    <div class="trp-hero">
+      <h1 class="trp-hero__heading">
+        {%- if trp_plain != blank -%}
+          <span class="trp-hero__plain">{{- trp_plain | escape -}}&nbsp;</span>
+        {%- endif -%}
+        {%- if trp_hi != blank -%}
+          <span class="trp-hero__highlight">
+            {{- trp_hi | escape -}}
+            <svg class="trp-underline-svg" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="var(--pc-green, #5BB870)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+          </span>
+        {%- endif -%}
+      </h1>
+      {%- if trp_intro != blank -%}
+        <p class="trp-hero__intro">{{ trp_intro | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <!-- ── Summary cards ── -->
+    <div class="trp-summary">
+
+      <div class="trp-summary-card">
+        <div class="trp-summary-card__icon trp-summary-card__icon--green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="1 4 1 10 7 10"/>
+            <polyline points="23 20 23 14 17 14"/>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/>
+          </svg>
+        </div>
+        <span class="trp-summary-card__title">{{ trp_c1_t | escape }}</span>
+        <span class="trp-summary-card__text">{{ trp_c1_txt | escape }}</span>
+      </div>
+
+      <div class="trp-summary-card">
+        <div class="trp-summary-card__icon trp-summary-card__icon--orange">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="10.29 3.86 1.82 18 22.18 18 13.71 3.86 10.29 3.86"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <span class="trp-summary-card__title">{{ trp_c2_t | escape }}</span>
+        <span class="trp-summary-card__text">{{ trp_c2_txt | escape }}</span>
+      </div>
+
+      <div class="trp-summary-card">
+        <div class="trp-summary-card__icon trp-summary-card__icon--green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+            <line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+        </div>
+        <span class="trp-summary-card__title">{{ trp_c3_t | escape }}</span>
+        <span class="trp-summary-card__text">{{ trp_c3_txt | escape }}</span>
+      </div>
+
+      <div class="trp-summary-card">
+        <div class="trp-summary-card__icon trp-summary-card__icon--orange">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+            <ellipse cx="12" cy="15.5" rx="5" ry="4.5"/>
+            <ellipse cx="5.5" cy="11" rx="2" ry="2.5"/>
+            <ellipse cx="18.5" cy="11" rx="2" ry="2.5"/>
+            <ellipse cx="8.5" cy="8" rx="1.8" ry="2.2"/>
+            <ellipse cx="15.5" cy="8" rx="1.8" ry="2.2"/>
+          </svg>
+        </div>
+        <span class="trp-summary-card__title">{{ trp_c4_t | escape }}</span>
+        <span class="trp-summary-card__text">{{ trp_c4_txt | escape }}</span>
+      </div>
+
+    </div>
+
+    <!-- ── Action card ── -->
+    <div class="trp-action">
+      <h2 class="trp-action__heading">{{ trp_action_h | escape }}</h2>
+      {%- if trp_action_t != blank -%}
+        <p class="trp-action__text">{{ trp_action_t | escape }}</p>
+      {%- endif -%}
+      <div class="trp-action__btns">
+        <a href="{{ trp_ct_url }}" class="trp-action__btn trp-action__btn--primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          {{ trp_ct_btn | escape }}
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Policy sections ── -->
+    {%- if trp_policy_blocks.size > 0 -%}
+      <div class="trp-policy">
+        {%- for block in trp_policy_blocks -%}
+          <details class="trp-acc" {{ block.shopify_attributes }}>
+            <summary class="trp-acc__summary">
+              <span>{{ block.settings.title | escape }}</span>
+              <svg class="trp-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </summary>
+            <div class="trp-acc__body">
+              {{ block.settings.content }}
+            </div>
+          </details>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <!-- ── FAQ ── -->
+    {%- if trp_faq_blocks.size > 0 -%}
+      <div class="trp-faq">
+        <h2 class="trp-faq__heading">{{ trp_faq_h | escape }}</h2>
+        <svg class="trp-faq__wave" viewBox="0 0 200 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4 12 C30 5 60 16 100 10 C140 4 170 15 196 10" stroke="var(--pc-orange, #EE7B28)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="trp-faq__list">
+          {%- for block in trp_faq_blocks -%}
+            <details class="trp-acc" {{ block.shopify_attributes }}>
+              <summary class="trp-acc__summary">
+                <span>{{ block.settings.question | escape }}</span>
+                <svg class="trp-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </summary>
+              <div class="trp-acc__body">
+                <p>{{ block.settings.answer | escape }}</p>
+              </div>
+            </details>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <!-- ── Contact CTA ── -->
+    {%- if trp_cta_h != blank or trp_cta_t != blank -%}
+      <div class="trp-cta">
+        {%- if trp_cta_h != blank -%}
+          <h2 class="trp-cta__heading">{{ trp_cta_h | escape }}</h2>
+        {%- endif -%}
+        {%- if trp_cta_t != blank -%}
+          <p class="trp-cta__text">{{ trp_cta_t | escape }}</p>
+        {%- endif -%}
+        <a href="{{ trp_cta_url }}" class="trp-cta__btn">
+          {{ trp_cta_btn | escape }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% stylesheet %}
+/* ==========================================================
+   Tailand Returns & Refunds — trp-*
+   ========================================================== */
+
+.trp-section {
+}
+
+.trp-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding-inline: var(--page-margin, 20px);
+}
+
+/* ── Hero ── */
+.trp-hero {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.trp-hero__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.25;
+  margin: 0 0 20px;
+}
+
+.trp-hero__plain {
+  font-weight: 400;
+}
+
+.trp-hero__highlight {
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  color: var(--pc-text, #2B1B12);
+}
+
+.trp-underline-svg {
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 100%;
+  height: 14px;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.trp-hero__intro {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.72;
+  line-height: 1.7;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* ── Summary cards ── */
+.trp-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.trp-summary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 22px 14px 24px;
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 18px;
+  box-shadow: 4px 5px 0 var(--pc-text, #2B1B12);
+}
+
+.trp-summary-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--pc-text, #2B1B12);
+  border-radius: 12px;
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.trp-summary-card__icon--green  { background: var(--pc-green, #5BB870); }
+.trp-summary-card__icon--orange { background: var(--pc-orange, #EE7B28); }
+
+.trp-summary-card__icon svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.trp-summary-card__title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.2;
+}
+
+.trp-summary-card__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.68;
+  line-height: 1.55;
+}
+
+/* ── Action card ── */
+.trp-action {
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 20px;
+  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
+  padding: 40px 36px;
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.trp-action__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.4rem, 3vw, 1.75rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0 0 14px;
+}
+
+.trp-action__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.72;
+  line-height: 1.65;
+  max-width: 540px;
+  margin: 0 auto 28px;
+}
+
+.trp-action__btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.trp-action__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.trp-action__btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.trp-action__btn--primary {
+  background: var(--pc-green, #5BB870);
+  color: var(--pc-white, #fff);
+}
+
+.trp-action__btn--primary:hover {
+  background: var(--pc-green-dark, #4A9860);
+  color: var(--pc-white, #fff);
+}
+
+.trp-action__btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
+}
+
+.trp-action__btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── Policy accordion list ── */
+.trp-policy {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 56px;
+}
+
+/* ── Accordion — shared by policy and FAQ ── */
+.trp-acc {
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.trp-acc[open] {
+  box-shadow: 5px 5px 0 var(--pc-text, #2B1B12);
+}
+
+.trp-acc__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+}
+
+.trp-acc__summary::-webkit-details-marker { display: none; }
+
+.trp-acc__chev {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--pc-orange, #EE7B28);
+  transition: transform 0.2s ease;
+}
+
+.trp-acc[open] .trp-acc__chev { transform: rotate(180deg); }
+
+.trp-acc__body {
+  padding: 14px 22px 20px;
+  border-top: 1.5px solid rgba(43, 27, 18, 0.12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.85;
+}
+
+.trp-acc__body p { margin: 0 0 0.7rem; }
+.trp-acc__body p:last-child { margin-bottom: 0; }
+.trp-acc__body a {
+  color: var(--pc-orange, #EE7B28);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.trp-acc__body a:hover { opacity: 0.8; }
+
+/* ── FAQ section ── */
+.trp-faq {
+  margin-bottom: 56px;
+}
+
+.trp-faq__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.7rem, 3.5vw, 2.3rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  text-align: center;
+  margin: 0 0 6px;
+}
+
+.trp-faq__wave {
+  display: block;
+  width: 140px;
+  height: 18px;
+  margin: 0 auto 28px;
+  overflow: visible;
+}
+
+.trp-faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Contact CTA card ── */
+.trp-cta {
+  text-align: center;
+  padding: 44px 36px;
+  background: #FFF4D9;
+  border: 2px solid rgba(79, 138, 47, 0.2);
+  border-radius: 20px;
+}
+
+.trp-cta__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0 0 12px;
+}
+
+.trp-cta__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  line-height: 1.65;
+  margin: 0 0 26px;
+}
+
+.trp-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 30px;
+  background: var(--pc-green, #5BB870);
+  color: var(--pc-white, #fff);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.trp-cta__btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.trp-cta__btn:hover {
+  background: var(--pc-green-dark, #4A9860);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
+}
+
+.trp-cta__btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .trp-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .trp-hero {
+    margin-bottom: 36px;
+  }
+  .trp-summary {
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .trp-summary-card {
+    padding: 18px 12px 20px;
+  }
+  .trp-action {
+    padding: 28px 20px;
+    margin-bottom: 36px;
+  }
+  .trp-policy,
+  .trp-faq {
+    margin-bottom: 40px;
+  }
+  .trp-acc__summary {
+    padding: 16px 18px;
+    font-size: 1rem;
+  }
+  .trp-acc__body {
+    padding: 12px 18px 16px;
+    font-size: 0.95rem;
+  }
+  .trp-cta {
+    padding: 32px 20px;
+  }
+  .trp-action__btns {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .trp-action__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .trp-summary {
+    grid-template-columns: 1fr;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Returns & Refunds",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading — plain part",
+      "default": "Returns &"
+    },
+    {
+      "type": "text",
+      "id": "heading_hi",
+      "label": "Heading — highlighted word",
+      "default": "Refunds",
+      "info": "Gets the green wavy underline."
+    },
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Hero intro text",
+      "default": "Need help with a return, refund, damaged item, or wrong product? Here's how we handle it."
+    },
+    { "type": "header", "content": "Summary cards" },
+    {
+      "type": "text",
+      "id": "card1_title",
+      "label": "Card 1 title",
+      "default": "Return Window"
+    },
+    {
+      "type": "text",
+      "id": "card1_text",
+      "label": "Card 1 text",
+      "default": "Return requests should be made within the applicable return window after delivery."
+    },
+    {
+      "type": "text",
+      "id": "card2_title",
+      "label": "Card 2 title",
+      "default": "Damaged or Wrong Item"
+    },
+    {
+      "type": "text",
+      "id": "card2_text",
+      "label": "Card 2 text",
+      "default": "If something arrives damaged or incorrect, contact us with your order number and photos."
+    },
+    {
+      "type": "text",
+      "id": "card3_title",
+      "label": "Card 3 title",
+      "default": "Refund Timing"
+    },
+    {
+      "type": "text",
+      "id": "card3_text",
+      "label": "Card 3 text",
+      "default": "Refunds are processed after the return or request is reviewed and approved."
+    },
+    {
+      "type": "text",
+      "id": "card4_title",
+      "label": "Card 4 title",
+      "default": "Need Help?"
+    },
+    {
+      "type": "text",
+      "id": "card4_text",
+      "label": "Card 4 text",
+      "default": "Send us a message and we'll help you with the next step."
+    },
+    { "type": "header", "content": "Action card" },
+    {
+      "type": "text",
+      "id": "action_heading",
+      "label": "Action card heading",
+      "default": "Start with your order details"
+    },
+    {
+      "type": "textarea",
+      "id": "action_text",
+      "label": "Action card body text",
+      "default": "If you have a customer account, sign in to view your orders. If you need help with a return or refund, contact us with your order number."
+    },
+    {
+      "type": "text",
+      "id": "contact_btn_text",
+      "label": "Contact button label",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "contact_btn_url",
+      "label": "Contact button link"
+    },
+    { "type": "header", "content": "FAQ" },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "FAQ section heading",
+      "default": "Common Questions"
+    },
+    { "type": "header", "content": "Contact CTA" },
+    {
+      "type": "text",
+      "id": "cta_heading",
+      "label": "CTA heading",
+      "default": "Need help with a return?"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_text",
+      "label": "CTA body text",
+      "default": "Send us your order number and a short description of the issue. We'll help you with the next step."
+    },
+    {
+      "type": "text",
+      "id": "cta_btn_text",
+      "label": "CTA button label",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "cta_btn_url",
+      "label": "CTA button link"
+    },
+    { "type": "header", "content": "Spacing" },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "policy",
+      "name": "Policy section",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Section title",
+          "default": "Policy section"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Section content",
+          "default": "<p>Enter your policy text here.</p>"
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Your question here"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "Your answer here."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Returns & Refunds" }
+  ]
+}
+{% endschema %}

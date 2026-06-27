@@ -1,0 +1,738 @@
+{%- liquid
+  assign tto_plain     = section.settings.heading_plain | default: 'Track Your'
+  assign tto_hi        = section.settings.heading_highlighted | default: 'Order'
+  assign tto_intro     = section.settings.intro_text
+  assign tto_cta_h     = section.settings.cta_heading
+  assign tto_cta_t     = section.settings.cta_text
+  assign tto_cta_btn   = section.settings.cta_btn_text | default: 'Contact Us'
+  assign tto_cta_url   = section.settings.cta_btn_url | default: '/pages/contact'
+  assign tto_faq_h     = section.settings.faq_heading | default: 'Common Questions'
+
+  assign tto_has_faq = false
+  if section.blocks.size > 0
+    assign tto_has_faq = true
+  endif
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: var(--pc-white, #fff);
+  }
+{% endstyle %}
+
+<section class="tto-section">
+  <div class="tto-container">
+
+    <!-- ── Hero ── -->
+    <div class="tto-hero">
+      <h1 class="tto-hero__heading">
+        {%- if tto_plain != blank -%}
+          <span class="tto-hero__plain">{{ tto_plain | escape }}&nbsp;</span>
+        {%- endif -%}
+        {%- if tto_hi != blank -%}
+          <span class="tto-hero__hi">
+            {{- tto_hi | escape -}}
+            <svg class="tto-hero__underline" viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        {%- endif -%}
+      </h1>
+      {%- if tto_intro != blank -%}
+        <p class="tto-hero__intro">{{ tto_intro | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <!-- ── 3-step card ── -->
+    <div class="tto-steps-card">
+      <div class="tto-steps">
+
+        <!-- Step 1 -->
+        <div class="tto-step">
+          <div class="tto-step__icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="tto-step__num" aria-hidden="true">1</span>
+          </div>
+          <h2 class="tto-step__title">Check your email</h2>
+          <p class="tto-step__text">Look for your shipping confirmation email from Tailand. It includes your tracking link once your order has shipped.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="tto-step">
+          <div class="tto-step__icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <span class="tto-step__num" aria-hidden="true">2</span>
+          </div>
+          <h2 class="tto-step__title">Open your tracking link</h2>
+          <p class="tto-step__text">Use the secure tracking link from your email to view the latest delivery updates directly from the carrier.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="tto-step">
+          <div class="tto-step__icon-wrap tto-step__icon-wrap--green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span class="tto-step__num tto-step__num--green" aria-hidden="true">3</span>
+          </div>
+          <h2 class="tto-step__title">Need help?</h2>
+          <p class="tto-step__text">If you can't find your tracking email or your tracking has not updated, send us a message and we'll sort it out.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Order number tip ── -->
+    <div class="tto-tip" role="note">
+      <svg class="tto-tip__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span class="tto-tip__text">Have your order number ready when contacting us — you can find it in your order confirmation email.</span>
+    </div>
+
+    <!-- ── Contact CTA card ── -->
+    <div class="tto-cta">
+      {%- if tto_cta_h != blank -%}
+        <h2 class="tto-cta__heading">{{ tto_cta_h | escape }}</h2>
+      {%- endif -%}
+      {%- if tto_cta_t != blank -%}
+        <p class="tto-cta__text">{{ tto_cta_t | escape }}</p>
+      {%- endif -%}
+      {%- if tto_cta_btn != blank -%}
+        <a href="{{ tto_cta_url }}" class="tto-cta__btn">
+          {{ tto_cta_btn | escape }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <!-- ── FAQ accordion ── -->
+    {%- if tto_has_faq -%}
+      <div class="tto-faq">
+        {%- if tto_faq_h != blank -%}
+          <h2 class="tto-faq__heading">{{ tto_faq_h | escape }}</h2>
+          <svg class="tto-faq__wave" viewBox="0 0 180 18" fill="none" aria-hidden="true">
+            <path d="M2 9 C 30 2, 60 16, 90 9 S 150 2, 178 9" stroke="var(--pc-green, #4F8A2F)" stroke-width="5" stroke-linecap="round" fill="none"/>
+          </svg>
+        {%- endif -%}
+        <div class="tto-faq__list">
+          {%- for block in section.blocks -%}
+            {%- if block.type != 'faq_item' -%}{%- continue -%}{%- endif -%}
+            {%- if block.settings.question == blank -%}{%- continue -%}{%- endif -%}
+            <details class="tto-acc" {{ block.shopify_attributes }}>
+              <summary class="tto-acc__summary">
+                <span class="tto-acc__question">{{ block.settings.question | escape }}</span>
+                <span class="tto-acc__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,7 10,13 16,7"/></svg>
+                </span>
+              </summary>
+              <div class="tto-acc__body">
+                <div class="tto-acc__inner">
+                  <p class="tto-acc__answer">{{ block.settings.answer | escape }}</p>
+                </div>
+              </div>
+            </details>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% stylesheet %}
+/* =========================================================
+   Tailand Track Order Page — tto-*
+   ========================================================= */
+
+.tto-section {
+}
+
+.tto-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding-inline: var(--page-margin, 20px);
+}
+
+/* ── Hero ── */
+.tto-hero {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 48px;
+}
+
+.tto-hero__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.2;
+  margin: 0 0 16px;
+}
+
+.tto-hero__plain {
+  font-weight: 400;
+}
+
+.tto-hero__hi {
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  white-space: nowrap;
+  padding-bottom: 8px;
+}
+
+.tto-hero__underline {
+  position: absolute;
+  left: -3%;
+  bottom: -2px;
+  width: 106%;
+  height: 12px;
+  color: var(--pc-green, #4F8A2F);
+  pointer-events: none;
+  display: block;
+}
+
+.tto-hero__intro {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ── Steps card ── */
+.tto-steps-card {
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 20px;
+  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
+  padding: 40px 32px;
+  margin-bottom: 28px;
+}
+
+.tto-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  align-items: start;
+}
+
+.tto-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 22px;
+  gap: 14px;
+}
+
+.tto-step:not(:last-child) {
+  border-right: 1.5px solid rgba(43, 27, 18, 0.1);
+}
+
+/* Icon circle */
+.tto-step__icon-wrap {
+  position: relative;
+  width: 66px;
+  height: 66px;
+  background: var(--pc-white, #fff);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pc-orange, #EE7B28);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  flex-shrink: 0;
+}
+
+.tto-step__icon-wrap--green {
+  color: var(--pc-green, #4F8A2F);
+}
+
+.tto-step__icon-wrap svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Step number badge */
+.tto-step__num {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 22px;
+  height: 22px;
+  background: var(--pc-orange, #EE7B28);
+  border: 2px solid var(--pc-text, #2B1B12);
+  border-radius: 50%;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--pc-white, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.tto-step__num--green {
+  background: var(--pc-green, #4F8A2F);
+}
+
+.tto-step__title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.tto-step__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.65;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── Order number tip callout ── */
+.tto-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 580px;
+  margin: 0 auto 40px;
+  padding: 14px 20px;
+  background: #FFF4D9;
+  border: 1.5px solid rgba(79, 138, 47, 0.2);
+  border-radius: 12px;
+}
+
+.tto-tip__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--pc-green, #4F8A2F);
+  margin-top: 1px;
+}
+
+.tto-tip__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.75;
+  line-height: 1.55;
+}
+
+/* ── Contact CTA card ── */
+.tto-cta {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 56px;
+  padding: 44px 36px;
+  background: #FFF4D9;
+  border: 2px solid rgba(238, 123, 40, 0.22);
+  border-radius: 20px;
+}
+
+.tto-cta__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0 0 12px;
+}
+
+.tto-cta__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  line-height: 1.65;
+  margin: 0 0 26px;
+}
+
+.tto-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 30px;
+  background: var(--pc-orange, #EE7B28);
+  color: var(--pc-white, #fff);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tto-cta__btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.tto-cta__btn:hover {
+  background: var(--pc-orange-dark, #E58901);
+  color: var(--pc-white, #fff);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
+}
+
+.tto-cta__btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── FAQ accordion ── */
+.tto-faq {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.tto-faq__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  text-align: center;
+  margin: 0 0 6px;
+}
+
+.tto-faq__wave {
+  display: block;
+  width: 160px;
+  height: 18px;
+  margin: 0 auto 32px;
+}
+
+.tto-faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Accordion item — same visual as tailand-faq.liquid */
+.tto-acc {
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.tto-acc[open] {
+  box-shadow: 5px 5px 0 var(--pc-text, #2B1B12);
+}
+
+.tto-acc__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.tto-acc__summary::-webkit-details-marker { display: none; }
+.tto-acc__summary::marker { display: none; }
+
+.tto-acc__summary:focus-visible {
+  outline: 2px solid var(--pc-orange, #EE7B28);
+  outline-offset: -2px;
+  border-radius: 14px;
+}
+
+.tto-acc__question {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.3;
+  flex: 1;
+  min-width: 0;
+  transition: color 0.15s ease;
+}
+
+.tto-acc__summary:hover .tto-acc__question {
+  color: var(--pc-orange, #EE7B28);
+}
+
+.tto-acc__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--pc-orange, #EE7B28);
+}
+
+.tto-acc__icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.tto-acc[open] .tto-acc__icon svg {
+  transform: rotate(180deg);
+}
+
+/* CSS grid height animation — same pattern as tailand-faq.liquid */
+.tto-acc__body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.28s ease;
+}
+
+.tto-acc[open] > .tto-acc__body {
+  grid-template-rows: 1fr;
+}
+
+.tto-acc__inner {
+  overflow: hidden;
+}
+
+.tto-acc__answer {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.82;
+  line-height: 1.75;
+  margin: 0;
+  padding: 4px 22px 20px;
+  border-top: 1.5px solid rgba(43, 27, 18, 0.1);
+}
+
+/* ── Responsive ── */
+@media screen and (max-width: 749px) {
+  .tto-hero {
+    margin-bottom: 32px;
+  }
+
+  .tto-hero__heading {
+    font-size: 2rem;
+  }
+
+  .tto-steps-card {
+    padding: 28px 20px;
+    border-radius: 16px;
+    box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  }
+
+  .tto-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .tto-step {
+    padding: 0 0 28px;
+  }
+
+  .tto-step:not(:last-child) {
+    border-right: none;
+    border-bottom: 1.5px solid rgba(43, 27, 18, 0.1);
+    margin-bottom: 28px;
+  }
+
+  .tto-tip {
+    margin-bottom: 32px;
+  }
+
+  .tto-cta {
+    padding: 32px 20px;
+    margin-bottom: 40px;
+  }
+
+  .tto-acc__summary {
+    padding: 16px 18px;
+  }
+
+  .tto-acc__question {
+    font-size: 1rem;
+  }
+
+  .tto-acc__answer {
+    font-size: 0.92rem;
+    padding: 4px 18px 18px;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .tto-steps-card {
+    padding: 22px 14px;
+    box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  }
+
+  .tto-cta {
+    padding: 26px 16px;
+    border-radius: 16px;
+  }
+
+  .tto-tip {
+    padding: 12px 14px;
+  }
+
+  .tto-acc {
+    border-radius: 14px;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Track Order Page",
+  "tag": "div",
+  "class": "tto-section-outer",
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading — plain text",
+      "default": "Track Your"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlighted",
+      "label": "Heading — highlighted text",
+      "default": "Order",
+      "info": "Gets the green wavy underline."
+    },
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Intro text",
+      "default": "Once your order ships, you'll receive a tracking link by email. Use that link to view the latest delivery updates securely."
+    },
+    { "type": "header", "content": "Contact CTA" },
+    {
+      "type": "text",
+      "id": "cta_heading",
+      "label": "CTA heading",
+      "default": "Can't find your tracking?"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_text",
+      "label": "CTA text",
+      "default": "Send us your name, email, and order number through our contact form and we'll help you check the status."
+    },
+    {
+      "type": "text",
+      "id": "cta_btn_text",
+      "label": "Contact button text",
+      "default": "Contact Us"
+    },
+    {
+      "type": "text",
+      "id": "cta_btn_url",
+      "label": "Contact page URL",
+      "default": "/pages/contact",
+      "info": "Update this to match your actual Contact Us page URL."
+    },
+    { "type": "header", "content": "FAQ" },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "FAQ heading",
+      "default": "Common Questions"
+    },
+    { "type": "header", "content": "Spacing" },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Your question"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "Your answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Track Order Page",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "When will I receive my tracking link?",
+            "answer": "Tracking details are sent by email once your order has shipped. If you haven't received it yet, check your spam folder or contact us."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "My tracking link is not updating. What should I do?",
+            "answer": "Tracking updates can sometimes take time to appear, especially right after shipping. If it has not updated for a while, contact us and we'll help."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can I track my order without an account?",
+            "answer": "Yes. Use the tracking link from your shipping confirmation email. No account is needed. If you can't find it, contact us with your order details."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Where can I find my order number?",
+            "answer": "Your order number is in your order confirmation email. It usually starts with a # symbol followed by a number."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What if I entered the wrong email at checkout?",
+            "answer": "Contact us with your name, shipping address, and approximate order date so we can help locate your order."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

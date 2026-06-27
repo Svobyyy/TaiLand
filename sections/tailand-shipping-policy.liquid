@@ -1,0 +1,661 @@
+{%- liquid
+  assign tsp_hi      = section.settings.heading_hi    | default: 'Shipping'
+  assign tsp_plain   = section.settings.heading_plain | default: 'Policy'
+  assign tsp_intro   = section.settings.intro_text
+  assign tsp_c1_t    = section.settings.card1_title   | default: 'Processing Time'
+  assign tsp_c1_txt  = section.settings.card1_text
+  assign tsp_c2_t    = section.settings.card2_title   | default: 'Tracking Updates'
+  assign tsp_c2_txt  = section.settings.card2_text
+  assign tsp_c3_t    = section.settings.card3_title   | default: 'Free Shipping'
+  assign tsp_c3_txt  = section.settings.card3_text
+  assign tsp_c4_t    = section.settings.card4_title   | default: 'Need Help?'
+  assign tsp_c4_txt  = section.settings.card4_text
+  assign tsp_faq_h   = section.settings.faq_heading   | default: 'Common Questions'
+  assign tsp_cta_h   = section.settings.cta_heading
+  assign tsp_cta_t   = section.settings.cta_text
+  assign tsp_cta_btn = section.settings.cta_btn_text  | default: 'Contact Us'
+  assign tsp_cta_url = section.settings.cta_btn_url   | default: '/pages/contact'
+
+  assign tsp_policy_blocks = section.blocks | where: 'type', 'policy'
+  assign tsp_faq_blocks    = section.blocks | where: 'type', 'faq'
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: #FFFFFF;
+  }
+{% endstyle %}
+
+<div class="tsp-section">
+  <div class="tsp-container">
+
+    <!-- ── Hero ── -->
+    <div class="tsp-hero">
+      <h1 class="tsp-hero__heading">
+        {%- if tsp_hi != blank -%}
+          <span class="tsp-hero__highlight">
+            {{- tsp_hi | escape -}}
+            <svg class="tsp-underline-svg" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="var(--pc-green, #5BB870)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+          </span>
+        {%- endif -%}
+        {%- if tsp_plain != blank -%}
+          <span class="tsp-hero__plain">&nbsp;{{- tsp_plain | escape -}}</span>
+        {%- endif -%}
+      </h1>
+      {%- if tsp_intro != blank -%}
+        <p class="tsp-hero__intro">{{ tsp_intro | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <!-- ── Summary cards ── -->
+    <div class="tsp-summary">
+
+      <div class="tsp-summary-card">
+        <div class="tsp-summary-card__icon tsp-summary-card__icon--green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <span class="tsp-summary-card__title">{{ tsp_c1_t | escape }}</span>
+        <span class="tsp-summary-card__text">{{ tsp_c1_txt | escape }}</span>
+      </div>
+
+      <div class="tsp-summary-card">
+        <div class="tsp-summary-card__icon tsp-summary-card__icon--orange">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="1" y="3" width="15" height="13" rx="1"/>
+            <path d="M16 8h4l3 5v5h-7V8z"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+        <span class="tsp-summary-card__title">{{ tsp_c2_t | escape }}</span>
+        <span class="tsp-summary-card__text">{{ tsp_c2_txt | escape }}</span>
+      </div>
+
+      <div class="tsp-summary-card">
+        <div class="tsp-summary-card__icon tsp-summary-card__icon--green">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <span class="tsp-summary-card__title">{{ tsp_c3_t | escape }}</span>
+        <span class="tsp-summary-card__text">{{ tsp_c3_txt | escape }}</span>
+      </div>
+
+      <div class="tsp-summary-card">
+        <div class="tsp-summary-card__icon tsp-summary-card__icon--orange">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+            <ellipse cx="12" cy="15.5" rx="5" ry="4.5"/>
+            <ellipse cx="5.5" cy="11" rx="2" ry="2.5"/>
+            <ellipse cx="18.5" cy="11" rx="2" ry="2.5"/>
+            <ellipse cx="8.5" cy="8" rx="1.8" ry="2.2"/>
+            <ellipse cx="15.5" cy="8" rx="1.8" ry="2.2"/>
+          </svg>
+        </div>
+        <span class="tsp-summary-card__title">{{ tsp_c4_t | escape }}</span>
+        <span class="tsp-summary-card__text">{{ tsp_c4_txt | escape }}</span>
+      </div>
+
+    </div>
+
+    <!-- ── Policy sections ── -->
+    {%- if tsp_policy_blocks.size > 0 -%}
+      <div class="tsp-policy">
+        {%- for block in tsp_policy_blocks -%}
+          <details class="tsp-acc" {{ block.shopify_attributes }}>
+            <summary class="tsp-acc__summary">
+              <span>{{ block.settings.title | escape }}</span>
+              <svg class="tsp-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </summary>
+            <div class="tsp-acc__body">
+              {{ block.settings.content }}
+            </div>
+          </details>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <!-- ── FAQ ── -->
+    {%- if tsp_faq_blocks.size > 0 -%}
+      <div class="tsp-faq">
+        <h2 class="tsp-faq__heading">{{ tsp_faq_h | escape }}</h2>
+        <svg class="tsp-faq__wave" viewBox="0 0 200 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4 12 C30 5 60 16 100 10 C140 4 170 15 196 10" stroke="var(--pc-orange, #EE7B28)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="tsp-faq__list">
+          {%- for block in tsp_faq_blocks -%}
+            <details class="tsp-acc" {{ block.shopify_attributes }}>
+              <summary class="tsp-acc__summary">
+                <span>{{ block.settings.question | escape }}</span>
+                <svg class="tsp-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </summary>
+              <div class="tsp-acc__body">
+                <p>{{ block.settings.answer | escape }}</p>
+              </div>
+            </details>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <!-- ── Contact CTA ── -->
+    {%- if tsp_cta_h != blank or tsp_cta_t != blank -%}
+      <div class="tsp-cta">
+        {%- if tsp_cta_h != blank -%}
+          <h2 class="tsp-cta__heading">{{ tsp_cta_h | escape }}</h2>
+        {%- endif -%}
+        {%- if tsp_cta_t != blank -%}
+          <p class="tsp-cta__text">{{ tsp_cta_t | escape }}</p>
+        {%- endif -%}
+        <a href="{{ tsp_cta_url }}" class="tsp-cta__btn">
+          {{ tsp_cta_btn | escape }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% stylesheet %}
+/* ==========================================================
+   Tailand Shipping Policy — tsp-*
+   ========================================================== */
+
+.tsp-section {
+}
+
+.tsp-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding-inline: var(--page-margin, 20px);
+}
+
+/* ── Hero ── */
+.tsp-hero {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.tsp-hero__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.25;
+  margin: 0 0 20px;
+}
+
+.tsp-hero__highlight {
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  color: var(--pc-text, #2B1B12);
+}
+
+.tsp-underline-svg {
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 100%;
+  height: 14px;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.tsp-hero__plain {
+  font-weight: 400;
+}
+
+.tsp-hero__intro {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.72;
+  line-height: 1.7;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* ── Summary cards ── */
+.tsp-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 52px;
+}
+
+.tsp-summary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 22px 14px 24px;
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 18px;
+  box-shadow: 4px 5px 0 var(--pc-text, #2B1B12);
+}
+
+.tsp-summary-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--pc-text, #2B1B12);
+  border-radius: 12px;
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.tsp-summary-card__icon--green  { background: var(--pc-green, #5BB870); }
+.tsp-summary-card__icon--orange { background: var(--pc-orange, #EE7B28); }
+
+.tsp-summary-card__icon svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.tsp-summary-card__title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.2;
+}
+
+.tsp-summary-card__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.68;
+  line-height: 1.55;
+}
+
+/* ── Policy accordion list ── */
+.tsp-policy {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 56px;
+}
+
+/* ── Accordion — shared by policy and FAQ ── */
+.tsp-acc {
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.tsp-acc[open] {
+  box-shadow: 5px 5px 0 var(--pc-text, #2B1B12);
+}
+
+.tsp-acc__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+}
+
+.tsp-acc__summary::-webkit-details-marker { display: none; }
+
+.tsp-acc__chev {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--pc-orange, #EE7B28);
+  transition: transform 0.2s ease;
+}
+
+.tsp-acc[open] .tsp-acc__chev { transform: rotate(180deg); }
+
+.tsp-acc__body {
+  padding: 14px 22px 20px;
+  border-top: 1.5px solid rgba(43, 27, 18, 0.12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.85;
+}
+
+.tsp-acc__body p { margin: 0 0 0.7rem; }
+.tsp-acc__body p:last-child { margin-bottom: 0; }
+.tsp-acc__body a {
+  color: var(--pc-orange, #EE7B28);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.tsp-acc__body a:hover { opacity: 0.8; }
+
+/* ── FAQ section ── */
+.tsp-faq {
+  margin-bottom: 56px;
+}
+
+.tsp-faq__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.7rem, 3.5vw, 2.3rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  text-align: center;
+  margin: 0 0 6px;
+}
+
+.tsp-faq__wave {
+  display: block;
+  width: 140px;
+  height: 18px;
+  margin: 0 auto 28px;
+  overflow: visible;
+}
+
+.tsp-faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Contact CTA card ── */
+.tsp-cta {
+  text-align: center;
+  padding: 44px 36px;
+  background: #FFF4D9;
+  border: 2px solid rgba(79, 138, 47, 0.2);
+  border-radius: 20px;
+}
+
+.tsp-cta__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0 0 12px;
+}
+
+.tsp-cta__text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+  line-height: 1.65;
+  margin: 0 0 26px;
+}
+
+.tsp-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 30px;
+  background: var(--pc-green, #5BB870);
+  color: var(--pc-white, #fff);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tsp-cta__btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.tsp-cta__btn:hover {
+  background: var(--pc-green-dark, #4A9860);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
+}
+
+.tsp-cta__btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .tsp-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .tsp-hero {
+    margin-bottom: 36px;
+  }
+  .tsp-summary {
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .tsp-summary-card {
+    padding: 18px 12px 20px;
+  }
+  .tsp-policy,
+  .tsp-faq {
+    margin-bottom: 40px;
+  }
+  .tsp-acc__summary {
+    padding: 16px 18px;
+    font-size: 1rem;
+  }
+  .tsp-acc__body {
+    padding: 12px 18px 16px;
+    font-size: 0.95rem;
+  }
+  .tsp-cta {
+    padding: 32px 20px;
+  }
+}
+
+@media (max-width: 420px) {
+  .tsp-summary {
+    grid-template-columns: 1fr;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Shipping Policy",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    {
+      "type": "text",
+      "id": "heading_hi",
+      "label": "Heading — highlighted word",
+      "default": "Shipping",
+      "info": "Gets the green wavy underline."
+    },
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading — plain word",
+      "default": "Policy"
+    },
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Hero intro text",
+      "default": "Everything you need to know about processing times, delivery, tracking, and shipping updates for your Tailand order."
+    },
+    { "type": "header", "content": "Summary cards" },
+    {
+      "type": "text",
+      "id": "card1_title",
+      "label": "Card 1 title",
+      "default": "Processing Time"
+    },
+    {
+      "type": "text",
+      "id": "card1_text",
+      "label": "Card 1 text",
+      "default": "Orders are usually processed within 1–3 business days."
+    },
+    {
+      "type": "text",
+      "id": "card2_title",
+      "label": "Card 2 title",
+      "default": "Tracking Updates"
+    },
+    {
+      "type": "text",
+      "id": "card2_text",
+      "label": "Card 2 text",
+      "default": "Tracking details are sent by email once your order ships."
+    },
+    {
+      "type": "text",
+      "id": "card3_title",
+      "label": "Card 3 title",
+      "default": "Free Shipping"
+    },
+    {
+      "type": "text",
+      "id": "card3_text",
+      "label": "Card 3 text",
+      "default": "Free shipping is available on orders over $60."
+    },
+    {
+      "type": "text",
+      "id": "card4_title",
+      "label": "Card 4 title",
+      "default": "Need Help?"
+    },
+    {
+      "type": "text",
+      "id": "card4_text",
+      "label": "Card 4 text",
+      "default": "If your tracking has not updated, contact us and we'll help."
+    },
+    { "type": "header", "content": "FAQ" },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "FAQ section heading",
+      "default": "Common Questions"
+    },
+    { "type": "header", "content": "Contact CTA" },
+    {
+      "type": "text",
+      "id": "cta_heading",
+      "label": "CTA heading",
+      "default": "Still have shipping questions?"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_text",
+      "label": "CTA body text",
+      "default": "Send us your order number and we'll help you check your shipping status."
+    },
+    {
+      "type": "text",
+      "id": "cta_btn_text",
+      "label": "CTA button label",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "cta_btn_url",
+      "label": "CTA button link"
+    },
+    { "type": "header", "content": "Spacing" },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "policy",
+      "name": "Policy section",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Section title",
+          "default": "Policy section"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Section content",
+          "default": "<p>Enter your policy text here.</p>"
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Your question here"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "Your answer here."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Shipping Policy" }
+  ]
+}
+{% endschema %}

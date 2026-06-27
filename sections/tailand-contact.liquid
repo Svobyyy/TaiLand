@@ -2,16 +2,11 @@
   assign tco_plain    = section.settings.heading_plain | default: 'Contact'
   assign tco_hi       = section.settings.heading_highlighted | default: 'Tailand'
   assign tco_intro    = section.settings.intro_text
-  assign tco_email    = section.settings.contact_email | default: 'support@tailand.store'
   assign tco_resp     = section.settings.response_time | default: 'We usually reply within 1–2 business days.'
   assign tco_hours    = section.settings.support_hours | default: 'Monday–Friday'
   assign tco_ig       = section.settings.instagram_url
   assign tco_tt       = section.settings.tiktok_url
   assign tco_facebook = section.settings.facebook_url
-  assign tco_fq_h     = section.settings.faq_heading | default: 'Need answers fast?'
-  assign tco_fq_t     = section.settings.faq_text
-  assign tco_fq_btn   = section.settings.faq_btn_text | default: 'View FAQ'
-  assign tco_fq_url   = section.settings.faq_btn_url | default: '/pages/faq'
   assign tco_cards    = section.settings.show_help_cards
   assign tco_trust    = section.settings.show_trust_badges
 
@@ -204,16 +199,6 @@
 
           <div class="tco-info__row">
             <span class="tco-info__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            </span>
-            <div>
-              <div class="tco-info__label">Email us</div>
-              <a href="mailto:{{ tco_email }}" class="tco-info__link">{{ tco_email }}</a>
-            </div>
-          </div>
-
-          <div class="tco-info__row">
-            <span class="tco-info__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </span>
             <div>
@@ -257,22 +242,6 @@
       </aside>
     </div>
 
-    <!-- ── FAQ shortcut ── -->
-    <div class="tco-faq-cta">
-      {%- if tco_fq_h != blank -%}
-        <h2 class="tco-faq-cta__heading">{{ tco_fq_h | escape }}</h2>
-      {%- endif -%}
-      {%- if tco_fq_t != blank -%}
-        <p class="tco-faq-cta__text">{{ tco_fq_t | escape }}</p>
-      {%- endif -%}
-      {%- if tco_fq_btn != blank -%}
-        <a href="{{ tco_fq_url }}" class="tco-faq-cta__btn">
-          {{ tco_fq_btn | escape }}
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="9 18 15 12 9 6"/></svg>
-        </a>
-      {%- endif -%}
-    </div>
-
     <!-- ── Trust badges ── -->
     {%- if tco_trust -%}
       <div class="tco-trust">
@@ -304,7 +273,6 @@
    ========================================================= */
 
 .tco-section {
-  background: var(--pc-white, #fff);
 }
 
 .tco-container {
@@ -372,7 +340,7 @@
 
 /* ── Form card ── */
 .tco-form-card {
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border: 2.5px solid var(--pc-text, #2B1B12);
   border-radius: 20px;
   box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
@@ -431,7 +399,7 @@
 
 /* ── Error messages ── */
 .tco-errors {
-  background: rgba(214, 60, 60, 0.07);
+  background: #FFFFFF;
   border: 2px solid var(--pc-sale-red, #D63C3C);
   border-radius: 12px;
   padding: 14px 18px;
@@ -607,7 +575,7 @@
   flex-shrink: 0;
   width: 38px;
   height: 38px;
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border: 2px solid rgba(43, 27, 18, 0.1);
   border-radius: 10px;
   color: var(--pc-orange, #EE7B28);
@@ -642,7 +610,7 @@
 
 /* ── Support info card ── */
 .tco-info {
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border: 2.5px solid var(--pc-text, #2B1B12);
   border-radius: 16px;
   box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
@@ -741,70 +709,6 @@
   transform: translate(-1px, -1px);
 }
 
-/* ── FAQ CTA block ── */
-.tco-faq-cta {
-  text-align: center;
-  max-width: 680px;
-  margin: 56px auto 0;
-  padding: 44px 36px;
-  background: rgba(79, 138, 47, 0.06);
-  border: 2px solid rgba(79, 138, 47, 0.18);
-  border-radius: 20px;
-}
-
-.tco-faq-cta__heading {
-  font-family: 'Fredoka', sans-serif;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 600;
-  color: var(--pc-text, #2B1B12);
-  margin: 0 0 12px;
-}
-
-.tco-faq-cta__text {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--pc-text, #2B1B12);
-  opacity: 0.7;
-  line-height: 1.65;
-  margin: 0 0 26px;
-}
-
-.tco-faq-cta__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 13px 30px;
-  background: var(--pc-orange, #EE7B28);
-  color: var(--pc-white, #fff);
-  border: 2.5px solid var(--pc-text, #2B1B12);
-  border-radius: 999px;
-  box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 1rem;
-  font-weight: 800;
-  text-decoration: none;
-  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
-}
-
-.tco-faq-cta__btn svg {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-}
-
-.tco-faq-cta__btn:hover {
-  background: var(--pc-orange-dark, #E58901);
-  color: var(--pc-white, #fff);
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--pc-text, #2B1B12);
-}
-
-.tco-faq-cta__btn:active {
-  transform: translate(1px, 1px);
-  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
-}
-
 /* ── Trust badges ── */
 .tco-trust {
   display: flex;
@@ -883,11 +787,6 @@
     grid-template-columns: 1fr;
   }
 
-  .tco-faq-cta {
-    padding: 32px 20px;
-    margin-top: 40px;
-  }
-
   .tco-trust {
     gap: 8px;
     margin-top: 36px;
@@ -947,13 +846,6 @@
     { "type": "header", "content": "Contact info" },
     {
       "type": "text",
-      "id": "contact_email",
-      "label": "Support email address",
-      "default": "support@tailand.store",
-      "info": "Shown as a mailto link on the page."
-    },
-    {
-      "type": "text",
       "id": "response_time",
       "label": "Response time",
       "default": "We usually reply within 1–2 business days."
@@ -982,32 +874,6 @@
       "id": "facebook_url",
       "label": "Facebook URL",
       "info": "e.g. https://facebook.com/tailandstore"
-    },
-    { "type": "header", "content": "FAQ shortcut section" },
-    {
-      "type": "text",
-      "id": "faq_heading",
-      "label": "FAQ section heading",
-      "default": "Need answers fast?"
-    },
-    {
-      "type": "textarea",
-      "id": "faq_text",
-      "label": "FAQ section text",
-      "default": "Check our most common questions about shipping, returns, tracking, and product safety."
-    },
-    {
-      "type": "text",
-      "id": "faq_btn_text",
-      "label": "FAQ button text",
-      "default": "View FAQ"
-    },
-    {
-      "type": "text",
-      "id": "faq_btn_url",
-      "label": "FAQ button URL",
-      "default": "/pages/faq",
-      "info": "Relative path (e.g. /pages/faq) or full URL."
     },
     { "type": "header", "content": "Show / hide sections" },
     {

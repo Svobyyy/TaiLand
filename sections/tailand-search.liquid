@@ -1,0 +1,500 @@
+{%- liquid
+  assign tc_show_sort   = section.settings.show_sort
+  assign tc_show_badges = section.settings.show_badges
+  assign tc_show_best   = section.settings.show_best_seller_badge
+  assign tc_best_text   = section.settings.best_seller_badge_text | default: 'Best Seller'
+  assign tc_btn         = section.settings.card_btn_text | default: 'Shop Now'
+  assign tc_per_page    = section.settings.products_per_page | default: 16
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: var(--pc-white, #fff);
+  }
+{% endstyle %}
+
+<div class="tc-section">
+  <div class="tc-container">
+
+    <!-- ── Hero heading ── -->
+    <div class="tc-hero">
+      {%- if search.performed -%}
+        <h1 class="tc-hero__heading">
+          <span class="tc-hero__plain">Search results for&nbsp;</span><span class="tc-query-badge">{{ search.terms | escape }}</span>
+        </h1>
+        {%- if search.results_count > 0 -%}
+          <p class="tc-search-meta">{{ search.results_count }} product{%- if search.results_count != 1 %}s{%- endif %} found</p>
+        {%- endif -%}
+      {%- else -%}
+        <h1 class="tc-hero__heading">
+          <span class="tc-hero__plain">Search our </span><span class="tc-hero__highlight">Store
+            <svg class="tc-hero__underline" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </h1>
+        <p class="tc-hero__desc">Use the search bar above to find products for your pet.</p>
+      {%- endif -%}
+    </div>
+
+    <!-- ── Search form ── -->
+    <form action="{{ routes.search_url }}" method="get" class="tc-search-form" role="search">
+      <input type="hidden" name="type" value="product">
+      <input
+        type="text"
+        name="q"
+        value="{{ search.terms | escape }}"
+        placeholder="Search for products..."
+        class="tc-search-form__input"
+        autocomplete="off"
+        aria-label="Search for products"
+      >
+      <button type="submit" class="tc-search-form__btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>Search</span>
+      </button>
+    </form>
+
+    <!-- ── Category tabs (hardcoded) — none active on search page ── -->
+    <nav class="tc-tabs" aria-label="Browse by category">
+      <a href="/collections/all" class="tc-tab">
+        <span class="tc-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </span>
+        <span class="tc-tab__label">All Products</span>
+      </a>
+      <a href="/collections/best-sellers" class="tc-tab">
+        <span class="tc-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </span>
+        <span class="tc-tab__label">Best Sellers</span>
+      </a>
+      <a href="/collections/dogs" class="tc-tab">
+        <span class="tc-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="17" rx="5.5" ry="5"/><ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="9" cy="7.5" rx="2" ry="2.8"/><ellipse cx="15" cy="7.5" rx="2" ry="2.8"/></svg>
+        </span>
+        <span class="tc-tab__label">Dogs</span>
+      </a>
+      <a href="/collections/cats" class="tc-tab">
+        <span class="tc-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V3l4 3h.5a7 7 0 0 1 7 0H16L20 3v3c2 1.5 4 3.5 4 7 0 4-3 8-8.5 8S4 18 4 14c0-3.5 1.5-6 3-7z"/><path d="M9.5 14.5h.01M14.5 14.5h.01"/></svg>
+        </span>
+        <span class="tc-tab__label">Cats</span>
+      </a>
+      <a href="/collections/sale" class="tc-tab">
+        <span class="tc-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l10 10 10-10L12 2z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <span class="tc-tab__label">Sale</span>
+      </a>
+    </nav>
+
+    <!-- ── Content: results or empty ── -->
+    {%- if search.performed -%}
+
+      {%- if search.results_count == 0 -%}
+
+        <!-- Empty state -->
+        <div class="tc-empty">
+          <div class="tc-empty__paw" aria-hidden="true">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+              <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
+              <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
+              <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
+              <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
+              <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
+            </svg>
+          </div>
+          <h2 class="tc-empty__heading">No paws found for <span class="tc-query-badge">&ldquo;{{ search.terms | escape }}&rdquo;</span></h2>
+          <p class="tc-empty__text">Try another search or explore our best picks.</p>
+          <div class="tc-empty__actions">
+            <a href="/collections/all" class="tc-empty__btn">Shop All Products</a>
+            <a href="/collections/best-sellers" class="tc-empty__btn tc-empty__btn--secondary">Shop Best Sellers</a>
+          </div>
+        </div>
+
+      {%- else -%}
+
+        <!-- Sort toolbar -->
+        {%- if tc_show_sort -%}
+          <div class="tc-toolbar">
+            <span class="tc-toolbar__count">
+              <svg class="tc-toolbar__count-paw" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="17" rx="5.5" ry="5"/><ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="9" cy="7.5" rx="2" ry="2.8"/><ellipse cx="15" cy="7.5" rx="2" ry="2.8"/></svg>
+              {{ search.results_count }} product{%- if search.results_count != 1 %}s{%- endif %}
+            </span>
+            <form method="get" action="{{ routes.search_url }}" class="tc-sort-form">
+              <input type="hidden" name="q" value="{{ search.terms | escape }}">
+              <input type="hidden" name="type" value="product">
+              <label for="tc-sort-{{ section.id }}" class="tc-sort__label">Sort by</label>
+              <div class="tc-sort__wrap">
+                <select id="tc-sort-{{ section.id }}" name="sort_by" class="tc-sort__select" onchange="this.form.submit()">
+                  <option value="relevance"{%- if search.sort_by == 'relevance' or search.sort_by == blank %} selected{%- endif %}>Relevance</option>
+                  <option value="price-ascending"{%- if search.sort_by == 'price-ascending' %} selected{%- endif %}>Price: Low → High</option>
+                  <option value="price-descending"{%- if search.sort_by == 'price-descending' %} selected{%- endif %}>Price: High → Low</option>
+                  <option value="created-at"{%- if search.sort_by == 'created-at' %} selected{%- endif %}>Newest First</option>
+                </select>
+                <span class="tc-sort__arrow" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+              </div>
+            </form>
+          </div>
+        {%- endif -%}
+
+        <!-- Product grid -->
+        {%- paginate search.results by tc_per_page -%}
+          <ul class="tc-grid" role="list">
+            {%- for result in search.results -%}
+              {%- if result.object_type == 'product' -%}
+                {%- assign product = result -%}
+                {%- assign tc_has_sale = false -%}
+                {%- if product.compare_at_price > product.price -%}
+                  {%- assign tc_has_sale = true -%}
+                {%- endif -%}
+                {%- assign tc_dual = false -%}
+                {%- if tc_show_badges and tc_has_sale and tc_show_best -%}
+                  {%- assign tc_dual = true -%}
+                {%- endif -%}
+
+                <li class="tc-card">
+
+                  <!-- Image + badges -->
+                  <div class="tc-card__media-wrap">
+                    <a href="{{ product.url }}" class="tc-card__media-link" tabindex="-1" aria-hidden="true">
+                      {%- if product.featured_image -%}
+                        {%- assign tc_img_alt = product.featured_image.alt | default: product.title | escape -%}
+                        {{-
+                          product.featured_image
+                          | image_url: width: 600
+                          | image_tag:
+                            class: 'tc-card__img',
+                            alt: tc_img_alt,
+                            loading: 'lazy',
+                            width: 600,
+                            height: 600
+                        -}}
+                      {%- else -%}
+                        <div class="tc-card__img tc-card__img--placeholder" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
+                            <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
+                            <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
+                            <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
+                            <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
+                          </svg>
+                        </div>
+                      {%- endif -%}
+                    </a>
+
+                    {%- if tc_show_badges -%}
+                      <div class="tc-badge-group{%- if tc_dual %} tc-badge-group--dual{%- endif %}">
+                        {%- if tc_has_sale -%}
+                          <span class="tc-sale-badge" aria-label="Ends soon">ENDS SOON</span>
+                        {%- endif -%}
+                        {%- if tc_show_best -%}
+                          <span class="tc-best-badge" aria-label="{{ tc_best_text | escape }}">{{ tc_best_text | escape }}</span>
+                        {%- endif -%}
+                      </div>
+                    {%- endif -%}
+                  </div>
+
+                  <!-- Card body -->
+                  <div class="tc-card__body">
+                    <a href="{{ product.url }}" class="tc-card__title-link">
+                      <h2 class="tc-card__title">{{ product.title | escape }}</h2>
+                    </a>
+
+                    <div class="tc-card__price">
+                      {%- if tc_has_sale -%}
+                        <span class="tc-card__price-sale">{{ product.price | money }}</span>
+                        <span class="tc-card__price-compare">{{ product.compare_at_price | money }}</span>
+                      {%- else -%}
+                        <span class="tc-card__price-reg">{{ product.price | money }}</span>
+                      {%- endif -%}
+                    </div>
+
+                    <a href="{{ product.url }}" class="tc-card__btn">
+                      {{- tc_btn | escape -}}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                  </div>
+
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+
+          <!-- Pagination -->
+          {%- if paginate.pages > 1 -%}
+            <nav class="tc-pagination" aria-label="Pagination">
+              {%- if paginate.previous -%}
+                <a href="{{ paginate.previous.url }}" class="tc-pagination__btn">&#8592; Previous</a>
+              {%- endif -%}
+              <span class="tc-pagination__info">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+              {%- if paginate.next -%}
+                <a href="{{ paginate.next.url }}" class="tc-pagination__btn">Next &#8594;</a>
+              {%- endif -%}
+            </nav>
+          {%- endif -%}
+        {%- endpaginate -%}
+
+      {%- endif -%}
+
+    {%- else -%}
+
+      <!-- No search performed — prompt to search -->
+      <div class="tc-empty">
+        <div class="tc-empty__paw" aria-hidden="true">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+            <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
+            <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
+            <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
+            <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
+            <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
+          </svg>
+        </div>
+        <p class="tc-empty__text">Use the search bar above to find the perfect products for your pet.</p>
+        <div class="tc-empty__actions">
+          <a href="/collections/all" class="tc-empty__btn">Browse All Products</a>
+        </div>
+      </div>
+
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% render 'tailand-grid-styles' %}
+
+{% stylesheet %}
+/* ── Search form ── */
+
+.tc-search-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 620px;
+  margin: 0 auto 36px;
+}
+
+.tc-search-form__input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 22px;
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.tc-search-form__input::placeholder {
+  color: rgba(43, 27, 18, 0.4);
+}
+
+.tc-search-form__input:focus {
+  outline: 2.5px solid var(--pc-orange, #EE7B28);
+  outline-offset: 2px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+}
+
+.tc-search-form__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 24px;
+  background: var(--pc-green, #4F8A2F);
+  color: #fff;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tc-search-form__btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.tc-search-form__btn:hover {
+  background: var(--pc-green-dark, #3E6F25);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── Search-specific text styles ── */
+
+.tc-query-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--pc-orange, #EE7B28);
+  color: #fff;
+  border: 2px solid var(--pc-text, #2B1B12);
+  border-radius: 50px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  padding: 0.12em 0.65em 0.18em;
+  font-weight: 700;
+  font-size: 0.78em;
+  vertical-align: middle;
+  white-space: nowrap;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: 'Nunito Sans', sans-serif;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+}
+
+.tc-search-meta {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.6;
+  margin: 8px auto 0;
+  font-weight: 600;
+}
+
+.tc-empty__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.tc-empty__heading .tc-query-badge {
+  font-size: 0.65em;
+  vertical-align: middle;
+}
+
+.tc-empty__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.tc-empty__btn--secondary {
+  background: var(--pc-white, #fff);
+  color: var(--pc-text, #2B1B12);
+}
+
+.tc-empty__btn--secondary:hover {
+  background: var(--pc-text, #2B1B12);
+  color: var(--pc-white, #fff);
+}
+
+@media screen and (max-width: 749px) {
+  .tc-search-form { gap: 8px; margin-bottom: 28px; }
+  .tc-search-form__btn span { display: none; }
+  .tc-search-form__btn { padding: 13px 16px; }
+  .tc-empty__heading { font-size: 1.35rem; }
+  .tc-query-badge { max-width: 200px; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Tailand Search",
+  "tag": "section",
+  "class": "tailand-search-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Sort bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort",
+      "label": "Show sort + product count bar",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Product cards"
+    },
+    {
+      "type": "text",
+      "id": "card_btn_text",
+      "label": "Card button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Results per page",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badges",
+      "label": "Show sale badge (ENDS SOON)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_best_seller_badge",
+      "label": "Show Best Seller badge on all results",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "best_seller_badge_text",
+      "label": "Best Seller badge text",
+      "default": "Best Seller"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tailand Search"
+    }
+  ]
+}
+{% endschema %}

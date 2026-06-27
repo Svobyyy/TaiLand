@@ -45,9 +45,21 @@
       {%- endif -%}
     </div>
 
-    <!-- ── Category tabs — pulled dynamically from Shopify nav menu ── -->
-    {%- if tc_show_tabs and tc_linklist.links.size > 0 -%}
+    <!-- ── Category tabs — All Products hardcoded first, then nav menu ── -->
+    {%- if tc_show_tabs -%}
+      {%- assign tc_all_active = false -%}
+      {%- if collection.handle == 'all' -%}{%- assign tc_all_active = true -%}{%- endif -%}
       <nav class="tc-tabs" aria-label="Browse by category">
+        <a
+          href="/collections/all"
+          class="tc-tab{%- if tc_all_active %} tc-tab--active{%- endif %}"
+          {%- if tc_all_active %} aria-current="page"{%- endif %}
+        >
+          <span class="tc-tab__icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </span>
+          <span class="tc-tab__label">All Products</span>
+        </a>
         {%- for link in tc_linklist.links -%}
           {%- comment %} Extract collection handle from /collections/{handle} URL {%- endcomment -%}
           {%- assign tc_lh = link.url | split: '/collections/' | last | split: '?' | first | split: '/' | first -%}
@@ -79,6 +91,7 @@
         {%- endfor -%}
       </nav>
     {%- endif -%}
+    {%- comment -%}Show tabs even when menu has no links (All Products always shows){%- endcomment -%}
 
     <!-- ── Sort + count toolbar ── -->
     {%- if tc_show_sort -%}
@@ -233,7 +246,6 @@
    ========================================================= */
 
 .tc-section {
-  background: var(--pc-white, #fff);
 }
 
 .tc-container {
@@ -362,7 +374,7 @@
   gap: 12px;
   margin-bottom: 28px;
   padding: 12px 20px;
-  background: rgba(247, 223, 184, 0.38);
+  background: #FFF4D9;
   border: 1.5px solid rgba(43, 27, 18, 0.1);
   border-radius: 14px;
 }
@@ -412,7 +424,7 @@
   -webkit-appearance: none;
   appearance: none;
   padding: 9px 42px 9px 16px;
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border: 2.5px solid var(--pc-text, #2B1B12);
   border-radius: 12px;
   box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
@@ -470,7 +482,7 @@
 
 /* ── Product card ── */
 .tc-card {
-  background: var(--pc-cream, #F7DFB8);
+  background: #FFF4D9;
   border: 2.5px solid var(--pc-text, #2B1B12);
   border-radius: 18px;
   box-shadow: 5px 5px 0 var(--pc-text, #2B1B12);
@@ -516,7 +528,7 @@
 .tc-card__img--placeholder {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: rgba(247, 223, 184, 0.6);
+  background: #FFF4D9;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -816,20 +828,13 @@
   }
 }
 
-@media screen and (max-width: 749px) {
-  .tc-hero {
-    margin-bottom: 28px;
-  }
-
+/* Tablets — scroll tabs horizontally, stack sort bar */
+@media screen and (max-width: 960px) {
   .tc-tabs {
     justify-content: flex-start;
     flex-wrap: nowrap;
     margin-bottom: 24px;
-  }
-
-  .tc-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    padding-bottom: 8px;
   }
 
   .tc-toolbar {
@@ -850,6 +855,17 @@
   .tc-sort__select {
     width: 100%;
     min-width: 0;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .tc-hero {
+    margin-bottom: 28px;
+  }
+
+  .tc-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 
   .tc-card__body {

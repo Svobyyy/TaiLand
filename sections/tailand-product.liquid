@@ -51,7 +51,7 @@
      The image is kept away from corners via padding + object-fit:contain,
      so no clipping is needed for the border-radius to look correct. */
   overflow: visible;
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   position: relative;
   padding: 1.25rem;
 }
@@ -101,7 +101,7 @@
   border: 2.5px solid var(--pc-text, #2d2d2d);
   box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
   overflow: hidden;
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   cursor: pointer;
   padding: 0;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -259,7 +259,7 @@
   border-radius: 999px;
   border: 2.5px solid var(--pc-text, #2d2d2d);
   box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   color: var(--pc-text, #2d2d2d);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
@@ -271,6 +271,7 @@
   box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
 }
 .tp-pill.tp-unavailable { opacity: 0.3; cursor: not-allowed; pointer-events: none; box-shadow: none; }
+.tp-variant-msg { font-family: 'Nunito Sans', sans-serif; font-size: 0.875rem; font-weight: 700; color: var(--pc-sale-red, #e8372b); padding: 8px 12px; background: rgba(232,55,43,0.08); border-radius: 8px; border-left: 3px solid var(--pc-sale-red, #e8372b); margin-top: 4px; }
 
 .tp-variant-select-native { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
 
@@ -292,7 +293,7 @@
   border: 2.5px solid var(--pc-text, #2d2d2d);
   border-radius: 999px;
   box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   overflow: hidden;
 }
 
@@ -307,7 +308,7 @@
   line-height: 1;
   transition: background 0.12s;
 }
-.tp-qty__btn:hover { background: rgba(0,0,0,0.06); }
+.tp-qty__btn:hover { background: #E8CFA0; }
 
 .tp-qty__input {
   width: 44px; text-align: center;
@@ -326,7 +327,7 @@
 
 /* Promo box */
 .tp-promo {
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border: 2.5px solid var(--pc-text, #2d2d2d);
   border-radius: 16px;
   box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
@@ -387,7 +388,7 @@
 
 /* Free shipping bar */
 .tp-ship-bar {
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border: 2.5px solid var(--pc-text, #2d2d2d);
   border-radius: 14px;
   box-shadow: 4px 4px 0 var(--pc-text, #2d2d2d);
@@ -403,7 +404,7 @@
 }
 .tp-ship-bar__text svg { width: 18px; height: 18px; color: var(--pc-green, #2eaa5f); flex-shrink: 0; }
 
-.tp-ship-bar__track { height: 8px; background: rgba(45,45,45,0.12); border-radius: 999px; overflow: hidden; }
+.tp-ship-bar__track { height: 8px; background: #E4DDD5; border-radius: 999px; overflow: hidden; }
 .tp-ship-bar__fill { height: 100%; background: var(--pc-green, #2eaa5f); border-radius: 999px; }
 
 /* Multibuy */
@@ -421,7 +422,7 @@
 
 /* Bundle upsell */
 .tp-upsell {
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border: 2.5px solid var(--pc-orange, #f59f2b);
   border-radius: 16px;
   box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
@@ -465,18 +466,11 @@
 .tp-btn-cart:hover:not(:disabled) { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--pc-text, #2d2d2d); background: var(--pc-green-dark, #228a4a); }
 .tp-btn-cart:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.shopify-payment-button__button {
-  border-radius: 999px !important;
-  font-family: 'Fredoka', sans-serif !important;
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-}
-
 /* Trust badges */
 .tp-trust {
   display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
   padding: 14px;
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border: 2.5px solid var(--pc-text, #2d2d2d);
   border-radius: 14px;
   box-shadow: 4px 4px 0 var(--pc-text, #2d2d2d);
@@ -540,7 +534,7 @@
   border: 2.5px solid var(--pc-text, #2d2d2d);
   border-radius: 14px; overflow: hidden;
   box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
 }
 .tp-acc[open] { box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d); }
 
@@ -586,7 +580,7 @@
 @media screen and (max-width: 599px) { .tp-story__grid { grid-template-columns: 1fr; } }
 
 .tp-story__card {
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border: 2.5px solid var(--pc-text, #2d2d2d);
   border-radius: 18px; box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
   overflow: hidden; display: flex; flex-direction: column;
@@ -618,7 +612,7 @@
   border-bottom: 1.5px solid rgba(45,45,45,0.12);
 }
 .tp-specs__row:last-child { border-bottom: none; }
-.tp-specs__row:nth-child(even) { background: rgba(245,159,43,0.07); }
+.tp-specs__row:nth-child(even) { background: #FFF8EE; }
 
 .tp-specs__key {
   padding: 12px 16px;
@@ -646,7 +640,7 @@
 @media screen and (max-width: 749px) { .tp-related__grid { grid-template-columns: repeat(2, 1fr); gap: 0.875rem; } }
 
 .tp-rel-card {
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border: 2.5px solid var(--pc-text, #2d2d2d);
   border-radius: 18px; box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
   overflow: hidden; display: flex; flex-direction: column;
@@ -655,7 +649,7 @@
 }
 .tp-rel-card:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--pc-text, #2d2d2d); }
 
-.tp-rel-card__img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: var(--pc-cream, #fffbf0); }
+.tp-rel-card__img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #FFF4D9; }
 .tp-rel-card__img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
 .tp-rel-card:hover .tp-rel-card__img { transform: scale(1.04); }
 
@@ -719,7 +713,7 @@
 .tp-sticky-bar {
   display: none;
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-  background: var(--pc-cream, #fffbf0);
+  background: #FFF4D9;
   border-top: 2.5px solid var(--pc-text, #2d2d2d);
   box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
   padding: 10px 16px;
@@ -743,6 +737,7 @@
   border-radius: 999px; box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
   cursor: pointer; white-space: nowrap;
 }
+.tp-sticky-bar__btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
 /* ---- Bottom spacing ---- */
 .tp-section-end { padding-bottom: var(--tp-pb, 64px); }
@@ -780,10 +775,13 @@
 
 <style>
   #tp-{{ section.id }} { --tp-pt: {{ tp_pt }}; --tp-pb: {{ tp_pb }}; }
+  #shopify-section-{{ section.id }} { background: #FFFFFF; }
 </style>
 
 <section id="tp-{{ section.id }}">
   {%- form 'product', tp_product, id: 'tp-form' -%}
+    {{- '' -}}
+    <input type="hidden" name="id" id="tp-variant-id" value="{{ product.selected_or_first_available_variant.id }}">
 
     <div class="tp-wrap">
       <div class="tp-main">
@@ -922,8 +920,11 @@
             </div>
           {%- endunless -%}
 
-          <!-- Hidden native select -->
-          <select name="id" id="tp-variant-select" class="tp-variant-select-native" aria-hidden="true">
+          <!-- Variant availability message -->
+          <div id="tp-variant-msg" class="tp-variant-msg" aria-live="polite" style="display:none"></div>
+
+          <!-- Variant data store (no name= so it does not submit a duplicate id) -->
+          <select id="tp-variant-select" class="tp-variant-select-native" aria-hidden="true">
             {%- for variant in tp_product.variants -%}
               {%- assign tp_var_alt = variant.featured_media.alt | default: tp_product.title | escape -%}
               {%- if variant.featured_media != blank -%}
@@ -1053,9 +1054,6 @@
                 {%- if tp_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
               </span>
             </button>
-            {%- if tp_variant.available -%}
-              <div>{{ form | payment_button }}</div>
-            {%- endif -%}
           </div>
 
           <!-- Trust badges -->
@@ -1274,6 +1272,12 @@
 </div>
 
 <script>
+  /* Variant data injected server-side for accurate availability / price checks */
+  window.tpProductData = {
+    handle: {{ product.handle | json }},
+    variants: [{%- for v in product.variants -%}{"id":{{ v.id }},"title":{{ v.title | json }},"available":{{ v.available }},"price":{{ v.price }},"compare_at_price":{{ v.compare_at_price | default: 0 }},"inventory_quantity":{{ v.inventory_quantity }},"inventory_policy":{{ v.inventory_policy | json }},"inventory_management":{{ v.inventory_management | json }},"option1":{{ v.option1 | json }},"option2":{{ v.option2 | json }},"option3":{{ v.option3 | json }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]
+  };
+
 (function () {
   /* --- Qty stepper --- */
   var qty = document.getElementById('tp-qty');
@@ -1316,92 +1320,195 @@
     }
   }
 
+  /* Fallback: if the Liquid-rendered hidden input is absent from DOM (CDN cache lag),
+     create it dynamically so cart add always has a valid variant id */
+  if (!document.getElementById('tp-variant-id')) {
+    var fEl = document.getElementById('tp-form');
+    if (fEl) {
+      var inp = document.createElement('input');
+      inp.type  = 'hidden';
+      inp.name  = 'id';
+      inp.id    = 'tp-variant-id';
+      inp.value = varSel ? varSel.value : '';
+      fEl.insertBefore(inp, fEl.firstChild);
+    }
+  }
+
+  /* Count how many option groups exist (1–3) */
+  var numOptionGroups = document.querySelectorAll('.tp-option-group').length;
+
+  /* Returns true if ANY real variant can be formed with `value` at `optionIndex`
+     combined with the current selections in all other option groups.            */
+  function canSelect(optionIndex, value) {
+    var tvArr = (window.tpProductData && window.tpProductData.variants) || [];
+    return tvArr.some(function (tv) {
+      for (var j = 0; j < numOptionGroups; j++) {
+        var tv_val = tv['option' + (j + 1)];
+        if (j === optionIndex) {
+          if (tv_val !== value) return false;
+        } else {
+          if (selOpts[j] && tv_val !== selOpts[j]) return false;
+        }
+      }
+      return true;
+    });
+  }
+
+  /* Exact-match: find the one variant where option1/2/3 all equal selOpts[0/1/2]. */
+  function findExactVariant() {
+    var tvArr = (window.tpProductData && window.tpProductData.variants) || [];
+    for (var i = 0; i < tvArr.length; i++) {
+      var tv = tvArr[i];
+      var match = true;
+      for (var j = 0; j < numOptionGroups; j++) {
+        if (tv['option' + (j + 1)] !== selOpts[j]) { match = false; break; }
+      }
+      if (match) return tv;
+    }
+    return null;
+  }
+
+  /* Mark pills that can't form any real variant as tp-unavailable.
+     If a selected pill becomes unavailable, deselects it and auto-picks
+     the first still-available value in that group.                      */
+  function updatePillAvailability() {
+    document.querySelectorAll('.tp-option-group').forEach(function (group) {
+      var gIdx = parseInt(group.getAttribute('data-option-index'), 10);
+      var pills = group.querySelectorAll('.tp-pill');
+
+      pills.forEach(function (pill) {
+        var val = pill.getAttribute('data-value');
+        var ok  = canSelect(gIdx, val);
+        pill.classList.toggle('tp-unavailable', !ok);
+        if (!ok) {
+          pill.setAttribute('aria-disabled', 'true');
+          if (pill.classList.contains('tp-selected')) {
+            pill.classList.remove('tp-selected');
+            pill.setAttribute('aria-pressed', 'false');
+            selOpts[gIdx] = null;
+            var lbl = document.getElementById('tp-sel-' + gIdx);
+            if (lbl) lbl.textContent = '';
+          }
+        } else {
+          pill.removeAttribute('aria-disabled');
+        }
+      });
+
+      /* Auto-select first available pill when group has no selection */
+      if (!selOpts[gIdx]) {
+        pills.forEach(function (pill) {
+          if (!selOpts[gIdx] && !pill.classList.contains('tp-unavailable')) {
+            pill.classList.add('tp-selected');
+            pill.setAttribute('aria-pressed', 'true');
+            selOpts[gIdx] = pill.getAttribute('data-value');
+            var lbl = document.getElementById('tp-sel-' + gIdx);
+            if (lbl) lbl.textContent = selOpts[gIdx];
+          }
+        });
+      }
+    });
+  }
+
   document.querySelectorAll('.tp-option-group').forEach(function (group) {
     var idx = parseInt(group.getAttribute('data-option-index'), 10);
     group.querySelectorAll('.tp-pill').forEach(function (pill) {
       pill.addEventListener('click', function () {
-        group.querySelectorAll('.tp-pill').forEach(function (p) { p.classList.remove('tp-selected'); p.setAttribute('aria-pressed','false'); });
+        if (pill.classList.contains('tp-unavailable')) return;
+        group.querySelectorAll('.tp-pill').forEach(function (p) {
+          p.classList.remove('tp-selected');
+          p.setAttribute('aria-pressed', 'false');
+        });
         pill.classList.add('tp-selected');
         pill.setAttribute('aria-pressed', 'true');
         selOpts[idx] = pill.getAttribute('data-value');
         var lbl = document.getElementById('tp-sel-' + idx);
         if (lbl) lbl.textContent = selOpts[idx];
+        updatePillAvailability();
         updateVariant();
       });
     });
   });
 
   function updateVariant() {
-    if (!varSel) return;
-    for (var i = 0; i < varSel.options.length; i++) {
-      var opt = varSel.options[i];
-      var parts = opt.text.split(' / ').map(function (s) { return s.trim(); });
-      var match = parts.every(function (p, j) { return !selOpts[j] || selOpts[j] === p; });
-      if (!match) continue;
-      varSel.selectedIndex = i;
+    var variantInput = document.getElementById('tp-variant-id');
+    var addBtn       = document.getElementById('tp-add-btn');
+    var btnText      = document.getElementById('tp-btn-text');
+    var stickyBtn    = document.getElementById('tp-sticky-btn');
+    var msgEl        = document.getElementById('tp-variant-msg');
 
-      var price   = parseInt(opt.getAttribute('data-price'),   10) || 0;
-      var compare = parseInt(opt.getAttribute('data-compare'), 10) || 0;
-      var avail   = !opt.disabled;
-      var onSale  = compare > price;
+    var matched = findExactVariant();
 
-      /* price display */
-      var priceEl   = document.getElementById('tp-price');
-      var compareEl = document.getElementById('tp-compare');
-      var savingsEl = document.getElementById('tp-savings');
-      if (priceEl) { priceEl.textContent = fmtMoney(price); priceEl.classList.toggle('tp-price--sale', onSale); }
-      if (compareEl) { compareEl.textContent = onSale ? fmtMoney(compare) : ''; compareEl.style.display = onSale ? '' : 'none'; }
-      if (savingsEl) { savingsEl.textContent = onSale ? 'Save ' + fmtMoney(compare - price) : ''; savingsEl.style.display = onSale ? '' : 'none'; }
+    if (!matched) {
+      /* No exact variant — clear hidden input so it can never reach cart */
+      if (variantInput) variantInput.value = '';
+      if (addBtn)    { addBtn.disabled = true; }
+      if (btnText)   { btnText.textContent = 'Unavailable'; }
+      if (stickyBtn) { stickyBtn.disabled = true; stickyBtn.textContent = 'Unavailable'; }
+      if (msgEl)     { msgEl.textContent = 'This combination is not available.'; msgEl.style.display = ''; }
+      return;
+    }
 
-      /* sticky price */
-      var sp = document.getElementById('tp-sticky-price');
-      if (sp) { sp.textContent = fmtMoney(price); sp.classList.toggle('tp-sticky-bar__price--sale', onSale); }
+    /* Sync hidden input with exact variant */
+    if (variantInput) {
+      variantInput.value = matched.id;
+      variantInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
 
-      /* button state */
-      var addBtn  = document.getElementById('tp-add-btn');
-      var btnText = document.getElementById('tp-btn-text');
-      if (addBtn) addBtn.disabled = !avail;
-      if (btnText) btnText.textContent = avail ? 'Add to Cart' : 'Sold Out';
-
-      /* variant image */
-      var imgSrc = opt.getAttribute('data-img');
-      var imgAlt = opt.getAttribute('data-alt');
-      if (mainImg && imgSrc) {
-        tpSwapImage(mainImg, imgSrc, imgAlt);
-        document.querySelectorAll('.tp-gallery__thumb').forEach(function (t) { t.classList.remove('tp-active'); });
+    /* Sync native select for data-img / data-alt lookup */
+    if (varSel) {
+      for (var si = 0; si < varSel.options.length; si++) {
+        if (varSel.options[si].value === String(matched.id)) {
+          varSel.selectedIndex = si;
+          break;
+        }
       }
-      break;
+    }
+
+    var avail   = matched.available;
+    var price   = matched.price;
+    var compare = matched.compare_at_price || 0;
+    var onSale  = compare > price;
+
+    /* Clear any previous message */
+    if (msgEl) { msgEl.textContent = ''; msgEl.style.display = 'none'; }
+
+    /* Price display */
+    var priceEl   = document.getElementById('tp-price');
+    var compareEl = document.getElementById('tp-compare');
+    var savingsEl = document.getElementById('tp-savings');
+    if (priceEl)   { priceEl.textContent = fmtMoney(price); priceEl.classList.toggle('tp-price--sale', onSale); }
+    if (compareEl) { compareEl.textContent = onSale ? fmtMoney(compare) : ''; compareEl.style.display = onSale ? '' : 'none'; }
+    if (savingsEl) { savingsEl.textContent = onSale ? 'Save ' + fmtMoney(compare - price) : ''; savingsEl.style.display = onSale ? '' : 'none'; }
+
+    /* Sticky price */
+    var sp = document.getElementById('tp-sticky-price');
+    if (sp) { sp.textContent = fmtMoney(price); sp.classList.toggle('tp-sticky-bar__price--sale', onSale); }
+
+    /* Button state */
+    if (addBtn)    { addBtn.disabled = !avail; }
+    if (btnText)   { btnText.textContent = avail ? 'Add to Cart' : 'Sold Out'; }
+    if (stickyBtn) { stickyBtn.disabled = !avail; stickyBtn.textContent = avail ? 'Add to Cart' : 'Sold Out'; }
+    if (!avail && msgEl) { msgEl.textContent = 'This variant is currently sold out.'; msgEl.style.display = ''; }
+
+    /* Variant image */
+    var varSelOpt = varSel && varSel.options[varSel.selectedIndex];
+    var imgSrc = varSelOpt ? varSelOpt.getAttribute('data-img') : null;
+    var imgAlt = varSelOpt ? varSelOpt.getAttribute('data-alt') : null;
+    if (mainImg && imgSrc) {
+      tpSwapImage(mainImg, imgSrc, imgAlt);
+      document.querySelectorAll('.tp-gallery__thumb').forEach(function (t) { t.classList.remove('tp-active'); });
     }
   }
+
+  /* Run on page load to disable impossible pills and sync state */
+  updatePillAvailability();
+  updateVariant();
 
   function fmtMoney(cents) {
     return (Math.round(cents) / 100).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' Kč';
   }
 
-  /* --- AJAX add to cart --- */
-  var form = document.getElementById('tp-form');
-  if (form) {
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var addBtn  = document.getElementById('tp-add-btn');
-      var btnText = document.getElementById('tp-btn-text');
-      if (addBtn && addBtn.disabled) return;
-      if (addBtn) addBtn.disabled = true;
-      if (btnText) btnText.textContent = 'Adding…';
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ id: varSel ? varSel.value : '', quantity: parseInt(qty.value, 10) || 1 })
-      }).then(function (r) { return r.json(); }).then(function (data) {
-        if (btnText) btnText.textContent = data.status ? 'Error' : 'Added! ✓';
-        document.dispatchEvent(new CustomEvent('cart:updated', { bubbles: true }));
-        setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Add to Cart'; }, 1800);
-      }).catch(function () {
-        if (btnText) btnText.textContent = 'Error – retry';
-        setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Add to Cart'; }, 2000);
-      });
-    });
-  }
+  /* Add to cart handled by the ES module below — needs CartLinesUpdateEvent from @shopify/events */
 
   /* --- Sticky bar visibility --- */
   var stickyBar = document.getElementById('tp-sticky');
@@ -1473,6 +1580,119 @@
     if (endMs) tick();
   }
 
+}());
+</script>
+
+<script type="module">
+import { CartLinesUpdateEvent } from '@shopify/events';
+
+(function () {
+  var form = document.getElementById('tp-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    var addBtn  = document.getElementById('tp-add-btn');
+    var btnText = document.getElementById('tp-btn-text');
+    if (addBtn && addBtn.disabled) return;
+    if (addBtn) addBtn.disabled = true;
+    if (btnText) btnText.textContent = 'Adding…';
+
+    var hiddenIdEl  = document.getElementById('tp-variant-id');
+    var qty         = document.getElementById('tp-qty') || { value: '1' };
+    var cartVarId   = hiddenIdEl ? hiddenIdEl.value.trim() : '';
+    var variantNum  = Number(cartVarId);
+    var qtyVal      = parseInt(qty.value, 10) || 1;
+
+    /* Pre-submit: variant ID must be set and valid */
+    if (!variantNum) {
+      if (btnText) btnText.textContent = 'Select options first';
+      setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Add to Cart'; }, 2500);
+      return;
+    }
+
+    /* Pre-submit: variant must exist in tpProductData and be available */
+    var tvArr2 = (window.tpProductData && window.tpProductData.variants) || [];
+    var foundV = null;
+    for (var fi = 0; fi < tvArr2.length; fi++) {
+      if (String(tvArr2[fi].id) === String(variantNum)) { foundV = tvArr2[fi]; break; }
+    }
+    if (!foundV) {
+      if (btnText) btnText.textContent = 'Invalid selection';
+      setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Add to Cart'; }, 2500);
+      return;
+    }
+    if (!foundV.available) {
+      if (btnText) btnText.textContent = 'Sold Out';
+      setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Sold Out'; }, 2500);
+      return;
+    }
+
+    var payload = { id: variantNum, quantity: qtyVal, sections: 'cart-drawer-section' };
+
+    /* Create the deferred promise — cart-drawer, cart-icon, cart-items all await this */
+    var deferred = CartLinesUpdateEvent.createPromise();
+
+    /* Dispatch BEFORE the fetch — this is the contract Horizon expects */
+    form.dispatchEvent(new CartLinesUpdateEvent({
+      action:  'add',
+      context: 'product',
+      lines:   [{ merchandiseId: String(variantNum), quantity: qtyVal }],
+      promise: deferred.promise,
+    }));
+
+    try {
+      var r    = await fetch('/cart/add.js', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+      var data = await r.json();
+
+      if (!r.ok) {
+        var errDesc = (data.description || data.message) || ('HTTP ' + r.status);
+        if (btnText) btnText.textContent = String(errDesc).slice(0, 50);
+        setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Add to Cart'; }, 4000);
+
+        /* Resolve with error flag — drawer stays closed, icon count unchanged */
+        deferred.resolve({ cart: { totalQuantity: 0, lines: [] }, detail: { didError: true } });
+        return;
+      }
+
+      /* ── SUCCESS ─────────────────────────────────────────────────────── */
+      var cartResp = await fetch('/cart.js');
+      var cart     = await cartResp.json();
+
+      deferred.resolve({
+        cart: CartLinesUpdateEvent.createCartFromAjaxResponse(cart),
+        detail: {
+          items:     cart.items,
+          source:    'tailand-product',
+          itemCount: cart.item_count,
+          sections:  data.sections || {},
+          didError:  false,
+        },
+      });
+
+      if (btnText) btnText.textContent = 'Added!';
+      setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Add to Cart'; }, 2000);
+
+      /* Fallback open: if auto_open_cart_drawer setting is disabled */
+      var drawerComp = document.querySelector('cart-drawer-component');
+      if (drawerComp && !drawerComp.hasAttribute('auto-open')) {
+        setTimeout(function () {
+          var drawer = document.querySelector('theme-drawer#cart-drawer');
+          if (drawer && typeof drawer.open === 'function') drawer.open();
+        }, 80);
+      }
+
+    } catch (err) {
+      if (btnText) btnText.textContent = 'Connection error – retry';
+      setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Add to Cart'; }, 3000);
+      deferred.reject(err);
+    }
+  });
 }());
 </script>
 

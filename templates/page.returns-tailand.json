@@ -1,0 +1,144 @@
+{
+  "sections": {
+    "tailand_returns_main": {
+      "type": "tailand-returns-policy",
+      "settings": {
+        "heading_plain": "Returns &",
+        "heading_hi": "Refunds",
+        "intro_text": "Need help with a return, refund, damaged item, or wrong product? Here's how we handle it.",
+        "card1_title": "Return Window",
+        "card1_text": "Return requests should be made within the applicable return window after delivery.",
+        "card2_title": "Damaged or Wrong Item",
+        "card2_text": "If something arrives damaged or incorrect, contact us with your order number and photos.",
+        "card3_title": "Refund Timing",
+        "card3_text": "Refunds are processed after the return or request is reviewed and approved.",
+        "card4_title": "Need Help?",
+        "card4_text": "Send us a message and we'll help you with the next step.",
+        "action_heading": "Start with your order details",
+        "action_text": "If you have a customer account, sign in to view your orders. If you need help with a return or refund, contact us with your order number.",
+        "contact_btn_text": "Contact Us",
+        "contact_btn_url": "/pages/contact",
+        "faq_heading": "Common Questions",
+        "cta_heading": "Need help with a return?",
+        "cta_text": "Send us your order number and a short description of the issue. We'll help you with the next step.",
+        "cta_btn_text": "Contact Us",
+        "cta_btn_url": "/pages/contact",
+        "padding_top": 64,
+        "padding_bottom": 80
+      },
+      "blocks": {
+        "policy_1": {
+          "type": "policy",
+          "settings": {
+            "title": "Return Window",
+            "content": "<p>You may request a return within the applicable return window after receiving your order. Items should be unused, clean, and in their original condition where possible.</p><p>Your statutory consumer rights may apply depending on your location and are not affected by this policy.</p>"
+          }
+        },
+        "policy_2": {
+          "type": "policy",
+          "settings": {
+            "title": "How to Start a Return",
+            "content": "<p>To start a return, contact us through our Contact Us page with your name, order number, and reason for the request. We'll review your request and send the next steps.</p>"
+          }
+        },
+        "policy_3": {
+          "type": "policy",
+          "settings": {
+            "title": "Damaged or Wrong Items",
+            "content": "<p>If your item arrives damaged, defective, or incorrect, contact us as soon as possible with your order number and clear photos of the item and packaging. We'll work to make it right.</p>"
+          }
+        },
+        "policy_4": {
+          "type": "policy",
+          "settings": {
+            "title": "Refunds",
+            "content": "<p>Once your return or refund request is reviewed and approved, we'll process the refund to your original payment method. Your bank or payment provider may take additional time to post the refund.</p>"
+          }
+        },
+        "policy_5": {
+          "type": "policy",
+          "settings": {
+            "title": "Return Shipping",
+            "content": "<p>Return shipping costs may depend on the reason for the return and your location. If the item arrived damaged, defective, or incorrect, contact us first before sending anything back.</p>"
+          }
+        },
+        "policy_6": {
+          "type": "policy",
+          "settings": {
+            "title": "Non-Returnable Items",
+            "content": "<p>Some items may not be eligible for return for hygiene, safety, custom, or final-sale reasons. Product-specific exceptions will be shown where applicable.</p>"
+          }
+        },
+        "policy_7": {
+          "type": "policy",
+          "settings": {
+            "title": "Order Cancellations",
+            "content": "<p>If you need to cancel an order, contact us as soon as possible. If the order has already been processed or shipped, cancellation may no longer be possible.</p>"
+          }
+        },
+        "policy_8": {
+          "type": "policy",
+          "settings": {
+            "title": "Exchanges",
+            "content": "<p>We do not guarantee direct exchanges for every product. If you need a different item or variant, contact us and we'll help find the best solution.</p>"
+          }
+        },
+        "policy_9": {
+          "type": "policy",
+          "settings": {
+            "title": "Contact Us",
+            "content": "<p>If you have a question about a return or refund, contact us through our Contact Us page and include your order number. We aim to respond within 1–2 business days.</p>"
+          }
+        },
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "How do I start a return?",
+            "answer": "Contact us through our Contact Us page with your order number and reason for the return. We'll review your request and let you know the next steps."
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "What should I do if my item arrived damaged?",
+            "answer": "Contact us as soon as possible with your order number and clear photos of the damaged item and packaging. We'll do our best to resolve it quickly."
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "When will I receive my refund?",
+            "answer": "Once your return or request is approved, we'll process the refund to your original payment method. Your bank may take a few additional business days to post it."
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "Do I have to pay return shipping?",
+            "answer": "Return shipping costs depend on the reason for the return and your location. If the item arrived damaged or incorrect, contact us first — we'll guide you on the best next step."
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I cancel my order?",
+            "answer": "Contact us as soon as possible if you need to cancel. If the order has already been shipped, cancellation may not be possible, but we'll do what we can to help."
+          }
+        },
+        "faq_6": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I exchange an item?",
+            "answer": "We don't guarantee direct exchanges for every item, but contact us with your order number and we'll find the best solution for you."
+          }
+        }
+      },
+      "block_order": [
+        "policy_1", "policy_2", "policy_3", "policy_4", "policy_5",
+        "policy_6", "policy_7", "policy_8", "policy_9",
+        "faq_1", "faq_2", "faq_3", "faq_4", "faq_5", "faq_6"
+      ]
+    }
+  },
+  "order": ["tailand_returns_main"]
+}

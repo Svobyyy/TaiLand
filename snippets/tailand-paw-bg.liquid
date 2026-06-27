@@ -1,0 +1,216 @@
+{%- comment -%}tailand-paw-bg.liquid — paw-print background texture{%- endcomment -%}
+<style>
+  /*
+    ── TUNING KNOBS ──────────────────────────────────────────────────────
+    --paw-opacity   overall alpha of the paw layer (applied before the mask)
+    --paw-spacing   tile size in px — smaller = denser (more paws per screen)
+
+    Fade shape is controlled directly in the mask-image gradient stops below.
+    Desktop gradient:  ~10 stops, fully visible at edges, ~5% at dead center
+    Mobile gradient:   ~8 stops,  fully visible at edges, ~10% at dead center
+    Neither gradient ever reaches 0 (transparent), which prevents hard cutoffs.
+    ─────────────────────────────────────────────────────────────────────── */
+  :root {
+    --paw-opacity:  0.25;
+    --paw-spacing:  300px;
+  }
+
+  /*
+    isolation:isolate on each Shopify section wrapper creates a local stacking
+    context so ::before at z-index:-1 sits:
+      — ABOVE the section's own background-color
+      — BELOW all section content (cards, images, text, buttons)
+    Opaque content elements naturally cover paws; paws appear only in open
+    background space between / around content.
+  */
+  [id^="shopify-section-"] {
+    position: relative;
+    isolation: isolate;
+  }
+
+  [id^="shopify-section-"]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: var(--paw-opacity);
+
+    /* background-attachment:fixed pins the tile to the viewport so paws
+       flow seamlessly across section boundaries like one continuous wallpaper. */
+    background-attachment: fixed;
+    background-repeat: repeat;
+    background-size: var(--paw-spacing) var(--paw-spacing);
+
+    /*
+      SVG tile 300×300 — 6 paws per tile, mixed sizes / colors / rotations:
+        Big dark dog paw    — #2B1B12, top-left,     +18°  (SVG opacity 0.75 → ~0.19 effective)
+        Small orange cat    — #EE7B28, top-right,    −20°
+        Medium dark dog     — #2B1B12, right-center, +35°  (SVG opacity 0.75 → ~0.19 effective)
+        Small beige dog     — #F7DFB8, left-center,  −12°
+        Large orange dog    — #EE7B28, bottom-center,+42°
+        Tiny beige cat      — #F7DFB8, bottom-left,  +5°
+
+      Dark groups carry opacity='0.75' inside the SVG so their effective
+      visibility = 0.25 (CSS) × 0.75 (SVG) ≈ 0.19, well under 0.22.
+      Orange and beige groups are at full SVG opacity (effective 0.25 at edges).
+
+      HOW TO ADJUST PAWS:
+        Opacity     → change --paw-opacity above
+        Density     → change --paw-spacing (smaller = more paws)
+        Dark dim    → change opacity='0.75' on the two dark %3Cg%3E groups
+        Paw color   → find fill='%23XXXXXX' and replace XXXXXX with 6-char hex
+                      (keep the %23 prefix — it encodes the # symbol)
+        Paw size    → change rx/ry on the ellipses inside a %3Cg%3E group
+    */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cg transform='translate(55,70) rotate(18)' opacity='0.75'%3E%3Cellipse cx='0' cy='20' rx='20' ry='17' fill='%232B1B12'/%3E%3Cellipse cx='-20' cy='3' rx='9' ry='8' fill='%232B1B12'/%3E%3Cellipse cx='-7' cy='-12' rx='8' ry='7' fill='%232B1B12'/%3E%3Cellipse cx='8' cy='-12' rx='8' ry='7' fill='%232B1B12'/%3E%3Cellipse cx='21' cy='3' rx='9' ry='8' fill='%232B1B12'/%3E%3C/g%3E%3Cg transform='translate(220,38) rotate(-20)'%3E%3Cellipse cx='0' cy='10' rx='10' ry='10' fill='%23EE7B28'/%3E%3Cellipse cx='-10' cy='1' rx='4' ry='4' fill='%23EE7B28'/%3E%3Cellipse cx='-3' cy='-7' rx='4' ry='4' fill='%23EE7B28'/%3E%3Cellipse cx='4' cy='-7' rx='4' ry='4' fill='%23EE7B28'/%3E%3Cellipse cx='11' cy='1' rx='4' ry='4' fill='%23EE7B28'/%3E%3C/g%3E%3Cg transform='translate(255,160) rotate(35)' opacity='0.75'%3E%3Cellipse cx='0' cy='14' rx='14' ry='12' fill='%232B1B12'/%3E%3Cellipse cx='-13' cy='2' rx='6' ry='5' fill='%232B1B12'/%3E%3Cellipse cx='-4' cy='-9' rx='5' ry='4.5' fill='%232B1B12'/%3E%3Cellipse cx='5' cy='-9' rx='5' ry='4.5' fill='%232B1B12'/%3E%3Cellipse cx='14' cy='2' rx='6' ry='5' fill='%232B1B12'/%3E%3C/g%3E%3Cg transform='translate(42,190) rotate(-12)'%3E%3Cellipse cx='0' cy='9' rx='9' ry='8' fill='%23F7DFB8'/%3E%3Cellipse cx='-9' cy='1' rx='4' ry='3.5' fill='%23F7DFB8'/%3E%3Cellipse cx='-3' cy='-6' rx='3.5' ry='3' fill='%23F7DFB8'/%3E%3Cellipse cx='4' cy='-6' rx='3.5' ry='3' fill='%23F7DFB8'/%3E%3Cellipse cx='10' cy='1' rx='4' ry='3.5' fill='%23F7DFB8'/%3E%3C/g%3E%3Cg transform='translate(180,255) rotate(42)'%3E%3Cellipse cx='0' cy='18' rx='18' ry='15' fill='%23EE7B28'/%3E%3Cellipse cx='-17' cy='2' rx='8' ry='7' fill='%23EE7B28'/%3E%3Cellipse cx='-6' cy='-11' rx='7' ry='6' fill='%23EE7B28'/%3E%3Cellipse cx='7' cy='-11' rx='7' ry='6' fill='%23EE7B28'/%3E%3Cellipse cx='18' cy='2' rx='8' ry='7' fill='%23EE7B28'/%3E%3C/g%3E%3Cg transform='translate(88,270) rotate(5)'%3E%3Cellipse cx='0' cy='7' rx='7' ry='7' fill='%23F7DFB8'/%3E%3Cellipse cx='-7' cy='1' rx='3' ry='3' fill='%23F7DFB8'/%3E%3Cellipse cx='-2' cy='-5' rx='3' ry='3' fill='%23F7DFB8'/%3E%3Cellipse cx='3' cy='-5' rx='3' ry='3' fill='%23F7DFB8'/%3E%3Cellipse cx='8' cy='1' rx='3' ry='3' fill='%23F7DFB8'/%3E%3C/g%3E%3C/svg%3E");
+
+    /*
+      ── DESKTOP CENTER FADE ───────────────────────────────────────────────
+      Multi-stop gradient — in a CSS mask black = visible, transparent = hidden.
+      The minimum is rgba(0,0,0,0.05) so paws never hard-disappear in the center;
+      they fade to ~1.25% effective opacity (0.25 × 0.05), which reads as clean
+      without creating a sharp cutoff anywhere.
+
+      HOW TO ADJUST THE FADE SHAPE:
+        Wider visible edge band  → shift the first few stops further right
+        Softer center            → raise the 50% value (e.g. 0.08 → 0.15)
+        More opaque center       → raise to 0.20 or higher
+        Tighter transition zone  → bring the 0.07 stops closer to 50%
+        Wider transition zone    → push the 0.30 stops closer to the edges
+    */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      black                    0%,
+      rgba(0, 0, 0, 0.95)     8%,
+      rgba(0, 0, 0, 0.70)     18%,
+      rgba(0, 0, 0, 0.22)     26%,
+      rgba(0, 0, 0, 0.04)     32%,
+      rgba(0, 0, 0, 0.03)     35%,
+      rgba(0, 0, 0, 0.03)     65%,
+      rgba(0, 0, 0, 0.04)     68%,
+      rgba(0, 0, 0, 0.22)     74%,
+      rgba(0, 0, 0, 0.70)     82%,
+      rgba(0, 0, 0, 0.95)     92%,
+      black                    100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      black                    0%,
+      rgba(0, 0, 0, 0.95)     8%,
+      rgba(0, 0, 0, 0.70)     18%,
+      rgba(0, 0, 0, 0.22)     26%,
+      rgba(0, 0, 0, 0.04)     32%,
+      rgba(0, 0, 0, 0.03)     35%,
+      rgba(0, 0, 0, 0.03)     65%,
+      rgba(0, 0, 0, 0.04)     68%,
+      rgba(0, 0, 0, 0.22)     74%,
+      rgba(0, 0, 0, 0.70)     82%,
+      rgba(0, 0, 0, 0.95)     92%,
+      black                    100%
+    );
+  }
+
+  /*
+    ── TABLET (750px – 1024px) ───────────────────────────────────────────
+    Slightly denser tile than mobile, but opacity pulled down from desktop.
+    The clean center zone is pushed wider than desktop (35%–65% range),
+    so text-heavy content areas stay readable on medium screens.
+
+    Effective paw opacity at center : 0.20 × 0.04 = 0.008 → invisible
+    Effective paw opacity at edges  : 0.20 × 1.00 = 0.20  → visible
+
+    HOW TO ADJUST:
+      Less visible overall  → lower --paw-opacity (e.g. 0.16)
+      Wider clean zone      → move the 26% stop to 22%, the 74% stop to 78%
+      Softer edge fade      → lower the 0.55 stop (e.g. 0.40)
+  */
+  @media screen and (min-width: 750px) and (max-width: 1024px) {
+    :root {
+      --paw-spacing:  360px;
+      --paw-opacity:  0.20;
+    }
+
+    [id^="shopify-section-"]::before {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        black                    0%,
+        rgba(0, 0, 0, 0.90)     6%,
+        rgba(0, 0, 0, 0.55)     16%,
+        rgba(0, 0, 0, 0.15)     26%,
+        rgba(0, 0, 0, 0.05)     35%,
+        rgba(0, 0, 0, 0.04)     50%,
+        rgba(0, 0, 0, 0.05)     65%,
+        rgba(0, 0, 0, 0.15)     74%,
+        rgba(0, 0, 0, 0.55)     84%,
+        rgba(0, 0, 0, 0.90)     94%,
+        black                    100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        black                    0%,
+        rgba(0, 0, 0, 0.90)     6%,
+        rgba(0, 0, 0, 0.55)     16%,
+        rgba(0, 0, 0, 0.15)     26%,
+        rgba(0, 0, 0, 0.05)     35%,
+        rgba(0, 0, 0, 0.04)     50%,
+        rgba(0, 0, 0, 0.05)     65%,
+        rgba(0, 0, 0, 0.15)     74%,
+        rgba(0, 0, 0, 0.55)     84%,
+        rgba(0, 0, 0, 0.90)     94%,
+        black                    100%
+      );
+    }
+  }
+
+  /*
+    ── MOBILE (≤749px) ──────────────────────────────────────────────────
+    Larger tile (less dense), lowest opacity.
+    Center minimum dropped to 0.05 (from 0.10) and the near-zero zone
+    widened to 38%–62%, so the center reads as clean on narrow screens.
+    Still never reaches 0 — no hard cutoff anywhere.
+
+    Effective paw opacity at center : 0.18 × 0.05 = 0.009 → invisible
+    Effective paw opacity at edges  : 0.18 × 1.00 = 0.18  → lightly visible
+
+    HOW TO ADJUST:
+      More visible overall  → raise --paw-opacity (e.g. 0.22)
+      Wider clean zone      → move the 20% stop to 16%, the 80% stop to 84%
+      Harder edge fade      → lower the 0.80 stop (e.g. 0.65)
+  */
+  @media (max-width: 749px) {
+    :root {
+      --paw-spacing:  420px;
+      --paw-opacity:  0.18;
+    }
+
+    [id^="shopify-section-"]::before {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        black                   0%,
+        rgba(0, 0, 0, 0.80)     8%,
+        rgba(0, 0, 0, 0.40)    20%,
+        rgba(0, 0, 0, 0.10)    32%,
+        rgba(0, 0, 0, 0.05)    38%,
+        rgba(0, 0, 0, 0.05)    62%,
+        rgba(0, 0, 0, 0.10)    68%,
+        rgba(0, 0, 0, 0.40)    80%,
+        rgba(0, 0, 0, 0.80)    92%,
+        black                   100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        black                   0%,
+        rgba(0, 0, 0, 0.80)     8%,
+        rgba(0, 0, 0, 0.40)    20%,
+        rgba(0, 0, 0, 0.10)    32%,
+        rgba(0, 0, 0, 0.05)    38%,
+        rgba(0, 0, 0, 0.05)    62%,
+        rgba(0, 0, 0, 0.10)    68%,
+        rgba(0, 0, 0, 0.40)    80%,
+        rgba(0, 0, 0, 0.80)    92%,
+        black                   100%
+      );
+    }
+  }
+</style>
