@@ -1629,7 +1629,15 @@ import { CartLinesUpdateEvent } from '@shopify/events';
       return;
     }
 
-    var payload = { id: variantNum, quantity: qtyVal, sections: 'cart-drawer-section' };
+    /* sections_url tells Shopify to render the section in the current page's template context
+       (product page), NOT in the cart endpoint context where template.name == 'cart' and
+       the cart-drawer snippet would silently render nothing due to its own condition check. */
+    var payload = {
+      id:           variantNum,
+      quantity:     qtyVal,
+      sections:     'cart-drawer-section',
+      sections_url: window.location.pathname,
+    };
 
     /* Create the deferred promise — cart-drawer, cart-icon, cart-items all await this */
     var deferred = CartLinesUpdateEvent.createPromise();
@@ -1661,6 +1669,16 @@ import { CartLinesUpdateEvent } from '@shopify/events';
       }
 
       /* ── SUCCESS ─────────────────────────────────────────────────────── */
+
+      /* Use sections from the add response when available.
+         If missing (e.g. Shopify rendered an empty section), fetch separately
+         using the current product-page URL as context so template.name == 'product'. */
+      var sectionsHtml = (data.sections && data.sections['cart-drawer-section'])
+        ? data.sections
+        : await fetch(window.location.pathname + '?sections=cart-drawer-section')
+            .then(function (res) { return res.json(); })
+            .catch(function () { return {}; });
+
       var cartResp = await fetch('/cart.js');
       var cart     = await cartResp.json();
 
@@ -1670,7 +1688,7 @@ import { CartLinesUpdateEvent } from '@shopify/events';
           items:     cart.items,
           source:    'tailand-product',
           itemCount: cart.item_count,
-          sections:  data.sections || {},
+          sections:  sectionsHtml,
           didError:  false,
         },
       });
@@ -1678,13 +1696,16 @@ import { CartLinesUpdateEvent } from '@shopify/events';
       if (btnText) btnText.textContent = 'Added!';
       setTimeout(function () { if (addBtn) addBtn.disabled = false; if (btnText) btnText.textContent = 'Add to Cart'; }, 2000);
 
-      /* Fallback open: if auto_open_cart_drawer setting is disabled */
+      /* Fallback open: if auto_open_cart_drawer setting is disabled, open the drawer manually.
+         Wait two animation frames so the morph from deferred.resolve can complete first. */
       var drawerComp = document.querySelector('cart-drawer-component');
       if (drawerComp && !drawerComp.hasAttribute('auto-open')) {
-        setTimeout(function () {
-          var drawer = document.querySelector('theme-drawer#cart-drawer');
-          if (drawer && typeof drawer.open === 'function') drawer.open();
-        }, 80);
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            var drawer = document.querySelector('theme-drawer#cart-drawer');
+            if (drawer && typeof drawer.open === 'function') drawer.open();
+          });
+        });
       }
 
     } catch (err) {

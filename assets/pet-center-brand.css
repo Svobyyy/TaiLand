@@ -813,6 +813,150 @@ a.pc-drawer-item:not(:has(.pc-drawer-icon)) {
 
 
 /* =========================================================
+   4e. Currency / Localization Selector
+   =========================================================
+   Desktop: compact branded pill shown in the header top row.
+   Mobile:  large card inside the hamburger drawer utility section.
+
+   Cascade note: Horizon's {% stylesheet %} blocks are inline <style> tags
+   (rendered in the HTML body, after this linked stylesheet). At equal
+   specificity, inline wins. We defeat that with an ID prefix (#header-component)
+   on desktop rules, and 3-class depth on mobile rules.
+   ========================================================= */
+
+/* ── Desktop pill ──────────────────────────────────────── */
+/* Specificity (1,1,0) beats the theme's (0,1,0) transparent reset */
+#header-component .dropdown-localization__button {
+  background: var(--pc-cream, #F7DFB8);
+  border: 2px solid var(--pc-text, #2B1B12);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  padding: 0.3rem 0.7rem 0.3rem 0.9rem;
+  gap: 5px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
+}
+
+#header-component .dropdown-localization__button:hover {
+  background: #FAECC5;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--pc-text, #2B1B12);
+}
+
+#header-component .dropdown-localization__button:focus-visible {
+  outline: 2px solid var(--pc-orange, #EE7B28);
+  outline-offset: 2px;
+}
+
+/* Keep the caret the right size and color inside the pill */
+#header-component .dropdown-localization__button .svg-wrapper.icon-caret {
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.7;
+}
+
+/* Dropdown panel: add a brand border so it looks intentional */
+#header-component .localization-wrapper {
+  border: 2px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ── Mobile drawer currency card ───────────────────────── */
+/* Custom element may default to display:contents which kills ::before.
+   Force block so the pseudo-element renders. */
+drawer-localization-component.menu-drawer__localization {
+  display: block;
+}
+
+/* "Currency" label above the card, injected via CSS so we don't touch the Liquid */
+.menu-drawer__utility-links .menu-drawer__localization::before {
+  content: 'Currency';
+  display: block;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #7A5C45;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+  padding-inline: 4px;
+}
+
+/* Full-width branded card — 3-class depth (0,3,0) beats inline (0,2,0) */
+.menu-drawer__utility-links .menu-drawer__localization .drawer-localization__button {
+  background: var(--pc-cream, #F7DFB8) !important;
+  border: 2.5px solid var(--pc-text, #2B1B12) !important;
+  border-radius: 16px !important;
+  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12) !important;
+  padding: 14px 18px !important;
+  width: 100%;
+  min-height: 54px;
+  color: var(--pc-text, #2B1B12) !important;
+  font-family: 'Fredoka', sans-serif !important;
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+.menu-drawer__utility-links .menu-drawer__localization .drawer-localization__button:hover,
+.menu-drawer__utility-links .menu-drawer__localization .drawer-localization__button:focus-visible {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12) !important;
+}
+
+/* Currency code text inside the button */
+.menu-drawer__utility-links .menu-drawer__localization .currency-code {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  letter-spacing: 0.02em;
+}
+
+/* Orange accent dot before the currency code */
+.menu-drawer__utility-links .menu-drawer__localization .mobile-localization--country::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--pc-orange, #EE7B28);
+  border: 1.5px solid var(--pc-text, #2B1B12);
+  margin-right: 8px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.menu-drawer__utility-links .menu-drawer__localization .mobile-localization--country {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Caret arrow: dark color, properly sized */
+.menu-drawer__utility-links .menu-drawer__localization .icon-caret svg {
+  width: 20px !important;
+  height: 20px !important;
+  stroke: var(--pc-text, #2B1B12);
+  opacity: 0.6;
+}
+
+/* Breathing room around the whole localization block in the drawer */
+.menu-drawer__utility-links .menu-drawer__localization {
+  margin-top: 8px;
+  padding: 16px 20px;
+  background: rgba(247, 223, 184, 0.25);
+  border-top: 1.5px solid rgba(43, 27, 18, 0.1);
+}
+
+
+/* =========================================================
    5. Product & UI Typography
    Targets standard Horizon theme classes for product cards,
    prices, and badges. Rules are additive and safe -- they

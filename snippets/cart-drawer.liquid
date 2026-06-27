@@ -21,6 +21,11 @@
     src="{{ 'cart-drawer.js' | asset_url }}"
     fetchpriority="low"
   ></script>
+  <script
+    type="module"
+    src="{{ 'component-cart-items.js' | asset_url }}"
+    fetchpriority="low"
+  ></script>
 
   {% capture empty_cart_drawer_content %}
     <div
@@ -137,6 +142,94 @@
   {% if render_wrapper %}
     </div>
   {% endif %}
+
+  <script>
+    (function () {
+      var cartDrawer = document.getElementById('cart-drawer');
+      if (!cartDrawer) {
+        console.log('[tc-cart] ERROR: #cart-drawer not found in DOM');
+        return;
+      }
+
+      // Scrim element — visible only on desktop (≥990px) as a backdrop overlay
+      var scrim = document.createElement('div');
+      scrim.className = 'tc-cart-scrim';
+      document.body.appendChild(scrim);
+      scrim.addEventListener('click', function () {
+        cartDrawer.dispatchEvent(new CustomEvent('close'));
+      });
+
+      var desktopQuery = window.matchMedia('(min-width: 990px)');
+
+      // On desktop, theme-drawer.js calls dialog.show() (non-modal, normal stacking context).
+      // On refresh, the session restore in theme-drawer.liquid calls dialog.setAttribute('open','')
+      // directly — also non-modal, bypassing show() entirely. Both paths lose to the z-index:18
+      // sticky header. Mobile works because it calls showModal() which uses the browser top layer.
+      //
+      // Fix: intercept BOTH paths on desktop and force showModal() (top layer, same as mobile).
+      //   Path 1 — show() override: catches explicit opens via theme-drawer.js.
+      //   Path 2 — MutationObserver on dialog: catches the session-restore setAttribute path.
+      //            Fires as a microtask BEFORE theme-drawer.js module has loaded, so the brief
+      //            close() call's async close event goes completely unhandled — no side-effects.
+      if (desktopQuery.matches) {
+        var desktopDialog = cartDrawer.querySelector('dialog');
+        if (desktopDialog) {
+          // Path 1: show() → showModal()
+          desktopDialog.show = function () {
+            if (!this.open) HTMLDialogElement.prototype.showModal.call(this);
+          };
+
+          // Path 2: direct setAttribute('open','') → promote to modal
+          new MutationObserver(function () {
+            if (desktopDialog.hasAttribute('open') && !desktopDialog.matches(':modal')) {
+              desktopDialog.close();
+              HTMLDialogElement.prototype.showModal.call(desktopDialog);
+              console.log('[tc-cart] session-restore→showModal() top-layer');
+            }
+          }).observe(desktopDialog, { attributes: true, attributeFilter: ['open'] });
+
+          console.log('[tc-cart] desktop intercepts installed on', desktopDialog.className);
+        } else {
+          console.log('[tc-cart] ERROR: dialog not found inside cart-drawer');
+        }
+      }
+
+      function syncDrawerClass() {
+        var headerSection = document.querySelector('.header-section');
+        var drawerDialog  = cartDrawer.querySelector('dialog');
+        var isDesktop     = desktopQuery.matches;
+
+        if (cartDrawer.hasAttribute('open')) {
+          document.body.classList.add('tc-cart-drawer-open');
+          if (isDesktop) {
+            if (headerSection) {
+              headerSection.style.setProperty('z-index', '1', 'important');
+              console.log('[tc-cart] open: header-section z-index =',
+                          getComputedStyle(headerSection).zIndex,
+                          '| position =', getComputedStyle(headerSection).position);
+            }
+            if (drawerDialog) {
+              drawerDialog.style.setProperty('z-index', '9999', 'important');
+              console.log('[tc-cart] open: dialog z-index =',
+                          getComputedStyle(drawerDialog).zIndex,
+                          '| parent =', drawerDialog.parentElement && drawerDialog.parentElement.id);
+            }
+          }
+        } else {
+          document.body.classList.remove('tc-cart-drawer-open');
+          if (headerSection) headerSection.style.removeProperty('z-index');
+          if (drawerDialog)  drawerDialog.style.removeProperty('z-index');
+        }
+      }
+
+      desktopQuery.addEventListener('change', syncDrawerClass);
+      new MutationObserver(syncDrawerClass).observe(cartDrawer, {
+        attributes: true,
+        attributeFilter: ['open'],
+      });
+      syncDrawerClass();
+    })();
+  </script>
 {%- endif -%}
 
 {% stylesheet %}
@@ -553,5 +646,78 @@
     font-weight: 700;
     font-size: 0.6rem;
     line-height: 1;
+  }
+
+  /* ── Desktop: cart drawer as true overlay (no page squeeze) ─────────── */
+  @media screen and (min-width: 990px) {
+    /* Neutralize base.css margin-right squeeze; page stays full-width */
+    body.tc-cart-drawer-open .page-wrapper {
+      margin-right: 0 !important;
+      transition: none !important;
+      overflow-y: hidden !important;
+    }
+
+    /* Lower every stacking context in the header below the cart dialog.
+       Primary fix is the JS inline style in syncDrawerClass(); this is the CSS backup.
+       .header-section is position:sticky z-index:18; #header-component and .header also
+       create stacking contexts via contain:layout. Target all three. */
+    body.tc-cart-drawer-open .header-section,
+    body.tc-cart-drawer-open #header-component,
+    body.tc-cart-drawer-open .header {
+      z-index: 1 !important;
+    }
+
+    /* Scrim covers only the page-content area (left side of viewport).
+       Stops at the drawer's left edge so it never dims the cart itself.
+       z-index 7: above lowered header (1), below cart dialog (theme z-index 8). */
+    .tc-cart-scrim {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: var(--theme-drawer-width, var(--sidebar-width));
+      z-index: 7;
+      background: rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    body.tc-cart-drawer-open .tc-cart-scrim {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    /* Collapse inline search bar so it doesn't overlap the drawer */
+    .pc-search-inline {
+      overflow: hidden;
+      transition: max-width 0.25s ease, min-width 0.25s ease, opacity 0.2s ease;
+    }
+
+    body.tc-cart-drawer-open .pc-search-inline {
+      max-width: 0 !important;
+      min-width: 0 !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  /* Desktop: dialog is now in the top layer via showModal() — no z-index fight needed.
+     Suppress the native ::backdrop; .tc-cart-scrim handles the dim overlay instead. */
+  @media screen and (min-width: 990px) {
+    #cart-drawer .theme-drawer__dialog::backdrop {
+      background: transparent;
+    }
+  }
+
+  /* Mobile/tablet: keep the native showModal() backdrop as the dim overlay */
+  @media screen and (max-width: 989px) {
+    .tc-cart-scrim {
+      display: none;
+    }
+
+    #cart-drawer .theme-drawer__dialog::backdrop {
+      background: rgba(0, 0, 0, 0.35);
+    }
   }
 {% endstylesheet %}
