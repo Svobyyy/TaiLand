@@ -2116,5 +2116,149 @@
         "default": "equal-width-buttons"
       }
     ]
+  },
+  {
+    "name": "Frequently Bought Together",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "fbt_show",
+        "label": "Show FBT section",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Default products"
+      },
+      {
+        "type": "product",
+        "id": "fbt_default_1",
+        "label": "Default product 1"
+      },
+      {
+        "type": "product",
+        "id": "fbt_default_2",
+        "label": "Default product 2"
+      },
+      {
+        "type": "product",
+        "id": "fbt_default_3",
+        "label": "Default product 3"
+      },
+      {
+        "type": "header",
+        "content": "Grooming (tag: grooming_upsell)"
+      },
+      {
+        "type": "product",
+        "id": "fbt_grooming_1",
+        "label": "Grooming product 1"
+      },
+      {
+        "type": "product",
+        "id": "fbt_grooming_2",
+        "label": "Grooming product 2"
+      },
+      {
+        "type": "product",
+        "id": "fbt_grooming_3",
+        "label": "Grooming product 3"
+      },
+      {
+        "type": "header",
+        "content": "Feeder (tag: feeder_upsell)"
+      },
+      {
+        "type": "product",
+        "id": "fbt_feeder_1",
+        "label": "Feeder product 1"
+      },
+      {
+        "type": "product",
+        "id": "fbt_feeder_2",
+        "label": "Feeder product 2"
+      },
+      {
+        "type": "product",
+        "id": "fbt_feeder_3",
+        "label": "Feeder product 3"
+      },
+      {
+        "type": "header",
+        "content": "Water (tag: water_upsell)"
+      },
+      {
+        "type": "product",
+        "id": "fbt_water_1",
+        "label": "Water product 1"
+      },
+      {
+        "type": "product",
+        "id": "fbt_water_2",
+        "label": "Water product 2"
+      },
+      {
+        "type": "product",
+        "id": "fbt_water_3",
+        "label": "Water product 3"
+      },
+      {
+        "type": "header",
+        "content": "Toy (tag: toy_upsell)"
+      },
+      {
+        "type": "product",
+        "id": "fbt_toy_1",
+        "label": "Toy product 1"
+      },
+      {
+        "type": "product",
+        "id": "fbt_toy_2",
+        "label": "Toy product 2"
+      },
+      {
+        "type": "product",
+        "id": "fbt_toy_3",
+        "label": "Toy product 3"
+      },
+      {
+        "type": "header",
+        "content": "Cat (tag: cat_upsell)"
+      },
+      {
+        "type": "product",
+        "id": "fbt_cat_1",
+        "label": "Cat product 1"
+      },
+      {
+        "type": "product",
+        "id": "fbt_cat_2",
+        "label": "Cat product 2"
+      },
+      {
+        "type": "product",
+        "id": "fbt_cat_3",
+        "label": "Cat product 3"
+      },
+      {
+        "type": "header",
+        "content": "Dog (tag: dog_upsell)"
+      },
+      {
+        "type": "product",
+        "id": "fbt_dog_1",
+        "label": "Dog product 1"
+      },
+      {
+        "type": "product",
+        "id": "fbt_dog_2",
+        "label": "Dog product 2"
+      },
+      {
+        "type": "product",
+        "id": "fbt_dog_3",
+        "label": "Dog product 3"
+      }
+    ]
   }
 ]

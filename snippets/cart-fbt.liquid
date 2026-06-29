@@ -7,7 +7,7 @@
 {%- assign fbt_mode  = fbt_mode  | default: 'drawer' -%}
 {%- assign fbt_limit = fbt_limit | default: 3 -%}
 
-{%- unless section.settings.show_fbt == false or cart.empty? -%}
+{%- unless settings.fbt_show == false or cart.empty? -%}
 
   {%- comment -%}── 1. Detect category from cart item tags (priority order) ──{%- endcomment -%}
   {%- assign fbt_category   = 'default' -%}
@@ -26,35 +26,35 @@
     {%- endunless -%}
   {%- endfor -%}
 
-  {%- comment -%}── 2. Map category → products using explicit dot notation (avoids dynamic-key GID issue) ──{%- endcomment -%}
+  {%- comment -%}── 2. Map category → products via theme settings (available everywhere, no section context needed) ──{%- endcomment -%}
   {%- if fbt_category == 'grooming' -%}
-    {%- assign fbt_fp1 = section.settings.fbt_grooming_1 -%}
-    {%- assign fbt_fp2 = section.settings.fbt_grooming_2 -%}
-    {%- assign fbt_fp3 = section.settings.fbt_grooming_3 -%}
+    {%- assign fbt_fp1 = settings.fbt_grooming_1 -%}
+    {%- assign fbt_fp2 = settings.fbt_grooming_2 -%}
+    {%- assign fbt_fp3 = settings.fbt_grooming_3 -%}
   {%- elsif fbt_category == 'feeder' -%}
-    {%- assign fbt_fp1 = section.settings.fbt_feeder_1 -%}
-    {%- assign fbt_fp2 = section.settings.fbt_feeder_2 -%}
-    {%- assign fbt_fp3 = section.settings.fbt_feeder_3 -%}
+    {%- assign fbt_fp1 = settings.fbt_feeder_1 -%}
+    {%- assign fbt_fp2 = settings.fbt_feeder_2 -%}
+    {%- assign fbt_fp3 = settings.fbt_feeder_3 -%}
   {%- elsif fbt_category == 'water' -%}
-    {%- assign fbt_fp1 = section.settings.fbt_water_1 -%}
-    {%- assign fbt_fp2 = section.settings.fbt_water_2 -%}
-    {%- assign fbt_fp3 = section.settings.fbt_water_3 -%}
+    {%- assign fbt_fp1 = settings.fbt_water_1 -%}
+    {%- assign fbt_fp2 = settings.fbt_water_2 -%}
+    {%- assign fbt_fp3 = settings.fbt_water_3 -%}
   {%- elsif fbt_category == 'toy' -%}
-    {%- assign fbt_fp1 = section.settings.fbt_toy_1 -%}
-    {%- assign fbt_fp2 = section.settings.fbt_toy_2 -%}
-    {%- assign fbt_fp3 = section.settings.fbt_toy_3 -%}
+    {%- assign fbt_fp1 = settings.fbt_toy_1 -%}
+    {%- assign fbt_fp2 = settings.fbt_toy_2 -%}
+    {%- assign fbt_fp3 = settings.fbt_toy_3 -%}
   {%- elsif fbt_category == 'cat' -%}
-    {%- assign fbt_fp1 = section.settings.fbt_cat_1 -%}
-    {%- assign fbt_fp2 = section.settings.fbt_cat_2 -%}
-    {%- assign fbt_fp3 = section.settings.fbt_cat_3 -%}
+    {%- assign fbt_fp1 = settings.fbt_cat_1 -%}
+    {%- assign fbt_fp2 = settings.fbt_cat_2 -%}
+    {%- assign fbt_fp3 = settings.fbt_cat_3 -%}
   {%- elsif fbt_category == 'dog' -%}
-    {%- assign fbt_fp1 = section.settings.fbt_dog_1 -%}
-    {%- assign fbt_fp2 = section.settings.fbt_dog_2 -%}
-    {%- assign fbt_fp3 = section.settings.fbt_dog_3 -%}
+    {%- assign fbt_fp1 = settings.fbt_dog_1 -%}
+    {%- assign fbt_fp2 = settings.fbt_dog_2 -%}
+    {%- assign fbt_fp3 = settings.fbt_dog_3 -%}
   {%- else -%}
-    {%- assign fbt_fp1 = section.settings.fbt_default_1 -%}
-    {%- assign fbt_fp2 = section.settings.fbt_default_2 -%}
-    {%- assign fbt_fp3 = section.settings.fbt_default_3 -%}
+    {%- assign fbt_fp1 = settings.fbt_default_1 -%}
+    {%- assign fbt_fp2 = settings.fbt_default_2 -%}
+    {%- assign fbt_fp3 = settings.fbt_default_3 -%}
   {%- endif -%}
 
   {%- comment -%}── 3. Build cart handle lookup string ──{%- endcomment -%}
