@@ -8,9 +8,11 @@
  * ------------------------------------------------------------
  */
 {
+  "type": "aside",
+  "name": "Overlay",
   "sections": {
-    "cart-section": {
-      "type": "tailand-cart",
+    "cart-drawer-section": {
+      "type": "cart-drawer-section",
       "settings": {
         "show_fbt": true,
         "fbt_default_1": "gid://shopify/product/10866767036743",
@@ -32,27 +34,9 @@
         "fbt_dog_2": "gid://shopify/product/10866869829959",
         "fbt_dog_3": "gid://shopify/product/10866873925959"
       }
-    },
-    "cart-you-may-also-like": {
-      "type": "pets-love-these",
-      "settings": {
-        "heading_plain": "More",
-        "heading_highlighted": "Pawsome Picks",
-        "collection": "all",
-        "products_to_show": 4,
-        "card_btn_text": "Shop Now",
-        "show_badge": true,
-        "badge_text": "BEST SELLER",
-        "show_view_all": true,
-        "view_all_text": "View All",
-        "view_all_link": "",
-        "padding_top": 52,
-        "padding_bottom": 52
-      }
     }
   },
   "order": [
-    "cart-section",
-    "cart-you-may-also-like"
+    "cart-drawer-section"
   ]
 }

@@ -123,6 +123,8 @@
                   {% render 'cart-products', context: 'drawer' %}
                 </scroll-hint>
 
+                {%- render 'cart-fbt', fbt_limit: 3, fbt_mode: 'drawer' -%}
+
                 <div class="cart-drawer__summary">
                   {% render 'cart-summary', section_id: 'cart-drawer-section' %}
                 </div>
