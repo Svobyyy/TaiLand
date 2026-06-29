@@ -131,8 +131,13 @@ export class ProductCard extends ProductCardLink {
     return this.refs.productCardLink || null;
   }
 
+  #fetchProductPageTimer = undefined;
+
   #fetchProductPageHandler = () => {
-    this.refs.quickAdd?.fetchProductPage(this.productPageUrl);
+    clearTimeout(this.#fetchProductPageTimer);
+    this.#fetchProductPageTimer = setTimeout(() => {
+      this.refs.quickAdd?.fetchProductPage(this.productPageUrl);
+    }, 150);
   };
 
   /**
@@ -178,6 +183,8 @@ export class ProductCard extends ProductCardLink {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('click', this.navigateToProduct);
+    mediaQueryLarge.removeEventListener('change', this.#handleQuickAdd);
+    clearTimeout(this.#fetchProductPageTimer);
   }
 
   #preloadNextPreviewImage() {

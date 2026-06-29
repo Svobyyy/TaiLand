@@ -16,6 +16,12 @@
     padding-top: {{ section.settings.padding_top }}px;
     padding-bottom: {{ section.settings.padding_bottom }}px;
   }
+  {% if request.page_type == 'index' %}
+  #shopify-section-{{ section.id }},
+  #shopify-section-{{ section.id }} .plt-section {
+    background-color: #FFF4D9;
+  }
+  {% endif %}
 {% endstyle %}
 
 <section class="plt-section" aria-label="{{ plt_plain }} {{ plt_highlight }}">
@@ -485,6 +491,56 @@
   .plt-card__btn {
     font-size: 0.9rem;
     padding: 9px 18px;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .plt-grid {
+    gap: 8px;
+  }
+  .plt-card__body {
+    padding: 8px 10px 12px;
+    gap: 5px;
+  }
+  .plt-card__title {
+    font-size: 0.9rem;
+  }
+  .plt-card__price-reg,
+  .plt-card__price-sale {
+    font-size: 1.05rem;
+  }
+  .plt-card__price-compare {
+    font-size: 0.75rem;
+  }
+  .plt-card__btn {
+    font-size: 0.78rem;
+    padding: 6px 10px;
+    gap: 3px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .plt-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .plt-card__body {
+    padding: 12px 16px 16px;
+    gap: 8px;
+  }
+  .plt-card__title {
+    font-size: 1.05rem;
+  }
+  .plt-card__price-reg,
+  .plt-card__price-sale {
+    font-size: 1.2rem;
+  }
+  .plt-card__btn {
+    font-size: 0.9rem;
+    padding: 9px 18px;
+    width: auto;
   }
 }
 

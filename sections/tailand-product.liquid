@@ -1,4 +1,4 @@
-{% stylesheet %}
+﻿{% stylesheet %}
 /* ============================================================
    TAILAND PRODUCT PAGE — tp-* prefix
    ============================================================ */
@@ -365,27 +365,6 @@
 .tp-countdown__sep { font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--pc-text, #2d2d2d); opacity: 0.5; }
 .tp-countdown__expired { font-family: 'Nunito Sans', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--pc-sale-red, #e8372b); }
 
-/* Benefit bullets */
-.tp-benefits { display: flex; flex-direction: column; gap: 7px; list-style: none; margin: 0; padding: 0; }
-
-.tp-benefit {
-  display: flex; align-items: center; gap: 9px;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 0.92rem; font-weight: 700;
-  color: var(--pc-text, #2d2d2d);
-}
-
-.tp-benefit__dot {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: var(--pc-green, #2eaa5f);
-  border: 2px solid var(--pc-text, #2d2d2d);
-  box-shadow: 2px 2px 0 var(--pc-text, #2d2d2d);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; color: #fff;
-}
-.tp-benefit__dot svg { width: 11px; height: 11px; }
-
 /* Free shipping bar */
 .tp-ship-bar {
   background: #FFF4D9;
@@ -546,6 +525,7 @@
   gap: 1rem; user-select: none;
 }
 .tp-acc summary::-webkit-details-marker { display: none; }
+.tp-acc__label { display: flex; align-items: center; gap: 10px; }
 
 .tp-acc__chev {
   width: 20px; height: 20px; flex-shrink: 0;
@@ -744,9 +724,184 @@
 
 /* ---- Mobile tightening ---- */
 @media screen and (max-width: 749px) {
-  .tp-wrap, .tp-desc-section, .tp-lower, .tp-story, .tp-specs, .tp-related, .tp-faq {
+  .tp-wrap, .tp-desc-section, .tp-lower, .tp-story, .tp-specs, .tp-related, .tp-faq, .tp-feat {
     padding-left: 1rem; padding-right: 1rem;
   }
+}
+
+/* ============================================================
+   FEATURE ROWS  (tp-feat-*)
+   ============================================================ */
+.tp-feat {
+  max-width: 1280px;
+  margin: 3.5rem auto 0;
+  padding: 0 1.5rem;
+}
+
+.tp-feat__row {
+  display: flex;
+  gap: 3.5rem;
+  align-items: center;
+  margin-bottom: 3.5rem;
+}
+
+.tp-feat__row:last-child { margin-bottom: 0; }
+
+.tp-feat__row--reverse { flex-direction: row-reverse; }
+
+/* Image side */
+.tp-feat__img-wrap {
+  flex: 1 1 45%;
+  min-width: 0;
+  border: 3px solid var(--pc-text, #2B1B12);
+  border-radius: 20px;
+  box-shadow: 6px 8px 0 rgba(43, 27, 18, 0.82);
+  overflow: hidden;
+  background: #FFF4D9;
+  flex-shrink: 0;
+}
+
+.tp-feat__img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.tp-feat__row:hover .tp-feat__img { transform: scale(1.03); }
+
+/* Text side */
+.tp-feat__content {
+  flex: 1 1 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tp-feat__eyebrow {
+  display: inline-block;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pc-orange, #EE7B28);
+  background: rgba(238, 123, 40, 0.1);
+  border: 1.5px solid rgba(238, 123, 40, 0.25);
+  border-radius: 999px;
+  padding: 4px 14px;
+  line-height: 1.4;
+  width: fit-content;
+}
+
+.tp-feat__title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.tp-feat__body {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.82;
+  max-width: 54ch;
+}
+
+.tp-feat__body p { margin: 0 0 0.75rem; }
+.tp-feat__body p:last-child { margin-bottom: 0; }
+
+.tp-feat__body h2,
+.tp-feat__body h3 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  opacity: 1;
+  margin: 0 0 0.75rem;
+  line-height: 1.2;
+}
+
+.tp-feat__body ul,
+.tp-feat__body ol {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.tp-feat__body li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  opacity: 1;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.4;
+}
+
+.tp-feat__body li::before {
+  content: '';
+  flex-shrink: 0;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  background-color: var(--pc-green, #4F8A2F);
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='5 10 8.5 13.5 15 6.5' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 14px 14px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.tp-feat__bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.tp-feat__bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--pc-text, #2B1B12);
+  line-height: 1.4;
+}
+
+.tp-feat__check {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: var(--pc-green, #4F8A2F);
+}
+
+@media screen and (max-width: 749px) {
+  .tp-feat__row,
+  .tp-feat__row--reverse {
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .tp-feat__img-wrap { flex-basis: auto; width: 100%; }
+  .tp-feat__content { flex-basis: auto; }
+  .tp-feat { margin-top: 2.5rem; }
 }
 {% endstylesheet %}
 
@@ -760,10 +915,15 @@
   assign tp_pt = section.settings.padding_top  | append: 'px'
   assign tp_pb = section.settings.padding_bottom | append: 'px'
 
-  assign tp_threshold_cents = section.settings.free_shipping_threshold | times: 100
+  assign tp_active_currency = localization.country.currency.iso_code
+  assign tp_is_usd          = false
+  if tp_active_currency == 'USD'
+    assign tp_is_usd = true
+  endif
+  assign tp_threshold_cents = section.settings.free_shipping_threshold_usd | times: 100
   assign tp_cart_cents      = cart.total_price
   assign tp_progress        = 0
-  if tp_threshold_cents > 0
+  if tp_is_usd and tp_threshold_cents > 0
     if tp_cart_cents >= tp_threshold_cents
       assign tp_progress = 100
     else
@@ -804,20 +964,20 @@
             {%- endif -%}
 
             {%- if tp_main_src != blank -%}
-              {{- tp_main_src | image_url: width: 900 | image_tag: id: 'tp-main-img', class: 'tp-gallery__main-img', alt: tp_main_alt, loading: 'eager', width: 900, height: 900 -}}
+              {{- tp_main_src | image_url: width: 900 | image_tag: id: 'tp-main-img', class: 'tp-gallery__main-img', alt: tp_main_alt, loading: 'eager', fetchpriority: 'high', width: 900, height: 900 -}}
             {%- endif -%}
 
           </div>
 
           {%- if tp_product.media.size > 1 -%}
             <div class="tp-gallery__thumbs">
-              {%- for media in tp_product.media limit: 8 -%}
+              {%- for media in tp_product.media -%}
                 {%- assign tp_th_alt = media.alt | default: tp_product.title | escape -%}
                 {%- assign tp_th_full = media.preview_image | image_url: width: 900 -%}
                 <button type="button"
                   class="tp-gallery__thumb{% if forloop.first %} tp-active{% endif %}"
                   data-src="{{ tp_th_full }}"
-                  aria-label="View image {{ forloop.index }}">
+                  aria-label="{{ tp_th_alt }}">
                   {{- media.preview_image | image_url: width: 144 | image_tag: alt: tp_th_alt, loading: 'lazy', width: 72, height: 72 -}}
                 </button>
               {%- endfor -%}
@@ -848,19 +1008,19 @@
                 {%- for i in (1..5) -%}
                   {%- if i <= tp_paw_n -%}
                     <svg class="tp-paw tp-paw--on" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
-                      <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
-                      <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
-                      <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
-                      <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
+                      <ellipse cx="6.5" cy="9" rx="2" ry="2.5"/>
+                      <ellipse cx="10" cy="6.5" rx="2" ry="2.5"/>
+                      <ellipse cx="14" cy="6.5" rx="2" ry="2.5"/>
+                      <ellipse cx="17.5" cy="9" rx="2" ry="2.5"/>
+                      <path d="M12 22.5C8.5 22.5 5.5 20.5 5.5 17.5C5.5 14.5 7.5 12.5 12 12.5C16.5 12.5 18.5 14.5 18.5 17.5C18.5 20.5 15.5 22.5 12 22.5Z"/>
                     </svg>
                   {%- else -%}
                     <svg class="tp-paw tp-paw--off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                      <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
-                      <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
-                      <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
-                      <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
-                      <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
+                      <ellipse cx="6.5" cy="9" rx="2" ry="2.5"/>
+                      <ellipse cx="10" cy="6.5" rx="2" ry="2.5"/>
+                      <ellipse cx="14" cy="6.5" rx="2" ry="2.5"/>
+                      <ellipse cx="17.5" cy="9" rx="2" ry="2.5"/>
+                      <path d="M12 22.5C8.5 22.5 5.5 20.5 5.5 17.5C5.5 14.5 7.5 12.5 12 12.5C16.5 12.5 18.5 14.5 18.5 17.5C18.5 20.5 15.5 22.5 12 22.5Z"/>
                     </svg>
                   {%- endif -%}
                 {%- endfor -%}
@@ -898,7 +1058,7 @@
                 {%- assign tp_oi = forloop.index0 -%}
                 <div class="tp-option-group" data-option-index="{{ tp_oi }}">
                   <div class="tp-option-label">
-                    {{ option.name }}<em id="tp-sel-{{ tp_oi }}">{{ option.selected_value }}</em>
+                    {{ option.name }}<em id="tp-sel-{{ tp_oi }}" aria-live="polite" aria-atomic="true">{{ option.selected_value }}</em>
                   </div>
                   <div class="tp-pills" role="group" aria-label="{{ option.name }}">
                     {%- for value in option.values -%}
@@ -966,59 +1126,50 @@
               {%- if section.settings.promo_text != blank -%}
                 <p class="tp-promo__text">{{ section.settings.promo_text }}</p>
               {%- endif -%}
-              {%- if section.settings.countdown_end != blank -%}
-                <div class="tp-countdown" id="tp-cd" data-end="{{ section.settings.countdown_end }}" data-expired="{{ section.settings.countdown_expired | default: 'Deal ended' }}">
-                  <span class="tp-countdown__label">Ends in</span>
-                  <div class="tp-countdown__units" id="tp-cd-units">
-                    <div class="tp-countdown__unit"><span class="tp-countdown__num" id="tp-cd-h">--</span><span class="tp-countdown__sub">Hrs</span></div>
+              {%- if section.settings.show_countdown -%}
+                <div class="tp-countdown" data-tailand-countdown>
+                  <span class="tp-countdown__label">{{ section.settings.countdown_label | default: "Today's deal ends in" }}</span>
+                  <div class="tp-countdown__units">
+                    <div class="tp-countdown__unit"><span class="tp-countdown__num" data-cd-h>--</span><span class="tp-countdown__sub">Hrs</span></div>
                     <span class="tp-countdown__sep">:</span>
-                    <div class="tp-countdown__unit"><span class="tp-countdown__num" id="tp-cd-m">--</span><span class="tp-countdown__sub">Min</span></div>
+                    <div class="tp-countdown__unit"><span class="tp-countdown__num" data-cd-m>--</span><span class="tp-countdown__sub">Min</span></div>
                     <span class="tp-countdown__sep">:</span>
-                    <div class="tp-countdown__unit"><span class="tp-countdown__num" id="tp-cd-s">--</span><span class="tp-countdown__sub">Sec</span></div>
+                    <div class="tp-countdown__unit"><span class="tp-countdown__num" data-cd-s>--</span><span class="tp-countdown__sub">Sec</span></div>
                   </div>
+                  <noscript><span class="tp-countdown__label">Today's deal is available now.</span></noscript>
                 </div>
               {%- endif -%}
             </div>
           {%- endif -%}
 
-          <!-- Benefit bullets -->
-          {%- assign tp_has_bens = false -%}
-          {%- for i in (1..5) -%}
-            {%- assign tp_bk = 'benefit_' | append: i -%}
-            {%- if section.settings[tp_bk] != blank -%}{%- assign tp_has_bens = true -%}{%- endif -%}
-          {%- endfor -%}
-          {%- if tp_has_bens -%}
-            <ul class="tp-benefits">
-              {%- for i in (1..5) -%}
-                {%- assign tp_bk = 'benefit_' | append: i -%}
-                {%- assign tp_bv = section.settings[tp_bk] -%}
-                {%- if tp_bv != blank -%}
-                  <li class="tp-benefit">
-                    <span class="tp-benefit__dot">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                    </span>
-                    {{ tp_bv }}
-                  </li>
-                {%- endif -%}
-              {%- endfor -%}
-            </ul>
-          {%- endif -%}
-
           <!-- Free shipping bar -->
           {%- if section.settings.show_free_shipping -%}
-            <div class="tp-ship-bar">
-              <div class="tp-ship-bar__text">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                {%- if tp_progress >= 100 -%}
-                  <span>You unlocked <strong>free shipping!</strong> &#127881;</span>
-                {%- else -%}
-                  <span>{{ section.settings.free_shipping_prefix }} <strong>{{ tp_remaining }}</strong> {{ section.settings.free_shipping_suffix }}</span>
-                {%- endif -%}
+            {%- if tp_is_usd and tp_threshold_cents > 0 -%}
+              <div class="tp-ship-bar"
+                   data-free-shipping-progress
+                   data-free-shipping-threshold="{{ tp_threshold_cents }}"
+                   data-free-shipping-prefix="{{ section.settings.free_shipping_prefix | escape }}"
+                   data-free-shipping-suffix="{{ section.settings.free_shipping_suffix | escape }}">
+                <div class="tp-ship-bar__text">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                  {%- if tp_progress >= 100 -%}
+                    <span data-free-shipping-message>You unlocked <strong>free shipping!</strong> &#127881;</span>
+                  {%- else -%}
+                    <span data-free-shipping-message>{{ section.settings.free_shipping_prefix }} <strong>{{ tp_remaining }}</strong> {{ section.settings.free_shipping_suffix }}</span>
+                  {%- endif -%}
+                </div>
+                <div class="tp-ship-bar__track">
+                  <div class="tp-ship-bar__fill" data-free-shipping-bar style="width:{{ tp_progress }}%"></div>
+                </div>
               </div>
-              <div class="tp-ship-bar__track">
-                <div class="tp-ship-bar__fill" style="width:{{ tp_progress }}%"></div>
+            {%- else -%}
+              <div class="tp-ship-bar tp-ship-bar--static">
+                <div class="tp-ship-bar__text">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                  <span>Free shipping on qualifying orders over <strong>$60 USD</strong></span>
+                </div>
               </div>
-            </div>
+            {%- endif -%}
           {%- endif -%}
 
           <!-- Multi-buy -->
@@ -1064,7 +1215,7 @@
                 <span>{{ section.settings.trust_1 | default: 'Secure Checkout' }}</span>
               </div>
               <div class="tp-trust__item">
-                <svg class="tp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.52"/></svg>
+                <svg class="tp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 15L3 9l6-6"/><path d="M3 9h12a6 6 0 0 1 0 12H9"/></svg>
                 <span>{{ section.settings.trust_2 | default: 'Easy Returns' }}</span>
               </div>
               <div class="tp-trust__item">
@@ -1086,8 +1237,102 @@
 
   {%- endform -%}
 
-  <!-- ======== PRODUCT DESCRIPTION (below two-column) ======== -->
-  {%- if tp_product.description != blank -%}
+  <!-- ======== FEATURE ROWS / DESCRIPTION ======== -->
+  {%- assign tp_has_feat = false -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'feature_row' -%}{%- assign tp_has_feat = true -%}{%- break -%}{%- endif -%}
+  {%- endfor -%}
+
+  {%- assign tp_desc_norm   = tp_product.description | replace: '<hr/>', '<hr>' | replace: '<hr />', '<hr>' -%}
+  {%- assign tp_desc_parts  = tp_desc_norm | split: '<hr>' -%}
+  {%- assign tp_desc_rows   = false -%}
+  {%- if tp_desc_parts.size > 1 -%}{%- assign tp_desc_rows = true -%}{%- endif -%}
+
+  {%- if tp_has_feat -%}
+    <div class="tp-feat">
+      {%- for block in section.blocks -%}
+        {%- if block.type != 'feature_row' -%}{%- continue -%}{%- endif -%}
+        {%- assign tp_fr_cls = 'tp-feat__row' -%}
+        {%- if block.settings.layout == 'image_right' -%}
+          {%- assign tp_fr_cls = 'tp-feat__row tp-feat__row--reverse' -%}
+        {%- endif -%}
+        <div class="{{ tp_fr_cls }}" {{ block.shopify_attributes }}>
+
+          {%- if block.settings.image != blank -%}
+            <div class="tp-feat__img-wrap">
+              {{- block.settings.image | image_url: width: 900 | image_tag:
+                    class: 'tp-feat__img',
+                    alt: block.settings.title,
+                    loading: 'lazy',
+                    widths: '450, 600, 900',
+                    sizes: '(max-width: 749px) 100vw, 45vw'
+              -}}
+            </div>
+          {%- endif -%}
+
+          <div class="tp-feat__content">
+            {%- if block.settings.eyebrow != blank -%}
+              <span class="tp-feat__eyebrow">{{ block.settings.eyebrow | escape }}</span>
+            {%- endif -%}
+            {%- if block.settings.title != blank -%}
+              <h3 class="tp-feat__title">{{ block.settings.title | escape }}</h3>
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <div class="tp-feat__body">{{ block.settings.text }}</div>
+            {%- endif -%}
+            {%- assign tp_fr_bullets = block.settings.bullet_1 | append: '|||' | append: block.settings.bullet_2 | append: '|||' | append: block.settings.bullet_3 | append: '|||' | append: block.settings.bullet_4 -%}
+            {%- assign tp_fr_bullet_arr = tp_fr_bullets | split: '|||' -%}
+            {%- assign tp_fr_has_bullets = false -%}
+            {%- for b in tp_fr_bullet_arr -%}
+              {%- unless b == blank -%}{%- assign tp_fr_has_bullets = true -%}{%- break -%}{%- endunless -%}
+            {%- endfor -%}
+            {%- if tp_fr_has_bullets -%}
+              <ul class="tp-feat__bullets">
+                {%- for b in tp_fr_bullet_arr -%}
+                  {%- if b == blank -%}{%- continue -%}{%- endif -%}
+                  <li class="tp-feat__bullet">
+                    <svg class="tp-feat__check" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="2"/>
+                      <polyline points="6.5 10 9 12.5 13.5 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>{{ b | escape }}</span>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- elsif tp_desc_rows -%}
+    <div class="tp-feat">
+      {%- for tp_part in tp_desc_parts -%}
+        {%- assign tp_part_clean = tp_part | strip -%}
+        {%- if tp_part_clean == blank -%}{%- continue -%}{%- endif -%}
+        {%- assign tp_feat_img = tp_product.images[forloop.index] -%}
+        {%- assign tp_row_reverse = false -%}
+        {%- assign tp_mod = forloop.index0 | modulo: 2 -%}
+        {%- if tp_mod == 1 -%}{%- assign tp_row_reverse = true -%}{%- endif -%}
+        <div class="tp-feat__row{% if tp_row_reverse %} tp-feat__row--reverse{% endif %}">
+          {%- if tp_feat_img != blank -%}
+            <div class="tp-feat__img-wrap">
+              {{- tp_feat_img | image_url: width: 900 | image_tag:
+                    class: 'tp-feat__img',
+                    alt: tp_product.title,
+                    loading: 'lazy',
+                    widths: '450, 600, 900',
+                    sizes: '(max-width: 749px) 100vw, 45vw'
+              -}}
+            </div>
+          {%- endif -%}
+          <div class="tp-feat__content">
+            <div class="tp-feat__body">{{ tp_part_clean }}</div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- elsif tp_product.description != blank -%}
     <div class="tp-desc-section">
       <div class="tp-description">{{ tp_product.description }}</div>
     </div>
@@ -1109,7 +1354,7 @@
           {%- if tp_at_val != blank and tp_ab_val != blank -%}
             <details class="tp-acc">
               <summary>
-                <span style="display:flex;align-items:center;gap:10px;">
+                <span class="tp-acc__label">
                   <span aria-hidden="true">{{ tp_ae }}</span>{{ tp_at_val }}
                 </span>
                 <svg class="tp-acc__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1275,7 +1520,16 @@
   /* Variant data injected server-side for accurate availability / price checks */
   window.tpProductData = {
     handle: {{ product.handle | json }},
-    variants: [{%- for v in product.variants -%}{"id":{{ v.id }},"title":{{ v.title | json }},"available":{{ v.available }},"price":{{ v.price }},"compare_at_price":{{ v.compare_at_price | default: 0 }},"inventory_quantity":{{ v.inventory_quantity }},"inventory_policy":{{ v.inventory_policy | json }},"inventory_management":{{ v.inventory_management | json }},"option1":{{ v.option1 | json }},"option2":{{ v.option2 | json }},"option3":{{ v.option3 | json }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]
+    variants: [
+      {%- for v in product.variants -%}
+        {%- assign _vsave = '' -%}
+        {%- if v.compare_at_price > v.price -%}
+          {%- assign _vsave = v.compare_at_price | minus: v.price | money -%}
+        {%- endif -%}
+        {"id":{{ v.id }},"title":{{ v.title | json }},"available":{{ v.available }},"price":{{ v.price }},"compare_at_price":{{ v.compare_at_price | default: 0 }},"price_html":{{ v.price | money | json }},"compare_at_price_html":{{ v.compare_at_price | default: 0 | money | json }},"save_html":{{ _vsave | json }},"inventory_quantity":{{ v.inventory_quantity }},"inventory_policy":{{ v.inventory_policy | json }},"inventory_management":{{ v.inventory_management | json }},"option1":{{ v.option1 | json }},"option2":{{ v.option2 | json }},"option3":{{ v.option3 | json }}}
+        {%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
   };
 
 (function () {
@@ -1302,11 +1556,13 @@
     }, 180);
   }
 
-  document.querySelectorAll('.tp-gallery__thumb').forEach(function (thumb) {
+  var allThumbs = Array.from(document.querySelectorAll('.tp-gallery__thumb'));
+  allThumbs.forEach(function (thumb) {
     thumb.addEventListener('click', function () {
-      document.querySelectorAll('.tp-gallery__thumb').forEach(function (t) { t.classList.remove('tp-active'); });
+      allThumbs.forEach(function (t) { t.classList.remove('tp-active'); });
       thumb.classList.add('tp-active');
-      tpSwapImage(mainImg, thumb.getAttribute('data-src'), null);
+      var thumbImg = thumb.querySelector('img');
+      tpSwapImage(mainImg, thumb.getAttribute('data-src'), thumbImg ? thumbImg.alt : null);
     });
   });
 
@@ -1342,6 +1598,7 @@
   function canSelect(optionIndex, value) {
     var tvArr = (window.tpProductData && window.tpProductData.variants) || [];
     return tvArr.some(function (tv) {
+      if (!tv.available) return false;
       for (var j = 0; j < numOptionGroups; j++) {
         var tv_val = tv['option' + (j + 1)];
         if (j === optionIndex) {
@@ -1476,13 +1733,13 @@
     var priceEl   = document.getElementById('tp-price');
     var compareEl = document.getElementById('tp-compare');
     var savingsEl = document.getElementById('tp-savings');
-    if (priceEl)   { priceEl.textContent = fmtMoney(price); priceEl.classList.toggle('tp-price--sale', onSale); }
-    if (compareEl) { compareEl.textContent = onSale ? fmtMoney(compare) : ''; compareEl.style.display = onSale ? '' : 'none'; }
-    if (savingsEl) { savingsEl.textContent = onSale ? 'Save ' + fmtMoney(compare - price) : ''; savingsEl.style.display = onSale ? '' : 'none'; }
+    if (priceEl)   { priceEl.textContent = matched.price_html; priceEl.classList.toggle('tp-price--sale', onSale); }
+    if (compareEl) { compareEl.textContent = onSale ? matched.compare_at_price_html : ''; compareEl.style.display = onSale ? '' : 'none'; }
+    if (savingsEl) { savingsEl.textContent = onSale ? 'Save ' + matched.save_html : ''; savingsEl.style.display = onSale ? '' : 'none'; }
 
     /* Sticky price */
     var sp = document.getElementById('tp-sticky-price');
-    if (sp) { sp.textContent = fmtMoney(price); sp.classList.toggle('tp-sticky-bar__price--sale', onSale); }
+    if (sp) { sp.textContent = matched.price_html; sp.classList.toggle('tp-sticky-bar__price--sale', onSale); }
 
     /* Button state */
     if (addBtn)    { addBtn.disabled = !avail; }
@@ -1496,17 +1753,15 @@
     var imgAlt = varSelOpt ? varSelOpt.getAttribute('data-alt') : null;
     if (mainImg && imgSrc) {
       tpSwapImage(mainImg, imgSrc, imgAlt);
-      document.querySelectorAll('.tp-gallery__thumb').forEach(function (t) { t.classList.remove('tp-active'); });
+      document.querySelectorAll('.tp-gallery__thumb').forEach(function (t) {
+        t.classList.toggle('tp-active', t.getAttribute('data-src') === imgSrc);
+      });
     }
   }
 
   /* Run on page load to disable impossible pills and sync state */
   updatePillAvailability();
   updateVariant();
-
-  function fmtMoney(cents) {
-    return (Math.round(cents) / 100).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' Kč';
-  }
 
   /* Add to cart handled by the ES module below — needs CartLinesUpdateEvent from @shopify/events */
 
@@ -1547,37 +1802,11 @@
       }
     }
     updateGalleryTop();
-    window.addEventListener('resize', updateGalleryTop);
-  }
-
-  /* --- Countdown timer --- */
-  var cdEl = document.getElementById('tp-cd');
-  if (cdEl) {
-    var endMs      = new Date(cdEl.getAttribute('data-end')).getTime();
-    var expTxt     = cdEl.getAttribute('data-expired') || 'Deal ended';
-    var cdUnitsEl  = document.getElementById('tp-cd-units');
-    var cdH = document.getElementById('tp-cd-h');
-    var cdM = document.getElementById('tp-cd-m');
-    var cdS = document.getElementById('tp-cd-s');
-
-    function pad(n) { return n < 10 ? '0' + n : '' + n; }
-
-    function tick() {
-      var diff = endMs - Date.now();
-      if (diff <= 0) {
-        if (cdUnitsEl) cdUnitsEl.innerHTML = '<span class="tp-countdown__expired">' + expTxt + '</span>';
-        return;
-      }
-      var h = Math.floor(diff / 3600000);
-      var m = Math.floor((diff % 3600000) / 60000);
-      var s = Math.floor((diff % 60000) / 1000);
-      if (cdH) cdH.textContent = pad(h);
-      if (cdM) cdM.textContent = pad(m);
-      if (cdS) cdS.textContent = pad(s);
-      setTimeout(tick, 1000);
-    }
-
-    if (endMs) tick();
+    var _galResizeTick;
+    window.addEventListener('resize', function () {
+      clearTimeout(_galResizeTick);
+      _galResizeTick = setTimeout(updateGalleryTop, 120);
+    });
   }
 
 }());
@@ -1682,6 +1911,8 @@ import { CartLinesUpdateEvent } from '@shopify/events';
       var cartResp = await fetch('/cart.js');
       var cart     = await cartResp.json();
 
+      refreshFreeShippingBars();
+
       deferred.resolve({
         cart: CartLinesUpdateEvent.createCartFromAjaxResponse(cart),
         detail: {
@@ -1714,6 +1945,42 @@ import { CartLinesUpdateEvent } from '@shopify/events';
       deferred.reject(err);
     }
   });
+
+  // ── Free-shipping bar live update (Section Rendering API) ──────────────
+  // Re-renders the bar server-side so Liquid's |money filter applies the
+  // correct presentment currency (CZK, EUR, USD …) automatically.
+  function refreshFreeShippingBars() {
+    var sectionId = '{{ section.id }}';
+    fetch(window.location.pathname + '?sections=' + encodeURIComponent(sectionId))
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (json) {
+        if (!json || !json[sectionId]) return;
+        var temp = document.createElement('div');
+        temp.innerHTML = json[sectionId];
+        var bars    = document.querySelectorAll('[data-free-shipping-progress]');
+        var newBars = temp.querySelectorAll('[data-free-shipping-progress]');
+        bars.forEach(function (bar, i) {
+          var newBar = newBars[i];
+          if (!newBar) return;
+          var fill    = bar.querySelector('[data-free-shipping-bar]');
+          var newFill = newBar.querySelector('[data-free-shipping-bar]');
+          if (fill && newFill) fill.style.width = newFill.style.width;
+          var msg    = bar.querySelector('[data-free-shipping-message]');
+          var newMsg = newBar.querySelector('[data-free-shipping-message]');
+          if (msg && newMsg) msg.innerHTML = newMsg.innerHTML;
+        });
+      })
+      .catch(function () {});
+  }
+
+  // Also update when the cart drawer changes quantity or removes a line.
+  document.addEventListener('CartLinesUpdateEvent', async function (e) {
+    try {
+      var result = await (e && e.detail && e.detail.promise);
+      if (result && result.detail && result.detail.didError) return;
+      refreshFreeShippingBars();
+    } catch (_) {}
+  });
 }());
 </script>
 
@@ -1745,15 +2012,15 @@ import { CartLinesUpdateEvent } from '@shopify/events';
     { "type": "header", "content": "Promo Box" },
     { "type": "text", "id": "promo_emoji", "label": "Promo icon (emoji)", "default": "🐾" },
     { "type": "text", "id": "promo_title", "label": "Promo box title", "default": "Today’s Pet Deal" },
-    { "type": "text", "id": "promo_text", "label": "Promo box text", "default": "Free shipping on orders over 799 Kč. Limited-time offer." },
+    { "type": "text", "id": "promo_text", "label": "Promo box text", "default": "Free shipping on qualifying orders. Limited-time offer." },
 
     { "type": "header", "content": "Countdown Timer" },
-    { "type": "text", "id": "countdown_end", "label": "Countdown end (ISO format)", "info": "Example: 2026-06-30T23:59:59. Leave blank to hide." },
-    { "type": "text", "id": "countdown_expired", "label": "Expired message", "default": "Deal ended" },
+    { "type": "checkbox", "id": "show_countdown", "label": "Show daily countdown to midnight", "default": true },
+    { "type": "text", "id": "countdown_label", "label": "Countdown label text", "default": "Today's deal ends in" },
 
     { "type": "header", "content": "Free Shipping Bar" },
     { "type": "checkbox", "id": "show_free_shipping", "label": "Show free shipping bar", "default": true },
-    { "type": "number", "id": "free_shipping_threshold", "label": "Threshold (main currency, e.g. 799)", "default": 799 },
+    { "type": "number", "id": "free_shipping_threshold_usd", "label": "Free shipping threshold (USD)", "info": "Must match Shopify Admin → Shipping → Free shipping rule. USD only — non-USD currencies show a static message instead.", "default": 60 },
     { "type": "text", "id": "free_shipping_prefix", "label": "Text before amount", "default": "You are" },
     { "type": "text", "id": "free_shipping_suffix", "label": "Text after amount", "default": "away from free shipping" },
 
@@ -1806,6 +2073,31 @@ import { CartLinesUpdateEvent } from '@shopify/events';
     { "type": "range", "id": "padding_bottom", "label": "Padding bottom (px)", "min": 0, "max": 120, "step": 4, "default": 64 }
   ],
   "blocks": [
+    {
+      "type": "feature_row",
+      "name": "Feature Row",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Image position",
+          "options": [
+            { "value": "image_left",  "label": "Image left" },
+            { "value": "image_right", "label": "Image right" }
+          ],
+          "default": "image_left"
+        },
+        { "type": "text",     "id": "eyebrow",  "label": "Eyebrow / label",  "placeholder": "e.g. Why pets love it" },
+        { "type": "text",     "id": "title",    "label": "Heading",           "default": "Made for happy pets" },
+        { "type": "richtext", "id": "text",     "label": "Paragraph text" },
+        { "type": "header",   "content": "Bullet points (leave blank to hide)" },
+        { "type": "text",     "id": "bullet_1", "label": "Bullet 1" },
+        { "type": "text",     "id": "bullet_2", "label": "Bullet 2" },
+        { "type": "text",     "id": "bullet_3", "label": "Bullet 3" },
+        { "type": "text",     "id": "bullet_4", "label": "Bullet 4" }
+      ]
+    },
     {
       "type": "story_card",
       "name": "Story Card",

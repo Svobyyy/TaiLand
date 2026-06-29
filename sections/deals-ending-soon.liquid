@@ -9,16 +9,24 @@
   assign des_all_link     = section.settings.view_all_link
   assign des_show_badge   = section.settings.show_badge
   assign des_badge_text   = section.settings.badge_text | default: 'ENDS SOON'
-  assign des_end_date     = section.settings.sale_end_date
-  assign des_expired_text = section.settings.expired_text | default: 'Sale ended'
+  assign des_show_countdown = section.settings.show_countdown
 -%}
 
 {% style %}
   #shopify-section-{{ section.id }} {
     padding-top: {{ section.settings.padding_top }}px;
     padding-bottom: {{ section.settings.padding_bottom }}px;
+    {% if request.page_type == 'index' %}
+    background-color: #FFF4D9;
+    {% else %}
     background-color: {{ section.settings.bg_color }};
+    {% endif %}
   }
+  {% if request.page_type == 'index' %}
+  #shopify-section-{{ section.id }} .des-section {
+    background-color: transparent;
+  }
+  {% endif %}
 {% endstyle %}
 
 <section class="des-section" aria-label="{{ des_plain }} {{ des_highlight }}">
@@ -41,16 +49,16 @@
           {%- endif -%}
         </h2>
 
-        {%- if des_end_date != blank -%}
-          <div class="des-countdown" id="des-countdown-{{ section.id }}" data-end="{{ des_end_date | escape }}">
-            <div class="des-timer" aria-live="polite" aria-label="Time remaining">
-              <span class="des-timer__box" data-des-hours>00</span>
+        {%- if des_show_countdown -%}
+          <div class="des-countdown" data-tailand-countdown aria-live="polite" aria-label="Time remaining until midnight">
+            <div class="des-timer">
+              <span class="des-timer__box" data-cd-h>--</span>
               <span class="des-timer__sep" aria-hidden="true">:</span>
-              <span class="des-timer__box" data-des-mins>00</span>
+              <span class="des-timer__box" data-cd-m>--</span>
               <span class="des-timer__sep" aria-hidden="true">:</span>
-              <span class="des-timer__box" data-des-secs>00</span>
+              <span class="des-timer__box" data-cd-s>--</span>
             </div>
-            <p class="des-expired" hidden>{{ des_expired_text | escape }}</p>
+            <noscript><span class="des-timer__noscript">Today's deals available now.</span></noscript>
           </div>
         {%- endif -%}
 
@@ -122,46 +130,6 @@
 
   </div>
 </section>
-
-<script>
-(function () {
-  var el = document.getElementById('des-countdown-{{ section.id }}');
-  if (!el) return;
-
-  var endDate   = new Date(el.getAttribute('data-end'));
-  if (isNaN(endDate.getTime())) return;
-
-  var timerEl   = el.querySelector('.des-timer');
-  var expiredEl = el.querySelector('.des-expired');
-  var hoursEl   = el.querySelector('[data-des-hours]');
-  var minsEl    = el.querySelector('[data-des-mins]');
-  var secsEl    = el.querySelector('[data-des-secs]');
-
-  function pad(n) { return ('0' + n).slice(-2); }
-
-  function tick() {
-    var diff = Math.max(0, endDate - new Date());
-
-    if (diff === 0) {
-      if (timerEl)   timerEl.style.display = 'none';
-      if (expiredEl) expiredEl.removeAttribute('hidden');
-      return;
-    }
-
-    var h = Math.floor(diff / 3600000);
-    var m = Math.floor((diff % 3600000) / 60000);
-    var s = Math.floor((diff % 60000) / 1000);
-
-    if (hoursEl) hoursEl.textContent = pad(h);
-    if (minsEl)  minsEl.textContent  = pad(m);
-    if (secsEl)  secsEl.textContent  = pad(s);
-
-    setTimeout(tick, 1000);
-  }
-
-  tick();
-})();
-</script>
 
 {% stylesheet %}
 /* ---- Deals Ending Soon (Pet Center) ---- */
@@ -579,16 +547,10 @@
       "content": "Countdown Timer"
     },
     {
-      "type": "text",
-      "id": "sale_end_date",
-      "label": "Sale end date and time",
-      "info": "Format: 2024-12-31T23:59:59 (local time). Leave blank to hide the countdown."
-    },
-    {
-      "type": "text",
-      "id": "expired_text",
-      "label": "Text shown when sale ends",
-      "default": "Sale ended"
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show daily countdown to midnight",
+      "default": true
     },
     {
       "type": "header",

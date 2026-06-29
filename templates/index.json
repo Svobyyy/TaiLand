@@ -19,7 +19,7 @@
         "left_heading": "45% OFF",
         "left_subheading": "Thousands of pet favorites",
         "left_button_text": "Shop Now",
-        "left_button_link": "",
+        "left_button_link": "shopify://collections/sale",
         "left_bg_color": "#f7dfb8",
         "left_image": "shopify://shop_images/hf_20260620_190421_02ff910d-75dc-4994-a70d-29c8a4126398.png",
         "left_image_alt": "",
@@ -30,7 +30,7 @@
         "left_overlay_opacity": 0,
         "right_top_heading": "Lookin for Kitty Stuff?",
         "right_top_button_text": "Shop here",
-        "right_top_button_link": "",
+        "right_top_button_link": "shopify://collections/cats",
         "right_top_bg_color": "#ee7b28",
         "right_top_image": "shopify://shop_images/hf_20260620_191033_01dd5a31-e488-4a56-98c5-6340f5d6f588.png",
         "right_top_image_alt": "",
@@ -41,7 +41,7 @@
         "right_top_overlay_opacity": 0,
         "right_bottom_heading": "Lookin for Doggy Stuff?",
         "right_bottom_button_text": "Shop here",
-        "right_bottom_button_link": "",
+        "right_bottom_button_link": "shopify://collections/dogs",
         "right_bottom_bg_color": "#ffad33",
         "right_bottom_image": "shopify://shop_images/hf_20260620_192008_f8809708-5b4a-4883-9c5e-2e57c429391a.png",
         "right_bottom_mobile_image": "shopify://shop_images/hf_20260620_213503_31a8b228-87d9-443d-91f9-6ab72cb57490.png",
@@ -60,7 +60,7 @@
           "type": "benefit",
           "settings": {
             "title": "Free Shipping",
-            "text": "Get free shipping on all orders over $60. No code needed.",
+            "text": "Free shipping on qualifying orders. No code needed.",
             "icon": "shipping",
             "link": ""
           }
@@ -124,7 +124,7 @@
         "view_all_text": "View All",
         "view_all_link": "",
         "padding_top": 52,
-        "padding_bottom": 52
+        "padding_bottom": 16
       }
     },
     "deals_ending_soon_TPLVik": {
@@ -144,7 +144,7 @@
         "view_all_text": "View All Deals",
         "view_all_link": "",
         "bg_color": "#ffffff",
-        "padding_top": 52,
+        "padding_top": 16,
         "padding_bottom": 52
       }
     },

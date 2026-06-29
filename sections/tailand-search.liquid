@@ -165,16 +165,11 @@
                     <a href="{{ product.url }}" class="tc-card__media-link" tabindex="-1" aria-hidden="true">
                       {%- if product.featured_image -%}
                         {%- assign tc_img_alt = product.featured_image.alt | default: product.title | escape -%}
-                        {{-
-                          product.featured_image
-                          | image_url: width: 600
-                          | image_tag:
-                            class: 'tc-card__img',
-                            alt: tc_img_alt,
-                            loading: 'lazy',
-                            width: 600,
-                            height: 600
-                        -}}
+                        {%- if forloop.first -%}
+                          {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'eager', fetchpriority: 'high', width: 600, height: 600 -}}
+                        {%- else -%}
+                          {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'lazy', width: 600, height: 600 -}}
+                        {%- endif -%}
                       {%- else -%}
                         <div class="tc-card__img tc-card__img--placeholder" aria-hidden="true">
                           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

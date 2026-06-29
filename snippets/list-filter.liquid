@@ -366,16 +366,49 @@
                       </label>
                     </div>
                   {% else %}
-                    {% render 'checkbox',
-                      name: value.param_name,
-                      value: value.value,
-                      label: value.label,
-                      checked: value.active,
-                      id: input_id,
-                      disabled: is_disabled,
-                      inputRef: 'facetInputs[]',
-                      events: 'on:pointerenter="/prefetchPage" on:pointerleave="/cancelPrefetchPage" on:pointerdown="/prefetchPageImmediate"'
-                    %}
+                    {%- assign label_lc = value.label | downcase -%}
+                    {%- if label_lc == 'dogs' or label_lc == 'dog' or label_lc == 'cats' or label_lc == 'cat' -%}
+                      <div
+                        class="checkbox{% if is_disabled %} checkbox--disabled{% endif %}"
+                        on:pointerenter="/prefetchPage"
+                        on:pointerleave="/cancelPrefetchPage"
+                        on:pointerdown="/prefetchPageImmediate"
+                      >
+                        <input
+                          type="checkbox"
+                          name="{{ value.param_name }}"
+                          value="{{ value.value }}"
+                          id="{{ input_id }}"
+                          class="checkbox__input"
+                          data-label="{{ value.label }}"
+                          {% if value.active %}checked{% endif %}
+                          {% if is_disabled %}disabled{% endif %}
+                          ref="facetInputs[]"
+                        >
+                        <label class="checkbox__label" for="{{ input_id }}">
+                          {{ 'icon-checkmark.svg' | inline_asset_content }}
+                          <span class="checkbox__label-icon" aria-hidden="true">
+                            {%- if label_lc == 'dogs' or label_lc == 'dog' -%}
+                              {% render 'icon-dog', width: 20, height: 20 %}
+                            {%- else -%}
+                              {% render 'icon-cat', width: 20, height: 20 %}
+                            {%- endif -%}
+                          </span>
+                          <span class="checkbox__label-text">{{- value.label -}}</span>
+                        </label>
+                      </div>
+                    {%- else -%}
+                      {% render 'checkbox',
+                        name: value.param_name,
+                        value: value.value,
+                        label: value.label,
+                        checked: value.active,
+                        id: input_id,
+                        disabled: is_disabled,
+                        inputRef: 'facetInputs[]',
+                        events: 'on:pointerenter="/prefetchPage" on:pointerleave="/cancelPrefetchPage" on:pointerdown="/prefetchPageImmediate"'
+                      %}
+                    {%- endif -%}
                   {% endif %}
                 {% endif %}
               </li>

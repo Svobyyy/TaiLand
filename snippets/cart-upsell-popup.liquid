@@ -1,0 +1,693 @@
+{%- liquid
+  assign cup_enabled = section.settings.enable_upsell
+-%}
+{%- if cup_enabled -%}
+
+{%- comment -%} ── Shared display settings ──────────────────────────────── {%- endcomment -%}
+{%- liquid
+  assign cup_title_override = section.settings.upsell_title
+  assign cup_desc_setting   = section.settings.upsell_description
+  assign cup_badge_setting  = section.settings.upsell_badge_text
+  assign cup_btn            = section.settings.upsell_button_text  | default: 'Add to order'
+  assign cup_decline        = section.settings.upsell_decline_text | default: 'No thanks, continue to checkout'
+-%}
+
+{%- comment -%} ── Slot availability checks ─────────────────────────────── {%- endcomment -%}
+{%- liquid
+  assign s_grooming_p  = section.settings.upsell_grooming_product
+  assign s_grooming_v  = s_grooming_p.selected_or_first_available_variant
+  assign s_grooming_ok = false
+  if s_grooming_p != blank and s_grooming_v != blank and s_grooming_v.available
+    assign s_grooming_ok = true
+  endif
+
+  assign s_feeder_p  = section.settings.upsell_feeder_product
+  assign s_feeder_v  = s_feeder_p.selected_or_first_available_variant
+  assign s_feeder_ok = false
+  if s_feeder_p != blank and s_feeder_v != blank and s_feeder_v.available
+    assign s_feeder_ok = true
+  endif
+
+  assign s_water_p  = section.settings.upsell_water_product
+  assign s_water_v  = s_water_p.selected_or_first_available_variant
+  assign s_water_ok = false
+  if s_water_p != blank and s_water_v != blank and s_water_v.available
+    assign s_water_ok = true
+  endif
+
+  assign s_toy_p  = section.settings.upsell_toy_product
+  assign s_toy_v  = s_toy_p.selected_or_first_available_variant
+  assign s_toy_ok = false
+  if s_toy_p != blank and s_toy_v != blank and s_toy_v.available
+    assign s_toy_ok = true
+  endif
+
+  assign s_cat_p  = section.settings.upsell_cat_product
+  assign s_cat_v  = s_cat_p.selected_or_first_available_variant
+  assign s_cat_ok = false
+  if s_cat_p != blank and s_cat_v != blank and s_cat_v.available
+    assign s_cat_ok = true
+  endif
+
+  assign s_dog_p  = section.settings.upsell_dog_product
+  assign s_dog_v  = s_dog_p.selected_or_first_available_variant
+  assign s_dog_ok = false
+  if s_dog_p != blank and s_dog_v != blank and s_dog_v.available
+    assign s_dog_ok = true
+  endif
+
+  assign s_default_p  = section.settings.upsell_product
+  assign s_default_v  = s_default_p.selected_or_first_available_variant
+  assign s_default_ok = false
+  if s_default_p != blank and s_default_v != blank and s_default_v.available
+    assign s_default_ok = true
+  endif
+
+  assign cup_any_ok = false
+  if s_grooming_ok or s_feeder_ok or s_water_ok or s_toy_ok or s_cat_ok or s_dog_ok or s_default_ok
+    assign cup_any_ok = true
+  endif
+-%}
+
+<!-- [CUP] enabled={{ cup_enabled }} | grooming={{ s_grooming_ok }} feeder={{ s_feeder_ok }} water={{ s_water_ok }} toy={{ s_toy_ok }} cat={{ s_cat_ok }} dog={{ s_dog_ok }} default={{ s_default_ok }} -->
+
+{%- if cup_any_ok -%}
+
+{%- comment -%} ── Render one <dialog> per available slot ───────────────── {%- endcomment -%}
+{%- if s_grooming_ok -%}
+  {%- render 'cup-upsell-dialog',
+    product: s_grooming_p, variant: s_grooming_v, rule: 'grooming',
+    title_override: cup_title_override, description: cup_desc_setting,
+    badge_setting: cup_badge_setting, btn_text: cup_btn, decline_text: cup_decline -%}
+{%- endif -%}
+{%- if s_feeder_ok -%}
+  {%- render 'cup-upsell-dialog',
+    product: s_feeder_p, variant: s_feeder_v, rule: 'feeder',
+    title_override: cup_title_override, description: cup_desc_setting,
+    badge_setting: cup_badge_setting, btn_text: cup_btn, decline_text: cup_decline -%}
+{%- endif -%}
+{%- if s_water_ok -%}
+  {%- render 'cup-upsell-dialog',
+    product: s_water_p, variant: s_water_v, rule: 'water',
+    title_override: cup_title_override, description: cup_desc_setting,
+    badge_setting: cup_badge_setting, btn_text: cup_btn, decline_text: cup_decline -%}
+{%- endif -%}
+{%- if s_toy_ok -%}
+  {%- render 'cup-upsell-dialog',
+    product: s_toy_p, variant: s_toy_v, rule: 'toy',
+    title_override: cup_title_override, description: cup_desc_setting,
+    badge_setting: cup_badge_setting, btn_text: cup_btn, decline_text: cup_decline -%}
+{%- endif -%}
+{%- if s_cat_ok -%}
+  {%- render 'cup-upsell-dialog',
+    product: s_cat_p, variant: s_cat_v, rule: 'cat',
+    title_override: cup_title_override, description: cup_desc_setting,
+    badge_setting: cup_badge_setting, btn_text: cup_btn, decline_text: cup_decline -%}
+{%- endif -%}
+{%- if s_dog_ok -%}
+  {%- render 'cup-upsell-dialog',
+    product: s_dog_p, variant: s_dog_v, rule: 'dog',
+    title_override: cup_title_override, description: cup_desc_setting,
+    badge_setting: cup_badge_setting, btn_text: cup_btn, decline_text: cup_decline -%}
+{%- endif -%}
+{%- if s_default_ok -%}
+  {%- render 'cup-upsell-dialog',
+    product: s_default_p, variant: s_default_v, rule: 'default',
+    title_override: cup_title_override, description: cup_desc_setting,
+    badge_setting: cup_badge_setting, btn_text: cup_btn, decline_text: cup_decline -%}
+{%- endif -%}
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── tag cache: seeded from Liquid (cart at page-load time) ─────────
+     { productId: ['tag1', 'tag2', ...] }
+     Refreshed via /products/{handle}.js when AJAX cart updates add
+     products whose tags are not yet cached.                           */
+  var tagCache = {};
+  {% for item in cart.items %}
+  tagCache[{{ item.product_id | json }}] = {{ item.product.tags | json }};
+  {% endfor %}
+
+  /* ── priority rules — order is the priority ─────────────────────── */
+  var RULES = [
+    { key: 'grooming', tags: ['grooming_upsell'] },
+    { key: 'feeder',   tags: ['feeder_upsell'] },
+    { key: 'water',    tags: ['water_upsell'] },
+    { key: 'toy',      tags: ['toy_upsell'] },
+    { key: 'cat',      tags: ['cat_upsell'] },
+    { key: 'dog',      tags: ['dog_upsell'] },
+    { key: 'default',  tags: [] }  /* empty tags = always matches */
+  ];
+
+  /* ── find all rendered dialogs by rule ─────────────────────────── */
+  var dialogs = {};
+  document.querySelectorAll('.cup-dialog[data-rule]').forEach(function (el) {
+    dialogs[el.dataset.rule] = el;
+    document.body.appendChild(el); /* portal: no ancestor transform can affect top-layer */
+  });
+
+  if (Object.keys(dialogs).length === 0) {
+    console.log('[CUP] no dialogs rendered — all slots unconfigured or sold out');
+    return;
+  }
+  console.log('[CUP] ready | slots:', Object.keys(dialogs).join(', '));
+
+  var activeDialog = null;
+  var DECLINE_KEY  = 'tailand_cup_declined';
+
+  /* per-variant decline tracking — cleared on any cart update */
+  function getDeclined() {
+    try { return JSON.parse(sessionStorage.getItem(DECLINE_KEY) || '[]'); } catch (_) { return []; }
+  }
+  function isDeclined(variantId) { return getDeclined().indexOf(String(variantId)) !== -1; }
+  function markDeclined(variantId) {
+    var list = getDeclined(), id = String(variantId);
+    if (list.indexOf(id) === -1) list.push(id);
+    try { sessionStorage.setItem(DECLINE_KEY, JSON.stringify(list)); } catch (_) {}
+  }
+  function clearDeclined() { try { sessionStorage.removeItem(DECLINE_KEY); } catch (_) {} }
+
+  /* ── fetch tags for cart items not yet in cache ─────────────────── */
+  function refreshTagCache(cartData) {
+    var needed = (cartData.items || []).filter(function (item) {
+      return tagCache[item.product_id] === undefined;
+    });
+    if (!needed.length) return Promise.resolve();
+    return Promise.all(needed.map(function (item) {
+      return fetch('/products/' + item.handle + '.js')
+        .then(function (r) { return r.json(); })
+        .then(function (p) {
+          tagCache[item.product_id] = (p.tags || []).map(function (t) {
+            return t.toLowerCase().trim();
+          });
+          console.log('[CUP] cached tags for', item.handle, ':', tagCache[item.product_id]);
+        })
+        .catch(function () {
+          tagCache[item.product_id] = []; /* empty on error so we don't retry */
+        });
+    }));
+  }
+
+  /* ── pick best dialog for current cart ─────────────────────────── */
+  function pickDialog(cartItems) {
+    /* collect all lowercase tags from all cart items */
+    var allTags = {};
+    cartItems.forEach(function (item) {
+      (tagCache[item.product_id] || []).forEach(function (t) {
+        allTags[t.toLowerCase().trim()] = true;
+      });
+    });
+
+    /* sets of product & variant IDs already in cart */
+    var inCartProducts = {}, inCartVariants = {};
+    cartItems.forEach(function (item) {
+      inCartProducts[String(item.product_id)] = true;
+      inCartVariants[String(item.variant_id)]  = true;
+    });
+
+    console.log('[CUP] cart tags:', Object.keys(allTags).join(', ') || '(none)');
+
+    for (var i = 0; i < RULES.length; i++) {
+      var rule   = RULES[i];
+      var dialog = dialogs[rule.key];
+      if (!dialog) continue; /* slot not configured */
+
+      /* tag match: empty tags array = default (always matches) */
+      if (rule.tags.length > 0) {
+        var hit = false;
+        for (var j = 0; j < rule.tags.length; j++) {
+          if (allTags[rule.tags[j]]) { hit = true; break; }
+        }
+        if (!hit) continue;
+      }
+
+      /* skip if this upsell product or variant is already in the cart */
+      if (inCartProducts[dialog.dataset.productId]) {
+        console.log('[CUP] skip rule', rule.key, '— product already in cart');
+        continue;
+      }
+      if (inCartVariants[dialog.dataset.variantId]) {
+        console.log('[CUP] skip rule', rule.key, '— variant already in cart');
+        continue;
+      }
+
+      /* skip if customer declined this variant during this session */
+      if (isDeclined(dialog.dataset.variantId)) {
+        console.log('[CUP] skip rule', rule.key, '— declined this session');
+        continue;
+      }
+
+      console.log('[CUP] matched rule:', rule.key);
+      return dialog;
+    }
+
+    console.log('[CUP] no rule matched — skip popup');
+    return null;
+  }
+
+  /* ── open a specific dialog ─────────────────────────────────────── */
+  function openDialog(dialog) {
+    if (!dialog || dialog.open) return;
+    activeDialog = dialog;
+    dialog.showModal();
+    document.body.style.overflow = 'hidden';
+    var btn = dialog.querySelector('button:not([disabled])');
+    if (btn) setTimeout(function () { btn.focus(); }, 50);
+  }
+
+  /* ── close whichever dialog is open ────────────────────────────── */
+  function closeActive() {
+    if (activeDialog) activeDialog.close();
+  }
+
+  /* ── navigate to checkout ───────────────────────────────────────── */
+  function goCheckout() {
+    window._cupSkip = true;
+    window.location.href = '/checkout';
+  }
+
+  /* ── add the active upsell variant to cart ──────────────────────── */
+  function doAdd() {
+    var dialog = activeDialog;
+    if (!dialog) return;
+
+    var variantId = parseInt(dialog.dataset.variantId, 10);
+    var addBtn    = dialog.querySelector('.cup-add-btn');
+    var errorEl   = dialog.querySelector('.cup-error');
+
+    console.log('[CUP] adding variantId:', variantId, 'rule:', dialog.dataset.rule);
+    addBtn.disabled    = true;
+    addBtn.textContent = 'Adding…';
+    errorEl.hidden     = true;
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+      body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] })
+    })
+    .then(function (r) { if (!r.ok) return Promise.reject(); return r.json(); })
+    .then(function () { return fetch('/cart.js').then(function (r) { return r.json(); }); })
+    .then(function (cartData) {
+      updateBadge(cartData.item_count);
+      addBtn.textContent = 'Added ✓';
+      console.log('[CUP] add success — going to checkout in 700ms');
+      setTimeout(goCheckout, 700);
+    })
+    .catch(function () {
+      addBtn.disabled    = false;
+      addBtn.textContent = addBtn.dataset.originalText;
+      errorEl.hidden     = false;
+      console.warn('[CUP] add failed');
+    });
+  }
+
+  /* ── update cart badge count in header ─────────────────────────── */
+  function updateBadge(count) {
+    document.querySelectorAll(
+      '.theme-drawer__badge, [data-cart-count], .cart-count__bubble, .cart-item-count, .cart-bubble__text-count'
+    ).forEach(function (el) {
+      el.textContent = count;
+      if (count > 0) {
+        el.classList.remove('visually-hidden');
+        el.classList.remove('hidden');
+      }
+    });
+    if (count > 0) {
+      document.querySelectorAll('.cart-bubble').forEach(function (el) {
+        el.classList.remove('visually-hidden');
+      });
+    }
+  }
+
+  /* ── close Horizon cart drawer, then run callback ───────────────── */
+  function closeCartDrawerThen(cb) {
+    var cartDrawerEl = document.getElementById('cart-drawer');
+    var drawerDialog = cartDrawerEl ? cartDrawerEl.querySelector('dialog') : null;
+    if (!drawerDialog || !drawerDialog.hasAttribute('open')) { cb(); return; }
+
+    console.log('[CUP] closing cart drawer first');
+    var proceeded    = false;
+
+    function proceed() {
+      if (proceeded) return;
+      proceeded = true;
+      clearTimeout(fallback);
+      if (drawerDialog) drawerDialog.removeEventListener('close', onPanelClose);
+      cb();
+    }
+
+    function onPanelClose() { proceed(); }
+    if (drawerDialog) drawerDialog.addEventListener('close', onPanelClose);
+
+    var fallback = setTimeout(proceed, 700);
+
+    if (typeof cartDrawerEl.close === 'function') {
+      cartDrawerEl.close();
+    } else {
+      var btn = cartDrawerEl.querySelector('.theme-drawer__close-button');
+      if (btn) btn.click();
+    }
+  }
+
+  /* ── wire up all dialogs (close / backdrop / ESC / card stop) ────── */
+  Object.keys(dialogs).forEach(function (key) {
+    var el = dialogs[key];
+
+    el.addEventListener('close', function () {
+      document.body.style.overflow = '';
+      if (activeDialog === el) activeDialog = null;
+    });
+    el.addEventListener('cancel', function (e) { e.preventDefault(); el.close(); });
+    el.addEventListener('click',  function (e) { if (e.target === el) el.close(); });
+  });
+
+  /* ── button delegation across all open dialogs ──────────────────── */
+  document.addEventListener('click', function (e) {
+    if (!activeDialog) return;
+
+    if (activeDialog.contains(e.target)) {
+      if (e.target.closest('.cup-close')) {
+        e.stopPropagation();
+        closeActive();
+        return;
+      }
+      if (e.target.closest('.cup-decline-btn')) {
+        e.stopPropagation();
+        markDeclined(activeDialog.dataset.variantId);
+        closeActive();
+        goCheckout();
+        return;
+      }
+      if (e.target.closest('.cup-add-btn')) {
+        e.stopPropagation();
+        doAdd();
+        return;
+      }
+    }
+  });
+
+  /* ── checkout button intercept — capture phase ──────────────────── */
+  document.addEventListener('click', function (e) {
+    if (window._cupSkip) return;
+
+    var btn = e.target.closest('[name="checkout"][type="submit"]');
+    if (!btn || btn.disabled) return;
+    /* skip accelerated buttons (Shop Pay, PayPal, Google Pay — these are never
+       type=submit name=checkout, but guard explicitly for theme quirks) */
+    if (btn.closest('shopify-payment-button, [data-shopify="payment-button"]')) return;
+
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    console.log('[CUP] checkout intercepted — fetching cart');
+
+    fetch('/cart.js')
+      .then(function (r) { return r.json(); })
+      .then(function (cartData) {
+        if (!cartData.items || cartData.items.length === 0) {
+          console.log('[CUP] cart empty — passing through');
+          goCheckout();
+          return;
+        }
+        return refreshTagCache(cartData).then(function () {
+          var dialog = pickDialog(cartData.items);
+          if (!dialog) { goCheckout(); return; }
+          closeCartDrawerThen(function () { openDialog(dialog); });
+        });
+      })
+      .catch(function (err) {
+        console.warn('[CUP] cart fetch error — passing through', err);
+        goCheckout();
+      });
+  }, true);
+
+  /* ── reset session flag + refresh tag cache on AJAX cart updates ── */
+  ['CartLinesUpdateEvent', 'cart:updated', 'cart:refresh'].forEach(function (name) {
+    document.addEventListener(name, function () {
+      clearDeclined(); /* cart changed — allow fresh upsell attempts */
+      fetch('/cart.js')
+        .then(function (r) { return r.json(); })
+        .then(function (cartData) { refreshTagCache(cartData); });
+    });
+  });
+
+}());
+</script>
+
+{%- endif -%}{%- comment -%} cup_any_ok {%- endcomment -%}
+{%- endif -%}{%- comment -%} cup_enabled {%- endcomment -%}
+
+{% stylesheet %}
+/* ── Pre-checkout upsell — native <dialog> ───────────────────── */
+
+/* reset browser dialog defaults + explicit centering
+   (inset:0 + margin:auto is more robust than relying on the UA
+   stylesheet — Horizon's CSS may reset dialog positioning) */
+.cup-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(700px, calc(100vw - 32px));
+  height: fit-content;
+  border: none;
+  padding: 20px;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
+  outline: none;
+}
+
+/* guard against theme CSS resets that hide all dialogs */
+.cup-dialog[open] {
+  display: block;
+}
+
+/* browser-native backdrop — dims full viewport including cart drawer */
+.cup-dialog::backdrop {
+  background: rgba(43, 27, 18, 0.65);
+}
+
+/* the visual card */
+.cup-card {
+  position: relative;
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  border-radius: 20px;
+  box-shadow: 6px 8px 0 rgba(43, 27, 18, 0.45);
+  padding: 36px 36px 30px;
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  max-height: calc(90dvh - 40px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── close button ── */
+.cup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--pc-orange, #EE7B28);
+  border: 2px solid var(--pc-text, #2B1B12);
+  box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  z-index: 1;
+  transition: background 0.15s;
+}
+
+.cup-close:hover { background: #d96a1a; }
+
+/* ── product image ── */
+.cup-img-wrap { flex-shrink: 0; width: 170px; }
+
+.cup-img {
+  width: 170px;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 2px solid var(--pc-text, #2B1B12);
+  display: block;
+}
+
+/* ── content column ── */
+.cup-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 32px;
+}
+
+.cup-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  background: var(--pc-orange, #EE7B28);
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--pc-text, #2B1B12);
+}
+
+.cup-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cup-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.72;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.cup-price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.cup-price {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--pc-text, #2B1B12);
+}
+
+.cup-price--sale { color: var(--pc-orange, #EE7B28); }
+
+.cup-compare {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  color: var(--pc-text, #2B1B12);
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.cup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+/* ── primary: green add button ── */
+.cup-add-btn {
+  width: 100%;
+  background: var(--pc-green, #5BB870);
+  color: #fff;
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 4px 0 var(--pc-text, #2B1B12);
+  border-radius: 14px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 15px 24px;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  text-align: center;
+}
+
+.cup-add-btn:hover:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 3px 0 var(--pc-text, #2B1B12);
+}
+
+.cup-add-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 3px 4px 0 var(--pc-text, #2B1B12);
+}
+
+/* ── error ── */
+.cup-error {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #b91c1c;
+  margin: 0;
+}
+
+.cup-error a { color: inherit; text-decoration: underline; cursor: pointer; }
+
+/* ── secondary: white decline button ── */
+.cup-decline-btn {
+  width: 100%;
+  background: #fff;
+  color: var(--pc-text, #2B1B12);
+  border: 2.5px solid var(--pc-text, #2B1B12);
+  box-shadow: 3px 4px 0 rgba(43, 27, 18, 0.22);
+  border-radius: 14px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 13px 24px;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  text-align: center;
+}
+
+.cup-decline-btn:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 3px 0 rgba(43, 27, 18, 0.22);
+}
+
+/* ── savings line (computed from real Shopify prices, never faked) ── */
+.cup-savings {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--pc-green, #5BB870);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.cup-savings-sep {
+  font-weight: 400;
+  opacity: 0.5;
+  margin: 0 4px;
+}
+
+/* ── mobile ── */
+@media (max-width: 540px) {
+  .cup-dialog { padding: 12px; }
+
+  .cup-card {
+    flex-direction: column;
+    padding: 24px 20px 20px;
+    gap: 16px;
+  }
+
+  .cup-img-wrap { width: 100%; }
+
+  .cup-img {
+    width: 100%;
+    height: 200px;
+  }
+
+  .cup-content { padding-right: 0; }
+}
+{% endstylesheet %}

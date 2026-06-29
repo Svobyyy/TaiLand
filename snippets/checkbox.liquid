@@ -52,6 +52,7 @@
     {% endif %}
   >
     {{ 'icon-checkmark.svg' | inline_asset_content }}
+    {%- if label_icon != blank -%}<span class="checkbox__label-icon" aria-hidden="true">{{ label_icon }}</span>{%- endif -%}
     <span class="checkbox__label-text">{{- label -}}</span>
   </label>
 </div>

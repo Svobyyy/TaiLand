@@ -146,80 +146,39 @@
   <script>
     (function () {
       var cartDrawer = document.getElementById('cart-drawer');
-      if (!cartDrawer) {
-        console.log('[tc-cart] ERROR: #cart-drawer not found in DOM');
-        return;
-      }
+      if (!cartDrawer) return;
 
-      // Scrim element — visible only on desktop (≥990px) as a backdrop overlay
+      // Scrim — desktop-only backdrop; clicking it closes the drawer
       var scrim = document.createElement('div');
       scrim.className = 'tc-cart-scrim';
       document.body.appendChild(scrim);
       scrim.addEventListener('click', function () {
-        cartDrawer.dispatchEvent(new CustomEvent('close'));
+        if (typeof cartDrawer.close === 'function') cartDrawer.close();
       });
 
       var desktopQuery = window.matchMedia('(min-width: 990px)');
 
-      // On desktop, theme-drawer.js calls dialog.show() (non-modal, normal stacking context).
-      // On refresh, the session restore in theme-drawer.liquid calls dialog.setAttribute('open','')
-      // directly — also non-modal, bypassing show() entirely. Both paths lose to the z-index:18
-      // sticky header. Mobile works because it calls showModal() which uses the browser top layer.
-      //
-      // Fix: intercept BOTH paths on desktop and force showModal() (top layer, same as mobile).
-      //   Path 1 — show() override: catches explicit opens via theme-drawer.js.
-      //   Path 2 — MutationObserver on dialog: catches the session-restore setAttribute path.
-      //            Fires as a microtask BEFORE theme-drawer.js module has loaded, so the brief
-      //            close() call's async close event goes completely unhandled — no side-effects.
+      // On desktop, theme-drawer.js calls dialog.show() (non-modal — loses to the sticky header).
+      // Session restore calls dialog.setAttribute('open','') directly, also bypassing showModal().
+      // Both paths are intercepted to use showModal() (browser top layer), matching mobile.
       if (desktopQuery.matches) {
         var desktopDialog = cartDrawer.querySelector('dialog');
         if (desktopDialog) {
-          // Path 1: show() → showModal()
           desktopDialog.show = function () {
             if (!this.open) HTMLDialogElement.prototype.showModal.call(this);
           };
-
-          // Path 2: direct setAttribute('open','') → promote to modal
           new MutationObserver(function () {
             if (desktopDialog.hasAttribute('open') && !desktopDialog.matches(':modal')) {
               desktopDialog.close();
               HTMLDialogElement.prototype.showModal.call(desktopDialog);
-              console.log('[tc-cart] session-restore→showModal() top-layer');
             }
           }).observe(desktopDialog, { attributes: true, attributeFilter: ['open'] });
-
-          console.log('[tc-cart] desktop intercepts installed on', desktopDialog.className);
-        } else {
-          console.log('[tc-cart] ERROR: dialog not found inside cart-drawer');
         }
       }
 
+      // Body class drives the scrim fade and header z-index via CSS
       function syncDrawerClass() {
-        var headerSection = document.querySelector('.header-section');
-        var drawerDialog  = cartDrawer.querySelector('dialog');
-        var isDesktop     = desktopQuery.matches;
-
-        if (cartDrawer.hasAttribute('open')) {
-          document.body.classList.add('tc-cart-drawer-open');
-          if (isDesktop) {
-            if (headerSection) {
-              headerSection.style.setProperty('z-index', '1', 'important');
-              console.log('[tc-cart] open: header-section z-index =',
-                          getComputedStyle(headerSection).zIndex,
-                          '| position =', getComputedStyle(headerSection).position);
-            }
-            if (drawerDialog) {
-              drawerDialog.style.setProperty('z-index', '9999', 'important');
-              console.log('[tc-cart] open: dialog z-index =',
-                          getComputedStyle(drawerDialog).zIndex,
-                          '| parent =', drawerDialog.parentElement && drawerDialog.parentElement.id);
-            }
-          }
-        } else {
-          document.body.classList.remove('tc-cart-drawer-open');
-          if (headerSection) headerSection.style.removeProperty('z-index');
-          if (drawerDialog)  drawerDialog.style.removeProperty('z-index');
-        }
+        document.body.classList.toggle('tc-cart-drawer-open', cartDrawer.hasAttribute('open'));
       }
 
       desktopQuery.addEventListener('change', syncDrawerClass);
@@ -688,18 +647,6 @@
       opacity: 1;
     }
 
-    /* Collapse inline search bar so it doesn't overlap the drawer */
-    .pc-search-inline {
-      overflow: hidden;
-      transition: max-width 0.25s ease, min-width 0.25s ease, opacity 0.2s ease;
-    }
-
-    body.tc-cart-drawer-open .pc-search-inline {
-      max-width: 0 !important;
-      min-width: 0 !important;
-      opacity: 0;
-      pointer-events: none;
-    }
   }
 
   /* Desktop: dialog is now in the top layer via showModal() — no z-index fight needed.

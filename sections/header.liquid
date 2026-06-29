@@ -1184,6 +1184,8 @@
   </script>
 {% endunless %}
 
+{% render 'cart-upsell-popup' %}
+
 {% schema %}
 {
   "name": "t:names.header",
@@ -1763,6 +1765,96 @@
       "label": "t:settings.text_color_transparent",
       "placeholder": "t:settings.default",
       "visible_if": "{{ section.settings.enable_transparent_header_collection }}"
+    },
+    {
+      "type": "header",
+      "content": "Pre-checkout Upsell"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_upsell",
+      "label": "Enable pre-checkout upsell popup",
+      "default": false
+    },
+    {
+      "type": "product",
+      "id": "upsell_product",
+      "label": "Upsell product"
+    },
+    {
+      "type": "text",
+      "id": "upsell_title",
+      "label": "Title override",
+      "info": "Leave blank to use the product title."
+    },
+    {
+      "type": "textarea",
+      "id": "upsell_description",
+      "label": "Description",
+      "info": "Short line shown below the title. Leave blank to hide."
+    },
+    {
+      "type": "text",
+      "id": "upsell_badge_text",
+      "label": "Offer badge text",
+      "default": "Special Offer",
+      "info": "E.g. 'Special Offer' or '10% OFF'. Leave blank to hide the badge. Only claim a discount if the product has a real compare-at price set in Shopify."
+    },
+    {
+      "type": "text",
+      "id": "upsell_button_text",
+      "label": "Add button text",
+      "default": "Add to order"
+    },
+    {
+      "type": "text",
+      "id": "upsell_decline_text",
+      "label": "Decline link text",
+      "default": "No thanks, continue to checkout"
+    },
+    {
+      "type": "header",
+      "content": "Category upsells (optional)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Tag your store products with: grooming_upsell, feeder_upsell, water_upsell, toy_upsell, cat_upsell, dog_upsell. When a cart item has that tag the matching upsell below is shown instead of the default. Priority: grooming → feeder → water → toy → cat → dog → default."
+    },
+    {
+      "type": "product",
+      "id": "upsell_grooming_product",
+      "label": "Grooming upsell",
+      "info": "Shown when cart has a product tagged 'grooming_upsell'"
+    },
+    {
+      "type": "product",
+      "id": "upsell_feeder_product",
+      "label": "Feeder upsell",
+      "info": "Shown when cart has a product tagged 'feeder_upsell'"
+    },
+    {
+      "type": "product",
+      "id": "upsell_water_product",
+      "label": "Water upsell",
+      "info": "Shown when cart has a product tagged 'water_upsell'"
+    },
+    {
+      "type": "product",
+      "id": "upsell_toy_product",
+      "label": "Toy upsell",
+      "info": "Shown when cart has a product tagged 'toy_upsell'"
+    },
+    {
+      "type": "product",
+      "id": "upsell_cat_product",
+      "label": "Cat upsell",
+      "info": "Shown when cart has a product tagged 'cat_upsell'"
+    },
+    {
+      "type": "product",
+      "id": "upsell_dog_product",
+      "label": "Dog upsell",
+      "info": "Shown when cart has a product tagged 'dog_upsell'"
     }
   ],
   "presets": []

@@ -56,7 +56,9 @@
                   | image_tag:
                     class: 'bat-img bat-img--after',
                     alt: bat_after_alt,
-                    loading: 'lazy'
+                    loading: 'lazy',
+                    width: 800,
+                    height: 600
                 -}}
               {%- else -%}
                 <div class="bat-img bat-img--after bat-img--placeholder"></div>
@@ -71,6 +73,8 @@
                     class: 'bat-img bat-img--before',
                     alt: bat_before_alt,
                     loading: 'lazy',
+                    width: 800,
+                    height: 600,
                     style: bat_clip_style
                 -}}
               {%- endif -%}
@@ -430,21 +434,24 @@
     if (!beforeImg || !handle) return;
 
     var dragging = false;
+    var cachedRect = null;  // read once at drag start, reused per pixel
 
     function setPosition(clientX) {
-      var rect = el.getBoundingClientRect();
+      var rect = cachedRect || el.getBoundingClientRect();
       var pct = Math.min(100, Math.max(0, (clientX - rect.left) / rect.width * 100));
       beforeImg.style.clipPath = 'inset(0 ' + (100 - pct).toFixed(2) + '% 0 0)';
       handle.style.left = pct.toFixed(2) + '%';
     }
 
     el.addEventListener('mousedown', function (e) {
+      cachedRect = el.getBoundingClientRect();
       dragging = true;
       setPosition(e.clientX);
       e.preventDefault();
     });
 
     el.addEventListener('touchstart', function (e) {
+      cachedRect = el.getBoundingClientRect();
       dragging = true;
       setPosition(e.touches[0].clientX);
     }, { passive: true });
@@ -464,6 +471,7 @@
 
     window.addEventListener('mouseup', function () {
       dragging = false;
+      cachedRect = null;
     });
   }
 

@@ -262,12 +262,23 @@ class HeaderMenu extends Component {
       finalHeight = 0;
     }
 
-    const headerVisibleHeight = this.#getHeaderVisibleHeight();
+    // Skip layout read when submenu height is already known to be 0.
+    const headerVisibleHeight = finalHeight > 0 ? this.#getHeaderVisibleHeight() : 0;
 
     this.headerComponent.style.setProperty('--submenu-height', `${finalHeight}px`);
     this.#setFullOpenHeaderHeight(finalHeight, headerVisibleHeight);
     this.style.setProperty('--submenu-opacity', '1');
-    this.#startPointerTracking(item, previouslyActiveItem);
+
+    // Pointer tracking drives the diagonal safety-box that keeps dropdowns open
+    // while the pointer moves from a nav link toward a submenu panel.
+    // Links without submenus in the default slot need no tracking — skip the
+    // getBoundingClientRect() reads and the per-pixel pointermove listener.
+    if (submenu || !isDefaultSlot) {
+      this.#startPointerTracking(item, previouslyActiveItem);
+    } else if (previouslyActiveItem) {
+      this.#stopPointerTracking(previouslyActiveItem);
+      document.body.removeEventListener('pointermove', this.#onPointerMove);
+    }
   };
 
   /**

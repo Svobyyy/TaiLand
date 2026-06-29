@@ -1,0 +1,104 @@
+{% doc %}
+  Renders one pre-checkout upsell <dialog> for a single product slot.
+
+  @param {product}  product        — Shopify product object for this slot
+  @param {variant}  variant        — Selected / first available variant
+  @param {string}   rule           — Rule key: grooming | feeder | water | toy | cat | dog | default
+  @param {string}   [title_override] — If set, overrides the product title
+  @param {string}   [description]  — Short line below the title (blank = hidden)
+  @param {string}   [badge_setting] — Badge text from settings (blank = auto-compute from savings)
+  @param {string}   btn_text       — "Add to order" button label
+  @param {string}   decline_text   — "No thanks" button label
+{% enddoc %}
+{%- liquid
+  assign cup_d_heading     = title_override | default: product.title
+  assign cup_d_on_sale     = false
+  assign cup_d_savings_pct = 0
+  assign cup_d_savings_abs = 0
+  if variant.compare_at_price > variant.price
+    assign cup_d_on_sale     = true
+    assign cup_d_savings_abs = variant.compare_at_price | minus: variant.price
+    assign cup_d_savings_pct = cup_d_savings_abs | times: 100 | divided_by: variant.compare_at_price
+  endif
+  assign cup_d_badge = badge_setting
+  if cup_d_badge == blank and cup_d_on_sale
+    assign cup_d_badge = 'Save ' | append: cup_d_savings_pct | append: '%'
+  endif
+-%}
+<dialog
+  id="cup-dialog-{{ rule }}"
+  class="cup-dialog"
+  data-rule="{{ rule }}"
+  aria-labelledby="cup-heading-{{ rule }}"
+  data-variant-id="{{ variant.id }}"
+  data-product-id="{{ product.id }}"
+>
+  <div class="cup-card">
+
+    <button class="cup-close" type="button" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    {%- if product.featured_image -%}
+      <div class="cup-img-wrap">
+        {{-
+          product.featured_image
+          | image_url: width: 400
+          | image_tag:
+            class: 'cup-img',
+            alt: product.title,
+            loading: 'lazy',
+            width: 170,
+            height: 170
+        -}}
+      </div>
+    {%- endif -%}
+
+    <div class="cup-content">
+      {%- if cup_d_badge != blank -%}
+        <span class="cup-badge">{{ cup_d_badge | escape }}</span>
+      {%- endif -%}
+
+      <h2 id="cup-heading-{{ rule }}" class="cup-title">{{ cup_d_heading | escape }}</h2>
+
+      {%- if description != blank -%}
+        <p class="cup-desc">{{ description | escape }}</p>
+      {%- endif -%}
+
+      <div class="cup-price-row">
+        <span class="cup-price{% if cup_d_on_sale %} cup-price--sale{% endif %}">
+          {{- variant.price | money -}}
+        </span>
+        {%- if cup_d_on_sale -%}
+          <span class="cup-compare">{{ variant.compare_at_price | money }}</span>
+        {%- endif -%}
+      </div>
+
+      {%- if cup_d_on_sale -%}
+        <p class="cup-savings">
+          You save {{ cup_d_savings_pct }}%
+          <span class="cup-savings-sep">·</span>
+          {{ cup_d_savings_abs | money }} off
+        </p>
+      {%- endif -%}
+
+      <div class="cup-actions">
+        <button class="cup-add-btn" type="button" data-original-text="{{ btn_text | escape }}">
+          {{ btn_text | escape }}
+        </button>
+
+        <p class="cup-error" hidden>
+          Could not add item.
+          <a href="/checkout">Continue to checkout anyway</a>
+        </p>
+
+        <button class="cup-decline-btn" type="button">
+          {{ decline_text | escape }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</dialog>

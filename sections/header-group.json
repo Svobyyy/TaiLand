@@ -17,7 +17,7 @@
         "announcement_BxgCk9": {
           "type": "_announcement",
           "settings": {
-            "text": "Free shipping on orders over $60",
+            "text": "Free shipping on orders $60+",
             "link": "",
             "font": "var(--font-body--family)",
             "font_size": "0.875rem",
@@ -134,7 +134,19 @@
         "text_color_transparent_product": "",
         "enable_transparent_header_collection": false,
         "collection_inverse_logo": false,
-        "text_color_transparent_collection": ""
+        "text_color_transparent_collection": "",
+        "enable_upsell": true,
+        "upsell_product": "7-in-1-pet-grooming-vacuum-kit-dog-cat-clippers-deshedding-brush-fur-vacuum-mess-free-grooming",
+        "upsell_title": "",
+        "upsell_description": "",
+        "upsell_button_text": "Add to order",
+        "upsell_decline_text": "No thanks, continue to checkout",
+        "upsell_grooming_product": "2-in-1-dog-paw-cleaner-cup-portable-silicone-paw-washer-bath-brush-for-muddy-paws-dogs-cats",
+        "upsell_feeder_product": "interactive-dog-puzzle-toy-treat-dispensing-slow-feeder-tumbler-for-small-medium-dogs-and-cats",
+        "upsell_water_product": "no-spill-dog-water-bowl-anti-splash-floating-bowl-for-dogs-cats-mess-free-1-5l-home-car",
+        "upsell_toy_product": "squeaky-plush-dog-toy-cute-corduroy-donkey-chew-toy-for-puppies-small-dogs-squeaker-inside",
+        "upsell_cat_product": "cat-litter-scoop-with-stand-hidden-bag-storage-durable-sifting-litter-shovel-with-holder",
+        "upsell_dog_product": "squeaky-plush-dog-toy-cute-corduroy-donkey-chew-toy-for-puppies-small-dogs-squeaker-inside"
       }
     }
   },

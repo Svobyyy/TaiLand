@@ -136,7 +136,8 @@
                 alt: right_top_image_alt,
                 widths: '300, 500, 700',
                 sizes: '(max-width: 749px) 100vw, 35vw',
-                loading: 'lazy'
+                loading: 'eager',
+                fetchpriority: 'high'
             }}
           </picture>
         {%- endif -%}
@@ -185,7 +186,8 @@
                 alt: right_bottom_image_alt,
                 widths: '300, 500, 700',
                 sizes: '(max-width: 749px) 100vw, 35vw',
-                loading: 'lazy'
+                loading: 'eager',
+                fetchpriority: 'high'
             }}
           </picture>
         {%- endif -%}

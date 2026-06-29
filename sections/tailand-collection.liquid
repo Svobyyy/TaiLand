@@ -23,7 +23,7 @@
 {% endstyle %}
 
 <div class="tc-section">
-  <div class="tc-container">
+  <div class="tc-container" id="tc-page-region" data-tc-section="{{ section.id }}">
 
     <!-- ── Hero header ── -->
     <div class="tc-hero">
@@ -75,15 +75,15 @@
                 {%- when 'best-sellers', 'best_sellers' -%}
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                 {%- when 'dogs' -%}
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="17" rx="5.5" ry="5"/><ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="9" cy="7.5" rx="2" ry="2.8"/><ellipse cx="15" cy="7.5" rx="2" ry="2.8"/></svg>
+                  {% render 'icon-dog', width: 20, height: 20 %}
                 {%- when 'cats' -%}
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V3l4 3h.5a7 7 0 0 1 7 0H16L20 3v3c2 1.5 4 3.5 4 7 0 4-3 8-8.5 8S4 18 4 14c0-3.5 1.5-6 3-7z"/><path d="M9.5 14.5h.01M14.5 14.5h.01"/></svg>
+                  {% render 'icon-cat', width: 20, height: 20 %}
                 {%- when 'sale' -%}
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l10 10 10-10L12 2z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg>
                 {%- when 'summer' -%}
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
                 {%- else -%}
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="17" rx="5.5" ry="5"/><ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="9" cy="7.5" rx="2" ry="2.8"/><ellipse cx="15" cy="7.5" rx="2" ry="2.8"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><ellipse cx="6.5" cy="9" rx="2" ry="2.5"/><ellipse cx="10" cy="6.5" rx="2" ry="2.5"/><ellipse cx="14" cy="6.5" rx="2" ry="2.5"/><ellipse cx="17.5" cy="9" rx="2" ry="2.5"/><path d="M12 22.5C8.5 22.5 5.5 20.5 5.5 17.5C5.5 14.5 7.5 12.5 12 12.5C16.5 12.5 18.5 14.5 18.5 17.5C18.5 20.5 15.5 22.5 12 22.5Z"/></svg>
               {%- endcase -%}
             </span>
             <span class="tc-tab__label">{{ link.title | escape }}</span>
@@ -104,7 +104,7 @@
         <form method="get" action="{{ collection.url }}" class="tc-sort-form">
           <label for="tc-sort-{{ section.id }}" class="tc-sort__label">Sort by</label>
           <div class="tc-sort__wrap">
-            <select id="tc-sort-{{ section.id }}" name="sort_by" class="tc-sort__select" onchange="this.form.submit()">
+            <select id="tc-sort-{{ section.id }}" name="sort_by" class="tc-sort__select">
               <option value="manual"{%- if collection.sort_by == 'manual' %} selected{%- endif %}>Featured</option>
               <option value="best-selling"{%- if collection.sort_by == 'best-selling' %} selected{%- endif %}>Best Selling</option>
               <option value="title-ascending"{%- if collection.sort_by == 'title-ascending' %} selected{%- endif %}>A–Z</option>
@@ -117,6 +117,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </span>
           </div>
+          <noscript><button type="submit" class="tc-sort__go">Go</button></noscript>
         </form>
       </div>
     {%- endif -%}
@@ -161,16 +162,11 @@
                 <a href="{{ product.url }}" class="tc-card__media-link" tabindex="-1" aria-hidden="true">
                   {%- if product.featured_image -%}
                     {%- assign tc_img_alt = product.featured_image.alt | default: product.title | escape -%}
-                    {{-
-                      product.featured_image
-                      | image_url: width: 600
-                      | image_tag:
-                        class: 'tc-card__img',
-                        alt: tc_img_alt,
-                        loading: 'lazy',
-                        width: 600,
-                        height: 600
-                    -}}
+                    {%- if forloop.first -%}
+                      {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'eager', fetchpriority: 'high', width: 600, height: 600 -}}
+                    {%- else -%}
+                      {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'lazy', width: 600, height: 600 -}}
+                    {%- endif -%}
                   {%- else -%}
                     <div class="tc-card__img tc-card__img--placeholder" aria-hidden="true">
                       <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -244,9 +240,6 @@
 /* =========================================================
    Tailand Collection Page — tc-*
    ========================================================= */
-
-.tc-section {
-}
 
 .tc-container {
   max-width: 1300px;
@@ -901,7 +894,128 @@
     padding: 8px 12px;
   }
 }
+
+/* AJAX loading state */
+#tc-page-region { transition: opacity 0.2s ease; }
+#tc-page-region.tc-loading { opacity: 0.5; pointer-events: none; }
 {% endstylesheet %}
+
+<script>
+(function () {
+  var pageRegion = document.getElementById('tc-page-region');
+  if (!pageRegion) return;
+
+  var sectionId = pageRegion.dataset.tcSection;
+  if (!sectionId) return;
+
+  // Prevent duplicate listeners if the section script runs more than once
+  // (Theme Editor re-renders, section hydration).
+  if (pageRegion.dataset.tcListening === '1') return;
+  pageRegion.dataset.tcListening = '1';
+
+  var currentCtrl = null;
+
+  // Close mobile header drawer using the component's public API
+  function closeMenu() {
+    var headerDrawer = document.querySelector('header-drawer');
+    if (headerDrawer && typeof headerDrawer.close === 'function') headerDrawer.close();
+  }
+
+  function fetchPage(url, opts) {
+    var scrollY = (opts && opts.scrollY) || 0;
+    var push    = !opts || opts.push !== false;
+
+    if (currentCtrl) currentCtrl.abort();
+    var ctrl = new AbortController();
+    currentCtrl = ctrl;
+    pageRegion.classList.add('tc-loading');
+
+    var tid = setTimeout(function () { ctrl.abort(); }, 12000);
+
+    fetch(url + (url.includes('?') ? '&' : '?') + 'sections=' + sectionId, { signal: ctrl.signal })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        clearTimeout(tid);
+        if (ctrl !== currentCtrl) return;
+        currentCtrl = null;
+
+        var html = data[sectionId];
+        if (!html) return restore();
+
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var newRegion = doc.getElementById('tc-page-region');
+        if (!newRegion) return restore();
+
+        pageRegion.innerHTML = newRegion.innerHTML;
+
+        if (push) history.pushState({ tcAjax: true, url: url }, '', url);
+        pageRegion.classList.remove('tc-loading');
+        window.scrollTo({ top: scrollY, behavior: scrollY ? 'instant' : 'smooth' });
+      })
+      .catch(function (err) {
+        clearTimeout(tid);
+        if (err.name === 'AbortError' && ctrl !== currentCtrl) return;
+        currentCtrl = null;
+        restore();
+      });
+  }
+
+  function restore() {
+    pageRegion.classList.remove('tc-loading');
+  }
+
+  function saveScrollY() {
+    history.replaceState(
+      Object.assign({ tcAjax: true, url: location.pathname + location.search }, history.state || {}, { scrollY: window.scrollY }),
+      ''
+    );
+  }
+
+  // Document-level delegation handles tabs, drawer links, and pagination
+  // even after innerHTML is replaced (no rebinding needed)
+  document.addEventListener('click', function (e) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    var tab = e.target.closest('.tc-tab');
+    if (tab && tab.href) {
+      e.preventDefault();
+      saveScrollY();
+      var sort = new URLSearchParams(location.search).get('sort_by');
+      fetchPage(tab.href + (sort ? '?sort_by=' + sort : ''), { scrollY: 0, push: true });
+      return;
+    }
+
+    // Header links (mobile drawer, desktop nav, mobile nav bar) — only on collection pages
+    var headerLink = e.target.closest('.pc-drawer-item, .menu-list__link, .menu-list__item');
+    if (headerLink && headerLink.href && headerLink.href.includes('/collections/')) {
+      if (!document.getElementById('tc-page-region')) return;
+      e.preventDefault();
+      if (headerLink.classList.contains('pc-drawer-item')) closeMenu();
+      saveScrollY();
+      fetchPage(headerLink.href, { scrollY: 0, push: true });
+      return;
+    }
+
+    var pageBtn = e.target.closest('.tc-pagination__btn');
+    if (pageBtn && pageBtn.href) {
+      e.preventDefault();
+      saveScrollY();
+      fetchPage(pageBtn.href, { scrollY: 0, push: true });
+    }
+  });
+
+  document.addEventListener('change', function (e) {
+    if (!e.target.matches('.tc-sort__select')) return;
+    saveScrollY();
+    fetchPage(location.pathname + '?sort_by=' + e.target.value, { scrollY: 0, push: true });
+  });
+
+  window.addEventListener('popstate', function (e) {
+    if (!e.state || !e.state.tcAjax) return;
+    fetchPage(location.pathname + location.search, { scrollY: e.state.scrollY || 0, push: false });
+  });
+})();
+</script>
 
 {% schema %}
 {

@@ -7,9 +7,12 @@
    2. Global Typography
    3. Global Buttons
    4. Header
+      4a. Logo & announcement
+      4b. Search
+      4c. Mobile header (≤749px)
+      4d. Mobile drawer nav cards
+      4e. Currency / Localization selector
    5. Product & UI Typography
-   6. Mobile Header  (next checkpoint)
-   7. Utility Accents  (next checkpoint)
    ============================================================ */
 
 
@@ -216,7 +219,7 @@ h4, h5, h6,
 
 /* -- Inline desktop search form -------------------------- */
 
-/* Hidden on mobile -- the modal search icon handles mobile */
+/* Hidden on mobile -- search lives inside the hamburger drawer */
 .pc-search-inline {
   display: none;
 }
@@ -225,7 +228,6 @@ h4, h5, h6,
   .pc-search-inline {
     display: flex;
     align-items: stretch;
-    /* Flexible: fills center column, min 360px, max 620px */
     flex: 1 1 auto;
     min-width: 360px;
     max-width: 620px;
@@ -234,14 +236,13 @@ h4, h5, h6,
 
 .pc-search-inline__input {
   flex: 1 1 auto;
-  min-width: 0; /* prevents flex overflow */
+  min-width: 0;
   height: 50px;
   padding: 0 1.4rem;
   background: var(--pc-white);
   color: var(--pc-text);
   border: 2px solid var(--pc-cream);
   border-right: none;
-  /* Pill shape: left side fully rounded */
   border-radius: 999px 0 0 999px;
   font-family: var(--font-body--family);
   font-size: 1.125rem;
@@ -269,7 +270,6 @@ h4, h5, h6,
   background-color: var(--pc-orange);
   color: var(--pc-white);
   border: 2px solid var(--pc-orange);
-  /* Pill shape: right side fully rounded */
   border-radius: 0 999px 999px 0;
   font-family: var(--font-body--family);
   font-size: var(--pc-text-base);
@@ -286,38 +286,30 @@ h4, h5, h6,
 }
 
 /* -- Tablet squeeze: 750–860px — prevent logo/search overlap ----------- */
-/* At this range the 88px logo (wide aspect ratio) + 360px search minimum
-   + icons push past the available width. Trim each element just enough. */
 @media screen and (min-width: 750px) and (max-width: 860px) {
-  /* Shrink logo height — width follows automatically (width: auto) */
   .header-logo__image {
     height: 60px !important;
     width: auto !important;
   }
 
-  /* Text logo fallback */
   .header-logo {
     font-size: 1.6rem !important;
   }
 
-  /* Reduce center column breathing room so search can use the space */
   .header__row--top .header__column--center {
     padding-inline: 0.5rem !important;
   }
 
-  /* Let search shrink further — 360px minimum is too wide at this range */
   .pc-search-inline {
     min-width: 200px;
   }
 
-  /* Slightly shorter, tighter search input */
   .pc-search-inline__input {
     height: 44px;
     padding: 0 0.9rem;
     font-size: 1rem;
   }
 
-  /* Tighter search button — icon only, less label padding */
   .pc-search-inline__button {
     height: 44px;
     padding: 0 1.1rem;
@@ -436,6 +428,19 @@ h4, h5, h6,
   color: var(--pc-orange);
 }
 
+/* -- Search button icon ---------------------------------- */
+.pc-search-button-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.pc-search-button-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
 /* -- Nav placeholder icons ------------------------------- */
 /* SVGs use stroke="currentColor" so they automatically
    match the white nav text. Replace SVG content in
@@ -456,18 +461,6 @@ h4, h5, h6,
   stroke-width: 2.5;
 }
 
-/* -- Search button icon ---------------------------------- */
-.pc-search-button-icon {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  line-height: 0;
-}
-
-.pc-search-button-icon svg {
-  width: 20px;
-  height: 20px;
-}
 
 
 /* =========================================================
@@ -635,14 +628,10 @@ h4, h5, h6,
    conflicting with Horizon's base drawer mechanics.
    ========================================================= */
 
-/* -- Drawer close button --------------------------------- */
-/* The global .button rule applies pc-green here. Override it
-   to an orange circle with a white X — strong contrast, clearly
-   intentional, matches the brand card style with an offset shadow.
-   margin pushes it away from the flush drawer edge. */
-.menu-drawer .menu-drawer__close-button {
-  align-self: flex-start;        /* Don't stretch across full flex column */
-  margin: 14px 0 8px 14px;      /* Space from top and left drawer edges */
+/* -- Drawer close buttons (menu + cart) ------------------ */
+/* Shared: orange circle, white X, offset shadow — brand card style. */
+.menu-drawer .menu-drawer__close-button,
+#cart-drawer .theme-drawer__close-button {
   padding: 0;
   width: 44px;
   height: 44px;
@@ -659,13 +648,27 @@ h4, h5, h6,
   transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-.menu-drawer .menu-drawer__close-button:hover {
+/* Menu drawer: push button away from flush drawer edges */
+.menu-drawer .menu-drawer__close-button {
+  align-self: flex-start;
+  margin: 14px 0 8px 14px;
+}
+
+.menu-drawer .menu-drawer__close-button:hover,
+#cart-drawer .theme-drawer__close-button:hover {
   background-color: var(--pc-orange-dark) !important;
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 var(--pc-text);
 }
 
-.menu-drawer .menu-drawer__close-button .svg-wrapper {
+#cart-drawer .theme-drawer__close-button:active {
+  background-color: var(--pc-orange-dark) !important;
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.menu-drawer .menu-drawer__close-button .svg-wrapper,
+#cart-drawer .theme-drawer__close-button .svg-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -675,7 +678,8 @@ h4, h5, h6,
   padding: 0;
 }
 
-.menu-drawer .menu-drawer__close-button svg {
+.menu-drawer .menu-drawer__close-button svg,
+#cart-drawer .theme-drawer__close-button svg {
   width: 26px !important;
   height: 26px !important;
 }
@@ -808,7 +812,6 @@ a.pc-drawer-item:not(:has(.pc-drawer-icon)) {
   width: 28px !important;
   height: 28px !important;
   stroke: currentColor;
-  fill: none;
 }
 
 
@@ -947,10 +950,17 @@ drawer-localization-component.menu-drawer__localization {
   opacity: 0.6;
 }
 
-/* Breathing room around the whole localization block in the drawer */
+/* Breathing room around the whole localization block in the drawer.
+   The utility-links parent has margin-inline-start: var(--padding-xl) but no
+   right constraint, so a negative LEFT margin escapes that indent and stretches
+   the background to the drawer's left edge. The right edge already reaches the
+   drawer wall naturally — no right negative margin (that caused horizontal scroll).
+   padding-inline: var(--drawer-padding) aligns content with the nav cards above. */
 .menu-drawer__utility-links .menu-drawer__localization {
   margin-top: 8px;
-  padding: 16px 20px;
+  margin-inline-start: calc(-1 * var(--padding-xl, 20px));
+  padding-block: 16px;
+  padding-inline: var(--drawer-padding, 20px);
   background: rgba(247, 223, 184, 0.25);
   border-top: 1.5px solid rgba(43, 27, 18, 0.1);
 }
@@ -962,6 +972,20 @@ drawer-localization-component.menu-drawer__localization {
    prices, and badges. Rules are additive and safe -- they
    only apply where the classes exist.
    ========================================================= */
+
+/* -- Filter value icons (Dogs / Cats checkbox labels) ---- */
+.checkbox__label-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.checkbox__label-icon svg {
+  width: 20px;
+  height: 20px;
+}
 
 /* Product card titles */
 .card__heading,
