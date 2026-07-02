@@ -28,6 +28,8 @@
     {{ title_append }}
   </h2>
 
+  {%- if header_actions -%}{{ header_actions }}{%- endif -%}
+
   <button
     class="theme-drawer__close-button"
     on:click="#{{ drawer_id }}/close"

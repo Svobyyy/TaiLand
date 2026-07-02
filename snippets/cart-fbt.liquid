@@ -9,136 +9,125 @@
 
 {%- unless settings.fbt_show == false or cart.empty? -%}
 
-  {%- comment -%}── 1. Detect category from cart item tags (priority order) ──{%- endcomment -%}
-  {%- assign fbt_category   = 'default' -%}
-  {%- assign fbt_found      = false -%}
-  {%- assign fbt_priorities = 'grooming,feeder,water,toy,cat,dog' | split: ',' -%}
-  {%- for fbt_pri in fbt_priorities -%}
-    {%- unless fbt_found -%}
-      {%- assign fbt_tag = fbt_pri | append: '_upsell' -%}
-      {%- for fbt_ci in cart.items -%}
-        {%- if fbt_ci.product.tags contains fbt_tag -%}
-          {%- assign fbt_category = fbt_pri -%}
-          {%- assign fbt_found    = true -%}
-          {%- break -%}
-        {%- endif -%}
-      {%- endfor -%}
-    {%- endunless -%}
-  {%- endfor -%}
-
-  {%- comment -%}── 2. Map category → products via theme settings (available everywhere, no section context needed) ──{%- endcomment -%}
-  {%- if fbt_category == 'grooming' -%}
-    {%- assign fbt_fp1 = settings.fbt_grooming_1 -%}
-    {%- assign fbt_fp2 = settings.fbt_grooming_2 -%}
-    {%- assign fbt_fp3 = settings.fbt_grooming_3 -%}
-  {%- elsif fbt_category == 'feeder' -%}
-    {%- assign fbt_fp1 = settings.fbt_feeder_1 -%}
-    {%- assign fbt_fp2 = settings.fbt_feeder_2 -%}
-    {%- assign fbt_fp3 = settings.fbt_feeder_3 -%}
-  {%- elsif fbt_category == 'water' -%}
-    {%- assign fbt_fp1 = settings.fbt_water_1 -%}
-    {%- assign fbt_fp2 = settings.fbt_water_2 -%}
-    {%- assign fbt_fp3 = settings.fbt_water_3 -%}
-  {%- elsif fbt_category == 'toy' -%}
-    {%- assign fbt_fp1 = settings.fbt_toy_1 -%}
-    {%- assign fbt_fp2 = settings.fbt_toy_2 -%}
-    {%- assign fbt_fp3 = settings.fbt_toy_3 -%}
-  {%- elsif fbt_category == 'cat' -%}
-    {%- assign fbt_fp1 = settings.fbt_cat_1 -%}
-    {%- assign fbt_fp2 = settings.fbt_cat_2 -%}
-    {%- assign fbt_fp3 = settings.fbt_cat_3 -%}
-  {%- elsif fbt_category == 'dog' -%}
-    {%- assign fbt_fp1 = settings.fbt_dog_1 -%}
-    {%- assign fbt_fp2 = settings.fbt_dog_2 -%}
-    {%- assign fbt_fp3 = settings.fbt_dog_3 -%}
-  {%- else -%}
-    {%- assign fbt_fp1 = settings.fbt_default_1 -%}
-    {%- assign fbt_fp2 = settings.fbt_default_2 -%}
-    {%- assign fbt_fp3 = settings.fbt_default_3 -%}
-  {%- endif -%}
-
-  {%- comment -%}── 3. Build cart handle lookup string ──{%- endcomment -%}
+  {%- comment -%}── 1. Build cart handle lookup string ──{%- endcomment -%}
   {%- assign fbt_in_cart = '' -%}
   {%- for fbt_ci in cart.items -%}
     {%- assign fbt_in_cart = fbt_in_cart | append: '|' | append: fbt_ci.product.handle | append: '|' -%}
   {%- endfor -%}
 
-  {%- comment -%}── 4. Capture rendered cards (single pass, avoids two-pass count) ──{%- endcomment -%}
+  {%- comment -%}── 2. Find ALL matching categories in priority order, append default ──{%- endcomment -%}
+  {%- assign fbt_priorities = 'grooming,feeder,water,toy,cat,dog' | split: ',' -%}
+  {%- assign fbt_active_cats = '' -%}
+  {%- for fbt_pri in fbt_priorities -%}
+    {%- assign fbt_tag = fbt_pri | append: '_upsell' -%}
+    {%- assign fbt_matched = false -%}
+    {%- for fbt_ci in cart.items -%}
+      {%- if fbt_ci.product.tags contains fbt_tag -%}
+        {%- assign fbt_matched = true -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if fbt_matched -%}
+      {%- if fbt_active_cats == '' -%}
+        {%- assign fbt_active_cats = fbt_pri -%}
+      {%- else -%}
+        {%- assign fbt_active_cats = fbt_active_cats | append: ',' | append: fbt_pri -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if fbt_active_cats == '' -%}
+    {%- assign fbt_active_cats = 'default' -%}
+  {%- else -%}
+    {%- assign fbt_active_cats = fbt_active_cats | append: ',default' -%}
+  {%- endif -%}
+  {%- assign fbt_cat_list = fbt_active_cats | split: ',' -%}
+
+  {%- comment -%}── 3. Capture rendered cards — walk categories then slots, fall through when needed ──{%- endcomment -%}
   {%- capture fbt_cards_html -%}
     {%- assign fbt_shown = 0 -%}
-    {%- for fbt_slot in (1..3) -%}
+    {%- assign fbt_seen  = fbt_in_cart -%}
+
+    {%- for fbt_cat in fbt_cat_list -%}
       {%- if fbt_shown >= fbt_limit -%}{%- break -%}{%- endif -%}
 
-      {%- if fbt_slot == 1 -%}
-        {%- assign fbt_p = fbt_fp1 -%}
-      {%- elsif fbt_slot == 2 -%}
-        {%- assign fbt_p = fbt_fp2 -%}
-      {%- else -%}
-        {%- assign fbt_p = fbt_fp3 -%}
-      {%- endif -%}
+      {%- for fbt_slot in (1..3) -%}
+        {%- if fbt_shown >= fbt_limit -%}{%- break -%}{%- endif -%}
 
-      {%- if fbt_p == blank -%}{%- continue -%}{%- endif -%}
-      {%- assign fbt_ch = '|' | append: fbt_p.handle | append: '|' -%}
-      {%- if fbt_in_cart contains fbt_ch -%}{%- continue -%}{%- endif -%}
-      {%- assign fbt_v = fbt_p.first_available_variant -%}
-      {%- if fbt_v == blank -%}{%- continue -%}{%- endif -%}
+        {%- assign fbt_key = 'fbt_' | append: fbt_cat | append: '_' | append: fbt_slot -%}
+        {%- assign fbt_raw = settings[fbt_key] -%}
+        {%- if fbt_raw == blank -%}{%- continue -%}{%- endif -%}
+        {%- comment -%}Resolve: product object when stored as GID, handle lookup when stored as string{%- endcomment -%}
+        {%- if fbt_raw.handle -%}
+          {%- assign fbt_p = fbt_raw -%}
+        {%- else -%}
+          {%- assign fbt_p = all_products[fbt_raw] -%}
+        {%- endif -%}
+        {%- if fbt_p == blank or fbt_p.handle == blank -%}{%- continue -%}{%- endif -%}
 
-      {%- assign fbt_on_sale = false -%}
-      {%- if fbt_v.compare_at_price > fbt_v.price -%}
-        {%- assign fbt_on_sale  = true -%}
-        {%- assign fbt_save_pct = fbt_v.compare_at_price | minus: fbt_v.price | times: 100 | divided_by: fbt_v.compare_at_price -%}
-      {%- endif -%}
+        {%- assign fbt_ch = '|' | append: fbt_p.handle | append: '|' -%}
+        {%- if fbt_seen contains fbt_ch -%}{%- continue -%}{%- endif -%}
+        {%- assign fbt_v = fbt_p.first_available_variant -%}
+        {%- if fbt_v == blank -%}{%- continue -%}{%- endif -%}
 
-      <div class="fbt-card fbt-card--{{ fbt_mode }}"
-           data-fbt-card
-           data-fbt-handle="{{ fbt_p.handle | escape }}">
+        {%- assign fbt_seen = fbt_seen | append: fbt_ch -%}
 
-        <a href="{{ fbt_p.url }}"
-           class="fbt-card__img-link"
-           tabindex="-1"
-           aria-hidden="true">
-          {%- if fbt_p.featured_image -%}
-            {{- fbt_p.featured_image
-                | image_url: width: 200
-                | image_tag:
-                    class: 'fbt-card__img',
-                    alt: fbt_p.title,
-                    loading: 'lazy',
-                    width: 80,
-                    height: 80
-            -}}
-          {%- else -%}
-            <div class="fbt-card__img-placeholder"></div>
-          {%- endif -%}
-          {%- if fbt_on_sale -%}
-            <span class="fbt-save-badge" aria-label="Save {{ fbt_save_pct }}%">-{{ fbt_save_pct }}%</span>
-          {%- endif -%}
-        </a>
+        {%- assign fbt_on_sale = false -%}
+        {%- if fbt_v.compare_at_price > fbt_v.price -%}
+          {%- assign fbt_on_sale  = true -%}
+          {%- assign fbt_save_pct = fbt_v.compare_at_price | minus: fbt_v.price | times: 100 | divided_by: fbt_v.compare_at_price -%}
+        {%- endif -%}
 
-        <div class="fbt-card__info">
-          <a href="{{ fbt_p.url }}" class="fbt-card__title">{{ fbt_p.title | escape | truncate: 50 }}</a>
-          <div class="fbt-card__price-row">
-            {%- if fbt_on_sale -%}
-              <span class="fbt-price fbt-price--sale">{{ fbt_v.price | money }}</span>
-              <s class="fbt-price fbt-price--compare">{{ fbt_v.compare_at_price | money }}</s>
+        <div class="fbt-card fbt-card--{{ fbt_mode }}"
+             data-fbt-card
+             data-fbt-handle="{{ fbt_p.handle | escape }}">
+
+          <a href="{{ fbt_p.url }}"
+             class="fbt-card__img-link"
+             tabindex="-1"
+             aria-hidden="true">
+            {%- if fbt_p.featured_image -%}
+              {{- fbt_p.featured_image
+                  | image_url: width: 200
+                  | image_tag:
+                      class: 'fbt-card__img',
+                      alt: fbt_p.title,
+                      loading: 'lazy',
+                      width: 80,
+                      height: 80
+              -}}
             {%- else -%}
-              <span class="fbt-price">{{ fbt_v.price | money }}</span>
+              <div class="fbt-card__img-placeholder"></div>
             {%- endif -%}
+            {%- if fbt_on_sale -%}
+              <span class="fbt-save-badge" aria-label="Save {{ fbt_save_pct }}%">-{{ fbt_save_pct }}%</span>
+            {%- endif -%}
+          </a>
+
+          <div class="fbt-card__info">
+            <a href="{{ fbt_p.url }}" class="fbt-card__title">{{ fbt_p.title | escape | truncate: 50 }}</a>
+            <div class="fbt-card__price-row">
+              {%- if fbt_on_sale -%}
+                <span class="fbt-price fbt-price--sale">{{ fbt_v.price | money }}</span>
+                <s class="fbt-price fbt-price--compare">{{ fbt_v.compare_at_price | money }}</s>
+              {%- else -%}
+                <span class="fbt-price">{{ fbt_v.price | money }}</span>
+              {%- endif -%}
+            </div>
+            <span class="fbt-error" role="alert"></span>
           </div>
-          <span class="fbt-error" role="alert"></span>
+
+          <button
+            type="button"
+            class="fbt-btn"
+            data-fbt-add
+            data-fbt-variant="{{ fbt_v.id }}"
+            data-fbt-handle="{{ fbt_p.handle | escape }}"
+            aria-label="Add {{ fbt_p.title | escape }} to cart"
+          >Add</button>
+
         </div>
-
-        <button
-          type="button"
-          class="fbt-btn"
-          data-fbt-add
-          data-fbt-variant="{{ fbt_v.id }}"
-          data-fbt-handle="{{ fbt_p.handle | escape }}"
-          aria-label="Add {{ fbt_p.title | escape }} to cart"
-        >Add</button>
-
-      </div>
-      {%- assign fbt_shown = fbt_shown | plus: 1 -%}
+        {%- assign fbt_shown = fbt_shown | plus: 1 -%}
+      {%- endfor -%}
     {%- endfor -%}
   {%- endcapture -%}
 
@@ -146,12 +135,19 @@
 
 <style>
 /* ── FBT Frequently Bought Together ────────────────────────────── */
+
+/* Drawer variant: bleed out of .cart-drawer__items padding-inline */
 .fbt-section {
-  padding: 10px var(--cart-drawer-padding, 16px) 12px;
+  margin-inline: calc(-1 * var(--cart-drawer-padding, 16px));
+  margin-top: 14px;
+  padding: 14px var(--cart-drawer-padding, 16px) 20px;
   background: #FFF8EE;
-  border-top: 2px solid rgba(43,27,18,0.12);
+  border-top: 2px solid rgba(43,27,18,0.18);
 }
+
+/* Page variant: reset bleed, use card style */
 .fbt-section--page {
+  margin-inline: 0;
   margin-top: 1.5rem;
   padding: 1.25rem 1.5rem;
   background: #FFF4D9;
@@ -159,14 +155,15 @@
   border-radius: 20px;
   box-shadow: 6px 8px 0 rgba(43,27,18,0.8);
 }
+
 .fbt-heading {
   font-family: 'Fredoka', sans-serif;
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #EE7B28;
-  margin: 0 0 9px;
+  margin: 0 0 12px;
   line-height: 1;
 }
 .fbt-section--page .fbt-heading {
@@ -179,7 +176,7 @@
 .fbt-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 .fbt-section--page .fbt-list {
   display: grid;
@@ -192,12 +189,12 @@
 .fbt-card--drawer {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   background: #fff;
   border: 2px solid #2B1B12;
   border-radius: 14px;
   box-shadow: 3px 3px 0 rgba(43,27,18,0.55);
-  padding: 8px 10px;
+  padding: 10px 12px;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 .fbt-card--drawer.fbt-removing { opacity: 0; transform: translateX(20px); }
@@ -219,7 +216,7 @@
   text-decoration: none;
 }
 .fbt-card--drawer .fbt-card__img-link {
-  width: 66px; height: 66px;
+  width: 76px; height: 76px;
   border: 2px solid #2B1B12; border-radius: 10px; overflow: hidden; background: #FFF4D9;
 }
 .fbt-card--page .fbt-card__img-link { width: 100%; aspect-ratio: 1/1; background: #fff; overflow: hidden; }
@@ -232,25 +229,25 @@
   padding: 2px 5px; border-radius: 5px; border: 1px solid #2B1B12; line-height: 1.3; pointer-events: none;
 }
 .fbt-card--page .fbt-save-badge { font-size: 0.72rem; padding: 3px 7px; border-radius: 8px; top: 8px; left: 8px; }
-.fbt-card__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.fbt-card__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .fbt-card--page .fbt-card__info { padding: 10px 12px; gap: 5px; }
 .fbt-card__title {
-  font-family: 'Fredoka', sans-serif; font-size: 0.85rem; font-weight: 700;
+  font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700;
   color: #2B1B12; text-decoration: none; line-height: 1.25;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .fbt-card--page .fbt-card__title { font-size: 1rem; }
 .fbt-card__title:hover { color: #EE7B28; }
 .fbt-card__price-row { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
-.fbt-price { font-family: 'Nunito Sans', sans-serif; font-size: 0.82rem; font-weight: 800; color: #2B1B12; }
+.fbt-price { font-family: 'Nunito Sans', sans-serif; font-size: 0.85rem; font-weight: 800; color: #2B1B12; }
 .fbt-price--sale { color: #e8372b; }
 .fbt-price--compare { font-size: 0.72rem; font-weight: 500; color: rgba(43,27,18,0.45); text-decoration: line-through; }
 .fbt-card--page .fbt-price { font-size: 0.95rem; }
 .fbt-card--page .fbt-price--compare { font-size: 0.82rem; }
 .fbt-btn {
-  flex-shrink: 0; padding: 5px 13px;
+  flex-shrink: 0; padding: 7px 16px;
   background: #EE7B28; color: #fff;
-  font-family: 'Nunito Sans', sans-serif; font-size: 0.78rem; font-weight: 800;
+  font-family: 'Nunito Sans', sans-serif; font-size: 0.82rem; font-weight: 800;
   border: 2px solid #2B1B12; border-radius: 999px; box-shadow: 2px 2px 0 #2B1B12;
   cursor: pointer; white-space: nowrap;
   transition: background .12s ease, transform .1s ease, box-shadow .1s ease;
@@ -275,8 +272,6 @@
         {{ fbt_cards_html }}
       </div>
     </div>
-
-    <script src="{{ 'tailand-fbt.js' | asset_url }}" defer></script>
 
   {%- endunless -%}
 

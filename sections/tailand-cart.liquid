@@ -1,5 +1,6 @@
 <script src="{{ 'component-cart-items.js' | asset_url }}" type="module" fetchpriority="low"></script>
 <script src="{{ 'component-cart-quantity-selector.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<script src="{{ 'tailand-fbt.js' | asset_url }}" defer></script>
 
 {%- capture tc_empty_html -%}
 <div class="tc-page tc-page--empty">
@@ -34,15 +35,33 @@
 <div class="tc-page">
   <div class="tc-layout">
 
-    <h1 class="tc-heading">
-      Your&nbsp;<span class="tc-heading__hi">
-        Cart
-        <svg class="tc-heading__underline" viewBox="0 0 200 12" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-          <path d="M2 8 C30 3 70 10 100 6 C130 2 165 9 198 6" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <div class="tc-heading-row">
+      <h1 class="tc-heading">
+        Your&nbsp;<span class="tc-heading__hi">
+          Cart
+          <svg class="tc-heading__underline" viewBox="0 0 200 12" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M2 8 C30 3 70 10 100 6 C130 2 165 9 198 6" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="tc-heading__count">({{ cart.item_count }})</span>
+      </h1>
+      <button
+        type="button"
+        id="tc-cart-clear-btn"
+        class="tc-cart-clear-btn"
+        aria-label="Delete all items from cart"
+      >
+        <svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+          <path d="M9 6V4h6v2"/>
         </svg>
-      </span>
-      <span class="tc-heading__count">({{ cart.item_count }})</span>
-    </h1>
+        <span class="tc-cart-clear-btn__text">Delete all</span>
+      </button>
+    </div>
+
+    {%- render 'cart-deal-banner' -%}
 
     <div class="tc-layout__body">
 
@@ -84,6 +103,14 @@
                     </text-component>
                   </span>
                 </div>
+
+                {%- liquid
+                  assign _cdmin_t = settings.cart_deal_min | default: 2
+                  assign _cdpct_t = settings.cart_deal_pct | default: 25
+                -%}
+                {%- if cart.item_count >= _cdmin_t -%}
+                  <span class="tc-deal-badge">{{ _cdpct_t }}% OFF at checkout</span>
+                {%- endif -%}
 
                 {%- unless item.product.has_only_default_variant -%}
                   <p class="tc-card__variant">
@@ -145,6 +172,19 @@
                   <span>-{{ d.total_allocated_amount | money }}</span>
                 </div>
               {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          {%- assign _cdmin_ts = settings.cart_deal_min | default: 2 -%}
+          {%- assign _cdpct_ts = settings.cart_deal_pct | default: 25 -%}
+          {%- assign _cdsav_ts = cart.items_subtotal_price | times: _cdpct_ts | divided_by: 100 -%}
+          {%- if cart.item_count >= _cdmin_ts and cart.cart_level_discount_applications.size == 0 -%}
+            <div class="tc-deal-summary-row">
+              <span class="tc-deal-summary-label">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                {{ _cdpct_ts }}% Cart Discount
+              </span>
+              <span class="tc-deal-summary-val">-{{ _cdsav_ts | money }} at checkout</span>
             </div>
           {%- endif -%}
 
@@ -221,14 +261,69 @@
   padding: 2.5rem 1.25rem 4rem;
 }
 
-/* ── Heading ──────────────────────────────────────────────────── */
+/* ── Heading row ──────────────────────────────────────────────── */
+.tc-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
 .tc-heading {
   font-family: 'Fredoka', sans-serif;
   font-size: clamp(2rem, 5vw, 2.75rem);
   font-weight: 700;
   color: var(--pc-text, #2B1B12);
-  margin: 0 0 2rem;
+  margin: 0;
   line-height: 1.2;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Delete all button (cart page) ───────────────────────────── */
+.tc-cart-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: #FFF4D9;
+  color: #2B1B12;
+  border: 2.5px solid #2B1B12;
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 #2B1B12;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s ease, color 0.12s ease, transform 0.1s ease, box-shadow 0.1s ease;
+  min-height: 38px;
+}
+.tc-cart-clear-btn svg { flex-shrink: 0; }
+.tc-cart-clear-btn:hover:not(:disabled):not([data-state="confirm"]) {
+  background: #EE7B28;
+  color: #fff;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #2B1B12;
+}
+.tc-cart-clear-btn[data-state="confirm"] {
+  background: #EE7B28;
+  color: #fff;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #2B1B12;
+}
+.tc-cart-clear-btn:disabled,
+.tc-cart-clear-btn[data-state="loading"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+@media screen and (max-width: 479px) {
+  .tc-cart-clear-btn__text { display: none; }
+  .tc-cart-clear-btn { padding: 8px 10px; }
 }
 
 .tc-heading__hi {
@@ -336,8 +431,6 @@
   color: var(--pc-text, #2B1B12);
   text-decoration: none;
   line-height: 1.25;
-  flex: 1;
-  min-width: 0;
   overflow-wrap: break-word;
   transition: color 0.15s ease;
 }
@@ -680,7 +773,112 @@
 .tc-empty__link:hover { color: var(--pc-orange, #EE7B28); }
 .tc-empty__sep { color: #7A5C45; }
 
+/* ── Cart deal badge (cart page) ──────────────────────────────── */
+.tc-deal-badge {
+  display: inline-block;
+  margin-top: 4px;
+  background: rgba(45,125,18,0.1);
+  color: #1A5009;
+  border: 1px solid rgba(45,125,18,0.4);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Cart deal summary row (cart page) ───────────────────────── */
+.tc-deal-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  margin-bottom: 6px;
+  border-top: 1px solid rgba(45,125,18,0.3);
+  gap: 8px;
+}
+.tc-deal-summary-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #1A5009;
+}
+.tc-deal-summary-val {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #2D7D12;
+  white-space: nowrap;
+}
+
 {% endstylesheet %}
+
+<script>
+  (function () {
+    var CONFIRM_MS = 3500;
+    var clearTimer = null;
+    var root = (window.Shopify && window.Shopify.routes.root) || '/';
+
+    function getBtn() { return document.getElementById('tc-cart-clear-btn'); }
+
+    function setBtnState(btn, state, text) {
+      btn.dataset.state = state || '';
+      var span = btn.querySelector('.tc-cart-clear-btn__text');
+      if (span) span.textContent = text;
+      btn.disabled = (state === 'loading');
+    }
+
+    function resetBtn() {
+      clearTimer && clearTimeout(clearTimer);
+      clearTimer = null;
+      var btn = getBtn();
+      if (btn) setBtnState(btn, '', 'Delete all');
+    }
+
+    function doClearCart() {
+      var btn = getBtn();
+      if (!btn) return;
+      clearTimer && clearTimeout(clearTimer);
+      setBtnState(btn, 'loading', '...');
+      fetch(root + 'cart/clear.js', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(function (r) {
+        if (!r.ok) throw new Error('clear failed');
+        setTimeout(function () { window.location.reload(); }, 400);
+      })
+      .catch(function () {
+        var b = getBtn();
+        if (!b) return;
+        setBtnState(b, '', 'Error, try again');
+        setTimeout(resetBtn, 2500);
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('#tc-cart-clear-btn');
+      if (!btn) {
+        var active = getBtn();
+        if (active && active.dataset.state === 'confirm') resetBtn();
+        return;
+      }
+      if (btn.disabled || btn.dataset.state === 'loading') return;
+      if (btn.dataset.state !== 'confirm') {
+        clearTimer && clearTimeout(clearTimer);
+        setBtnState(btn, 'confirm', 'Confirm?');
+        clearTimer = setTimeout(resetBtn, CONFIRM_MS);
+      } else {
+        doClearCart();
+      }
+    });
+  })();
+</script>
 
 {% schema %}
 {

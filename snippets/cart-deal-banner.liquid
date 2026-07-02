@@ -1,0 +1,101 @@
+{%- assign _cdmin = settings.cart_deal_min | default: 2 -%}
+{%- assign _cdpct = settings.cart_deal_pct | default: 25 -%}
+{%- assign _cdcount = cart.item_count -%}
+{%- assign _cdmin1 = _cdmin | minus: 1 -%}
+{%- assign _cdneed = _cdmin | minus: _cdcount -%}
+{%- assign _cdsavings = cart.items_subtotal_price | times: _cdpct | divided_by: 100 -%}
+{%- assign _cdunlocked = false -%}
+{%- assign _cdalmost = false -%}
+{%- if _cdcount >= _cdmin -%}
+  {%- assign _cdunlocked = true -%}
+{%- elsif _cdcount == _cdmin1 -%}
+  {%- assign _cdalmost = true -%}
+{%- endif -%}
+
+{%- unless _cdcount == 0 -%}
+  {%- if _cdunlocked -%}
+    <div class="tc-deal-banner tc-deal-banner--unlocked" data-cart-deal-banner aria-live="polite">
+      <div class="tc-deal-banner__head">
+        <span class="tc-deal-banner__pill">🎉 {{ _cdpct }}% CART DISCOUNT UNLOCKED</span>
+      </div>
+      <p class="tc-deal-banner__text">Your whole cart gets <strong>{{ _cdpct }}% off</strong> automatically at checkout.</p>
+      {%- if _cdsavings > 0 -%}
+        <p class="tc-deal-banner__savings">You save <strong>{{ _cdsavings | money }}</strong> at checkout</p>
+      {%- endif -%}
+    </div>
+  {%- else -%}
+    <div class="tc-deal-banner tc-deal-banner--locked" data-cart-deal-banner aria-live="polite">
+      <div class="tc-deal-banner__head">
+        <span class="tc-deal-banner__pill tc-deal-banner__pill--locked">🔒 {{ _cdcount }} / {{ _cdmin }} items</span>
+        {%- if _cdalmost -%}<span class="tc-deal-banner__almost">Almost there!</span>{%- endif -%}
+      </div>
+      <p class="tc-deal-banner__text">Add <strong>{{ _cdneed }} more item{%- if _cdneed != 1 -%}s{%- endif -%}</strong> to unlock {{ _cdpct }}% off your entire cart.</p>
+    </div>
+  {%- endif -%}
+{%- endunless -%}
+
+<style>
+.tc-deal-banner {
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font-family: 'Nunito Sans', sans-serif;
+  line-height: 1.4;
+}
+.tc-deal-banner--unlocked {
+  background: rgba(45,125,18,0.08);
+  border: 2px solid #2D7D12;
+  box-shadow: 4px 4px 0 rgba(45,125,18,0.25);
+}
+.tc-deal-banner--locked {
+  background: rgba(241,130,34,0.08);
+  border: 2px solid #F18222;
+  box-shadow: 4px 4px 0 rgba(241,130,34,0.25);
+}
+.tc-deal-banner__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.tc-deal-banner__pill {
+  display: inline-block;
+  background: #2D7D12;
+  color: #fff;
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-family: 'Fredoka', 'Nunito Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tc-deal-banner__pill--locked {
+  background: #F18222;
+}
+.tc-deal-banner__almost {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #B83200;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tc-deal-banner__text {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #2B1B12;
+}
+.tc-deal-banner--unlocked .tc-deal-banner__text {
+  color: #1A5009;
+}
+.tc-deal-banner--locked .tc-deal-banner__text {
+  color: #6B3000;
+}
+.tc-deal-banner__savings {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1A5009;
+  font-family: 'Nunito Sans', sans-serif;
+}
+</style>

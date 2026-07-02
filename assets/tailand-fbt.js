@@ -11,12 +11,37 @@
   var isCartPage = /^\/cart(\/|$|\?)/.test(window.location.pathname);
 
   function updateCartBadges(count) {
-    /* Horizon cart count badges */
     document.querySelectorAll(
-      '.theme-drawer__badge, .cart-bubble__text, [data-cart-count]'
+      '.theme-drawer__badge, .cart-bubble__text-count, [data-cart-count]'
     ).forEach(function (el) {
       el.textContent = count;
     });
+  }
+
+  /**
+   * Refresh the cart drawer using the theme's morphSection (smart DOM diffing)
+   * when available, falling back to a raw replaceWith.
+   */
+  function refreshCartDrawer(sectionsHtml) {
+    var morphFn = window._tailandMorphSection;
+    if (typeof morphFn === 'function') {
+      morphFn('cart-drawer-section', sectionsHtml, {
+        mode: 'hydration',
+        injectStylesheet: true
+      }).catch(function () {
+        replaceCartDrawerFallback(sectionsHtml);
+      });
+    } else {
+      replaceCartDrawerFallback(sectionsHtml);
+    }
+  }
+
+  function replaceCartDrawerFallback(sectionsHtml) {
+    var parser = new DOMParser();
+    var doc    = parser.parseFromString(sectionsHtml, 'text/html');
+    var newEl  = doc.querySelector('[data-hydration-key="cart-drawer-inner"]');
+    var curEl  = document.querySelector('[data-hydration-key="cart-drawer-inner"]');
+    if (newEl && curEl) curEl.replaceWith(newEl);
   }
 
   document.addEventListener('click', function (e) {
@@ -32,10 +57,15 @@
     btn.disabled    = true;
     btn.textContent = '...';
 
+    var payload = { id: variantId, quantity: 1 };
+    if (!isCartPage) {
+      payload.sections = 'cart-drawer-section';
+    }
+
     fetch('/cart/add.js', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body:    JSON.stringify({ id: variantId, quantity: 1 }),
+      body:    JSON.stringify(payload),
     })
     .then(function (r) {
       return r.json().then(function (d) { return { ok: r.ok, data: d }; });
@@ -49,31 +79,20 @@
       btn.textContent = 'Added ✓';
       btn.classList.add('fbt-added');
 
+      if (isCartPage) {
+        setTimeout(function () { window.location.reload(); }, 900);
+        return Promise.resolve(null);
+      }
+
+      var sectionHtml = res.data.sections && res.data.sections['cart-drawer-section'];
+      // Refresh immediately — morphSection handles concurrent calls safely
+      if (sectionHtml) refreshCartDrawer(sectionHtml);
+
       return fetch('/cart.js').then(function (r) { return r.json(); });
     })
     .then(function (cart) {
+      if (!cart) return;
       updateCartBadges(cart.item_count);
-
-      if (isCartPage) {
-        /* Cart page: reload so Liquid re-renders totals and filters out
-           the newly added product from the FBT list. */
-        setTimeout(function () { window.location.reload(); }, 900);
-        return;
-      }
-
-      /* Drawer: fade and remove the card, hide section if empty. */
-      setTimeout(function () {
-        if (!card) return;
-        card.classList.add('fbt-removing');
-        setTimeout(function () {
-          var list = card.parentNode;
-          if (list) list.removeChild(card);
-          if (list && list.children.length === 0) {
-            var section = list.closest('.fbt-section');
-            if (section) section.remove();
-          }
-        }, 320);
-      }, 1400);
     })
     .catch(function (err) {
       btn.disabled    = false;

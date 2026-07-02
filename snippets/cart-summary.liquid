@@ -38,6 +38,16 @@
     {%- endif -%}
   </div>
 
+  {%- assign _cdmin_s = settings.cart_deal_min | default: 2 -%}
+  {%- assign _cdpct_s = settings.cart_deal_pct | default: 25 -%}
+  {%- assign _cdsav_s = cart.items_subtotal_price | times: _cdpct_s | divided_by: 100 -%}
+  {%- if cart.item_count >= _cdmin_s and cart.cart_level_discount_applications.size == 0 -%}
+    <div class="tc-deal-summary-row">
+      <span class="tc-deal-summary-label">{{ _cdpct_s }}% off at checkout</span>
+      <span class="tc-deal-summary-val">-{{ _cdsav_s | money }}</span>
+    </div>
+  {%- endif -%}
+
   {% if settings.show_cart_note or settings.show_add_discount_code %}
     <div class="cart-actions">
       {% if settings.show_cart_note %}
@@ -611,5 +621,28 @@
     .cart-summary--extend {
       height: 100%;
     }
+  }
+
+  /* ── Cart deal summary row (drawer) ──────────────────────────── */
+  .tc-deal-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-top: 1px solid rgba(45,125,18,0.25);
+    gap: 8px;
+  }
+  .tc-deal-summary-label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #1A5009;
+  }
+  .tc-deal-summary-val {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #2D7D12;
+    white-space: nowrap;
   }
 {% endstylesheet %}

@@ -205,6 +205,13 @@
                         mode: 'trigger'
                       %}
                     </div>
+                    {%- liquid
+                      assign _cdmin_p = settings.cart_deal_min | default: 2
+                      assign _cdpct_p = settings.cart_deal_pct | default: 25
+                    -%}
+                    {%- if cart.item_count >= _cdmin_p -%}
+                      <span class="tc-deal-badge">{{ _cdpct_p }}% OFF at checkout</span>
+                    {%- endif -%}
                     {% if item.product.vendor and block_settings.vendor %}
                       <p>
                         {{ item.product.vendor }}
@@ -278,7 +285,7 @@
                         <p>{{ item.selling_plan_allocation.selling_plan.name }}</p>
                       {%- endif -%}
 
-                      {%- if item.line_level_discount_allocations.size > 0 -%}
+                      {%- if item.line_level_discount_allocations.size > 0 and context != 'drawer' -%}
                         <ul
                           class="list-unstyled"
                           role="list"
@@ -1008,4 +1015,21 @@
       opacity: 1;
     }
   }
+
+  /* ── Cart deal badge (drawer) ────────────────────────────────── */
+  .tc-deal-badge {
+    display: inline-block;
+    margin-top: 4px;
+    background: rgba(45,125,18,0.1);
+    color: #1A5009;
+    border: 1px solid rgba(45,125,18,0.4);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
 {% endstylesheet %}

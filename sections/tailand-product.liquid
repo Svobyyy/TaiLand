@@ -2444,6 +2444,10 @@
       if (window.Shopify && typeof window.Shopify.formatMoney === 'function') {
         return window.Shopify.formatMoney(cents, window.Shopify.money_format);
       }
+      var currency = (window.Shopify && window.Shopify.currency && window.Shopify.currency.active) || '';
+      if (currency && typeof Intl !== 'undefined' && Intl.NumberFormat) {
+        try { return new Intl.NumberFormat(undefined, { style: 'currency', currency: currency }).format(cents / 100); } catch (e) {}
+      }
       return (cents / 100).toFixed(2);
     }
 
@@ -2493,7 +2497,7 @@
             var cur = parseInt((qtyInput && qtyInput.value) || '1', 10) || 1;
             var savingPerItem = Math.floor(priceCents * discPct / 100);
             savingsEl.textContent = 'You\'re saving ' + formatMoney(savingPerItem * cur) + ' on this order';
-            savingsEl.style.display = '';
+            savingsEl.style.display = 'block';
           } else {
             savingsEl.style.display = 'none';
           }

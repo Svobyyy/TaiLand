@@ -26,6 +26,11 @@
     src="{{ 'component-cart-items.js' | asset_url }}"
     fetchpriority="low"
   ></script>
+  <script type="module">
+    import { morphSection, sectionRenderer } from '@theme/section-renderer';
+    window._tailandMorphSection = morphSection;
+    window._tailandSectionRenderer = sectionRenderer;
+  </script>
 
   {% capture empty_cart_drawer_content %}
     <div
@@ -102,11 +107,28 @@
               {% endif %}
             {% endcapture %}
             {% assign cart_drawer_title = 'content.cart_title' | t %}
+            {% capture cart_clear_btn %}
+              <button
+                type="button"
+                id="tc-cart-clear-btn"
+                class="tc-cart-clear-btn"
+                aria-label="Delete all items from cart"
+              >
+                <svg aria-hidden="true" focusable="false" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-1 14H6L5 6"/>
+                  <path d="M10 11v6M14 11v6"/>
+                  <path d="M9 6V4h6v2"/>
+                </svg>
+                <span class="tc-cart-clear-btn__text">Delete all</span>
+              </button>
+            {% endcapture %}
             {% render 'theme-drawer-header',
               title: cart_drawer_title,
               drawer_id: 'cart-drawer',
               heading_id: 'cart-drawer-heading',
-              title_append: cart_badge_html
+              title_append: cart_badge_html,
+              header_actions: cart_clear_btn
             %}
           {%- endif -%}
 
@@ -120,15 +142,15 @@
                 style="--header-height: 60px;"
               >
                 <scroll-hint class="cart-drawer__items">
+                  {%- render 'cart-deal-banner' -%}
                   {% render 'cart-products', context: 'drawer' %}
+                  {%- render 'cart-fbt', fbt_limit: 3, fbt_mode: 'drawer' -%}
                 </scroll-hint>
-
-                {%- render 'cart-fbt', fbt_limit: 3, fbt_mode: 'drawer' -%}
-
-                <div class="cart-drawer__summary">
-                  {% render 'cart-summary', section_id: 'cart-drawer-section' %}
-                </div>
               </scroll-hint>
+
+              <div class="cart-drawer__summary">
+                {% render 'cart-summary', section_id: 'cart-drawer-section' %}
+              </div>
             {%- endif -%}
           {% endcapture %}
           {% render 'cart-items-component',
@@ -144,6 +166,8 @@
   {% if render_wrapper %}
     </div>
   {% endif %}
+
+  <script src="{{ 'tailand-fbt.js' | asset_url }}" defer></script>
 
   <script>
     (function () {
@@ -190,6 +214,106 @@
       });
       syncDrawerClass();
     })();
+
+    // ── Delete-all clear cart ────────────────────────────────────────
+    (function () {
+      var CONFIRM_MS  = 3500;
+      var clearTimer  = null;
+      var isCartPage  = /^\/cart(\/|$|\?)/.test(window.location.pathname);
+      var root        = (window.Shopify && window.Shopify.routes.root) || '/';
+
+      function getBtn() { return document.getElementById('tc-cart-clear-btn'); }
+
+      function setBtnState(btn, state, text) {
+        btn.dataset.state = state || '';
+        var span = btn.querySelector('.tc-cart-clear-btn__text');
+        if (span) span.textContent = text;
+        btn.disabled = (state === 'loading');
+      }
+
+      function resetBtn() {
+        clearTimer && clearTimeout(clearTimer);
+        clearTimer = null;
+        var btn = getBtn();
+        if (btn) setBtnState(btn, '', 'Delete all');
+      }
+
+      function updateBadges() {
+        document.querySelectorAll(
+          '.theme-drawer__badge, .cart-bubble__text-count, [data-cart-count]'
+        ).forEach(function (el) { el.textContent = '0'; });
+      }
+
+      function refreshDrawer() {
+        var sr = window._tailandSectionRenderer;
+        if (sr && typeof sr.renderSection === 'function') {
+          return sr.renderSection('cart-drawer-section', {
+            cache: false,
+            mode: 'hydration',
+            injectStylesheet: true
+          });
+        }
+        // Fallback when module bridge not yet loaded
+        return fetch('/?sections=cart-drawer-section')
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            var html = data['cart-drawer-section'];
+            if (!html) return;
+            var parser = new DOMParser();
+            var doc    = parser.parseFromString(html, 'text/html');
+            var newEl  = doc.querySelector('[data-hydration-key="cart-drawer-inner"]');
+            var curEl  = document.querySelector('[data-hydration-key="cart-drawer-inner"]');
+            if (newEl && curEl) curEl.replaceWith(newEl);
+          });
+      }
+
+      function doClearCart() {
+        var btn = getBtn();
+        if (!btn) return;
+        clearTimer && clearTimeout(clearTimer);
+        setBtnState(btn, 'loading', '...');
+
+        fetch(root + 'cart/clear.js', {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function (r) {
+          if (!r.ok) throw new Error('clear failed');
+          updateBadges();
+          if (isCartPage) {
+            setTimeout(function () { window.location.reload(); }, 600);
+            return;
+          }
+          return refreshDrawer();
+        })
+        .catch(function () {
+          var b = getBtn();
+          if (!b) return;
+          setBtnState(b, '', 'Error, try again');
+          setTimeout(resetBtn, 2500);
+        });
+      }
+
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest('#tc-cart-clear-btn');
+
+        if (!btn) {
+          var active = getBtn();
+          if (active && active.dataset.state === 'confirm') resetBtn();
+          return;
+        }
+
+        if (btn.disabled || btn.dataset.state === 'loading') return;
+
+        if (btn.dataset.state !== 'confirm') {
+          clearTimer && clearTimeout(clearTimer);
+          setBtnState(btn, 'confirm', 'Confirm?');
+          clearTimer = setTimeout(resetBtn, CONFIRM_MS);
+        } else {
+          doClearCart();
+        }
+      });
+    })();
   </script>
 {%- endif -%}
 
@@ -214,12 +338,12 @@
   }
 
   .cart-drawer__content {
-    height: calc(100% - var(--header-height));
     display: flex;
     flex-direction: column;
     padding: 0;
     background-color: var(--color-background);
-    flex-grow: 1;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
   }
 
@@ -345,9 +469,14 @@
   .theme-drawer__header {
     background-color: #FFF4D9;
     border-bottom: 2px solid #2B1B12;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .theme-drawer__title {
+    flex: 1;
+    min-width: 0;
     font-family: 'Fredoka', sans-serif;
     color: #2B1B12;
   }
@@ -370,7 +499,7 @@
   /* Spacing between header and first card, and last card and summary */
   .cart-drawer__items {
     padding-top: 1.25rem;
-    padding-bottom: 1.5rem;
+    padding-bottom: 0;
   }
 
   /* Hide per-unit price in drawer — line total top-right is sufficient */
@@ -508,6 +637,32 @@
     background-color: #FFF4D9;
     border-top: 2px solid #2B1B12;
     mask-image: none;
+    position: static;
+    flex-shrink: 0;
+    margin-top: 0;
+  }
+
+  /* ── Short viewport: compact summary so products get usable height ── */
+  @media screen and (max-height: 650px) {
+    #cart-drawer .cart-drawer__summary {
+      --cart-drawer-summary-padding: 10px;
+      gap: 8px;
+    }
+    /* Discount code entry is accessible at checkout — hide it on short screens */
+    #cart-drawer .cart-drawer__summary .cart-actions {
+      display: none;
+    }
+  }
+
+  @media screen and (max-height: 520px) {
+    #cart-drawer .cart-drawer__summary {
+      --cart-drawer-summary-padding: 8px;
+      gap: 6px;
+    }
+    /* Hide shipping/duties note — visible at checkout anyway */
+    #cart-drawer .cart-drawer__summary .cart-totals__tax-note {
+      display: none;
+    }
   }
 
   .cart-totals__total-label,
@@ -667,6 +822,59 @@
 
     #cart-drawer .theme-drawer__dialog::backdrop {
       background: rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  /* ── Delete all button ──────────────────────────────────────── */
+  .tc-cart-clear-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 8px 16px;
+    background: #FFF4D9;
+    color: #2B1B12;
+    border: 2.5px solid #2B1B12;
+    border-radius: 999px;
+    box-shadow: 2px 2px 0 #2B1B12;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.12s ease, color 0.12s ease, transform 0.1s ease, box-shadow 0.1s ease;
+    min-height: 38px;
+  }
+  .tc-cart-clear-btn svg {
+    flex-shrink: 0;
+    width: 13px;
+    height: 13px;
+  }
+  .tc-cart-clear-btn:hover:not(:disabled):not([data-state="confirm"]) {
+    background: #EE7B28;
+    color: #fff;
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #2B1B12;
+  }
+  .tc-cart-clear-btn[data-state="confirm"] {
+    background: #EE7B28;
+    color: #fff;
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #2B1B12;
+  }
+  .tc-cart-clear-btn:disabled,
+  .tc-cart-clear-btn[data-state="loading"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  @media screen and (max-width: 479px) {
+    .tc-cart-clear-btn__text {
+      display: none;
+    }
+    .tc-cart-clear-btn {
+      padding: 8px 10px;
     }
   }
 {% endstylesheet %}

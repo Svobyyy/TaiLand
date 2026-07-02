@@ -2118,6 +2118,23 @@
     ]
   },
   {
+    "name": "Cart Deal",
+    "settings": [
+      {
+        "type": "number",
+        "id": "cart_deal_min",
+        "label": "Minimum items to unlock cart deal",
+        "default": 2
+      },
+      {
+        "type": "number",
+        "id": "cart_deal_pct",
+        "label": "Cart deal discount percentage",
+        "default": 25
+      }
+    ]
+  },
+  {
     "name": "Frequently Bought Together",
     "settings": [
       {
