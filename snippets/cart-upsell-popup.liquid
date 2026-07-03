@@ -359,8 +359,19 @@
       document.body.style.overflow = '';
       if (activeDialog === el) activeDialog = null;
     });
-    el.addEventListener('cancel', function (e) { e.preventDefault(); el.close(); });
-    el.addEventListener('click',  function (e) { if (e.target === el) el.close(); });
+    el.addEventListener('cancel', function (e) {
+      e.preventDefault();
+      markDeclined(el.dataset.variantId);
+      el.close();
+      goCheckout();
+    });
+    el.addEventListener('click',  function (e) {
+      if (e.target === el) {
+        markDeclined(el.dataset.variantId);
+        el.close();
+        goCheckout();
+      }
+    });
   });
 
   /* ── button delegation across all open dialogs ──────────────────── */
@@ -370,7 +381,9 @@
     if (activeDialog.contains(e.target)) {
       if (e.target.closest('.cup-close')) {
         e.stopPropagation();
+        markDeclined(activeDialog.dataset.variantId);
         closeActive();
+        goCheckout();
         return;
       }
       if (e.target.closest('.cup-decline-btn')) {

@@ -6,6 +6,8 @@
 
 {%- assign fbt_mode  = fbt_mode  | default: 'drawer' -%}
 {%- assign fbt_limit = fbt_limit | default: 3 -%}
+{%- assign fbt_img_w = 200 -%}
+{%- if fbt_mode == 'page' -%}{%- assign fbt_img_w = 600 -%}{%- endif -%}
 
 {%- unless settings.fbt_show == false or cart.empty? -%}
 
@@ -87,7 +89,7 @@
              aria-hidden="true">
             {%- if fbt_p.featured_image -%}
               {{- fbt_p.featured_image
-                  | image_url: width: 200
+                  | image_url: width: fbt_img_w
                   | image_tag:
                       class: 'fbt-card__img',
                       alt: fbt_p.title,
@@ -140,7 +142,7 @@
 .fbt-section {
   margin-inline: calc(-1 * var(--cart-drawer-padding, 16px));
   margin-top: 14px;
-  padding: 14px var(--cart-drawer-padding, 16px) 20px;
+  padding: 14px var(--cart-drawer-padding, 16px) 8px;
   background: #FFF8EE;
   border-top: 2px solid rgba(43,27,18,0.18);
 }

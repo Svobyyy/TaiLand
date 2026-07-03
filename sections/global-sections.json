@@ -14,6 +14,7 @@
     "cart-drawer-section": {
       "type": "cart-drawer-section",
       "settings": {
+        "free_shipping_threshold": 60,
         "show_fbt": true,
         "fbt_default_1": "gid://shopify/product/10866767036743",
         "fbt_default_2": "gid://shopify/product/10866838176071",

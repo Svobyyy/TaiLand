@@ -1375,15 +1375,14 @@
   assign tp_pt = section.settings.padding_top  | append: 'px'
   assign tp_pb = section.settings.padding_bottom | append: 'px'
 
-  assign tp_active_currency = localization.country.currency.iso_code
-  assign tp_is_usd          = false
-  if tp_active_currency == 'USD'
-    assign tp_is_usd = true
+  assign tp_exchange        = localization.country.currency.exchange_rate | default: 1
+  if tp_exchange == 0
+    assign tp_exchange = 1
   endif
-  assign tp_threshold_cents = section.settings.free_shipping_threshold_usd | times: 100
+  assign tp_threshold_cents = section.settings.free_shipping_threshold_usd | times: tp_exchange | times: 100 | round
   assign tp_cart_cents      = cart.total_price
   assign tp_progress        = 0
-  if tp_is_usd and tp_threshold_cents > 0
+  if tp_threshold_cents > 0
     if tp_cart_cents >= tp_threshold_cents
       assign tp_progress = 100
     else
@@ -1429,7 +1428,7 @@
               <div class="tp-gallery__badge">{{ section.settings.sale_badge_text }}</div>
             {%- endif -%}
 
-            {%- assign tp_main_media = tp_variant.featured_media | default: tp_product.featured_media -%}
+            {%- assign tp_main_media = tp_product.media.first | default: tp_product.featured_media -%}
             {%- if tp_main_media != blank -%}
               {%- assign tp_main_alt = tp_main_media.alt | default: tp_product.title | escape -%}
               {%- assign tp_main_src = tp_main_media.preview_image -%}
@@ -1684,33 +1683,25 @@
           {%- endif -%}
 
           <!-- Free shipping bar -->
-          {%- if section.settings.show_free_shipping -%}
-            {%- if tp_is_usd and tp_threshold_cents > 0 -%}
-              <div class="tp-ship-bar"
-                   data-free-shipping-progress
-                   data-free-shipping-threshold="{{ tp_threshold_cents }}"
-                   data-free-shipping-prefix="{{ section.settings.free_shipping_prefix | escape }}"
-                   data-free-shipping-suffix="{{ section.settings.free_shipping_suffix | escape }}">
-                <div class="tp-ship-bar__text">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                  {%- if tp_progress >= 100 -%}
-                    <span data-free-shipping-message>You unlocked <strong>free shipping!</strong> &#127881;</span>
-                  {%- else -%}
-                    <span data-free-shipping-message>{{ section.settings.free_shipping_prefix }} <strong>{{ tp_remaining }}</strong> {{ section.settings.free_shipping_suffix }}</span>
-                  {%- endif -%}
-                </div>
-                <div class="tp-ship-bar__track">
-                  <div class="tp-ship-bar__fill" data-free-shipping-bar style="width:{{ tp_progress }}%"></div>
-                </div>
+          {%- if section.settings.show_free_shipping and tp_threshold_cents > 0 -%}
+            <div class="tp-ship-bar"
+                 data-free-shipping-progress
+                 data-free-shipping-threshold="{{ tp_threshold_cents }}"
+                 data-fs-usd-cents="{{ section.settings.free_shipping_threshold_usd | times: 100 }}"
+                 data-free-shipping-prefix="{{ section.settings.free_shipping_prefix | escape }}"
+                 data-free-shipping-suffix="{{ section.settings.free_shipping_suffix | escape }}">
+              <div class="tp-ship-bar__text">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                {%- if tp_progress >= 100 -%}
+                  <span data-free-shipping-message>You unlocked <strong>free shipping!</strong> &#127881;</span>
+                {%- else -%}
+                  <span data-free-shipping-message>{{ section.settings.free_shipping_prefix }} <strong>{{ tp_remaining }}</strong> {{ section.settings.free_shipping_suffix }}</span>
+                {%- endif -%}
               </div>
-            {%- else -%}
-              <div class="tp-ship-bar tp-ship-bar--static">
-                <div class="tp-ship-bar__text">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                  <span>Free shipping on qualifying orders over <strong>$60 USD</strong></span>
-                </div>
+              <div class="tp-ship-bar__track">
+                <div class="tp-ship-bar__fill" data-free-shipping-bar style="width:{{ tp_progress }}%"></div>
               </div>
-            {%- endif -%}
+            </div>
           {%- endif -%}
 
           <!-- Multi-buy -->
@@ -2282,6 +2273,7 @@
     });
   });
 
+  var _tpInitDone = false;
   function updateVariant() {
     var variantInput = document.getElementById('tp-variant-id');
     var addBtn       = document.getElementById('tp-add-btn');
@@ -2347,7 +2339,7 @@
     var varSelOpt = varSel && varSel.options[varSel.selectedIndex];
     var imgSrc = varSelOpt ? varSelOpt.getAttribute('data-img') : null;
     var imgAlt = varSelOpt ? varSelOpt.getAttribute('data-alt') : null;
-    if (mainImg && imgSrc) {
+    if (_tpInitDone && mainImg && imgSrc) {
       tpSwapImage(mainImg, imgSrc, imgAlt);
       document.querySelectorAll('.tp-gallery__thumb').forEach(function (t) {
         t.classList.toggle('tp-active', t.getAttribute('data-src') === imgSrc);
@@ -2358,6 +2350,7 @@
   /* Run on page load to disable impossible pills and sync state */
   updatePillAvailability();
   updateVariant();
+  _tpInitDone = true;
 
   /* Add to cart handled by the ES module below — needs CartLinesUpdateEvent from @shopify/events */
 
@@ -2725,8 +2718,13 @@ import { CartLinesUpdateEvent } from '@shopify/events';
           if (msg && newMsg) msg.innerHTML = newMsg.innerHTML;
         });
       })
+      .then(function () { if (window.tcUpdateFSBars) window.tcUpdateFSBars(); })
       .catch(function () {});
   }
+
+  // Run JS currency override on initial load
+  if (window.tcUpdateFSBars) window.tcUpdateFSBars();
+  else document.addEventListener('DOMContentLoaded', function () { if (window.tcUpdateFSBars) window.tcUpdateFSBars(); });
 
   // Also update when the cart drawer changes quantity or removes a line.
   document.addEventListener('CartLinesUpdateEvent', async function (e) {

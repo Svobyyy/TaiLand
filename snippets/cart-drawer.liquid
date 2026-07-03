@@ -142,6 +142,37 @@
                 style="--header-height: 60px;"
               >
                 <scroll-hint class="cart-drawer__items">
+                  {%- if section.settings.free_shipping_threshold > 0 -%}
+                    {%- assign tc_exchange = localization.country.currency.exchange_rate | default: 1 -%}
+                    {%- if tc_exchange == 0 -%}{%- assign tc_exchange = 1 -%}{%- endif -%}
+                    {%- assign tc_fs_cents = section.settings.free_shipping_threshold | times: tc_exchange | times: 100 | round -%}
+                    {%- assign tc_fs_unlocked = false -%}
+                    {%- if cart.total_price >= tc_fs_cents -%}
+                      {%- assign tc_fs_unlocked = true -%}
+                    {%- endif -%}
+                    {%- assign tc_fs_remaining = tc_fs_cents | minus: cart.total_price -%}
+                    {%- assign tc_fs_pct = cart.total_price | times: 100 | divided_by: tc_fs_cents | at_most: 100 -%}
+                    <div class="tc-freeship{% if tc_fs_unlocked %} tc-freeship--unlocked{% endif %}"
+                         id="tc-freeship"
+                         data-free-shipping-progress
+                         data-fs-usd-cents="{{ section.settings.free_shipping_threshold | times: 100 }}"
+                         data-free-shipping-prefix="You are"
+                         data-free-shipping-suffix="away from free shipping">
+                      <div class="tc-freeship__text">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        <span data-free-shipping-message>
+                          {%- if tc_fs_unlocked -%}
+                            Free shipping unlocked
+                          {%- else -%}
+                            You are <strong>{{ tc_fs_remaining | money }}</strong> away from free shipping
+                          {%- endif -%}
+                        </span>
+                      </div>
+                      <div class="tc-freeship__track">
+                        <div class="tc-freeship__fill" data-free-shipping-bar style="width:{{ tc_fs_pct }}%"></div>
+                      </div>
+                    </div>
+                  {%- endif -%}
                   {%- render 'cart-deal-banner' -%}
                   {% render 'cart-products', context: 'drawer' %}
                   {%- render 'cart-fbt', fbt_limit: 3, fbt_mode: 'drawer' -%}
@@ -317,11 +348,87 @@
   </script>
 {%- endif -%}
 
+<script>
+  window.tcUpdateFSBars = window.tcUpdateFSBars || (function () {
+      var SHOP_CURRENCY = {{ shop.currency | json }};
+
+      function run() {
+        var js = window.Shopify || {};
+        var rate = parseFloat((js.currency && js.currency.rate) || 1) || 1;
+        var active = (js.currency && js.currency.active) || SHOP_CURRENCY;
+        if (rate === 1 && active === SHOP_CURRENCY) return;
+
+        fetch('/cart.js')
+          .then(function (r) { return r.json(); })
+          .then(function (cart) {
+            var cartTotal = cart.total_price;
+            var cartCurrency = cart.currency;
+
+            document.querySelectorAll('[data-free-shipping-progress]').forEach(function (el) {
+              var baseCents = parseInt(el.dataset.fsUsdCents || '0', 10);
+              if (!baseCents) return;
+
+              var threshCents, progress, remaining;
+              if (cartCurrency !== active) {
+                // Cart API still in base currency (JS converter, no server-side Markets)
+                threshCents = baseCents;
+                progress = Math.min(100, Math.floor(cartTotal * 100 / threshCents));
+                remaining = Math.round(Math.max(0, threshCents - cartTotal) * rate);
+              } else {
+                // Shopify Markets: cart API already in presentment currency
+                threshCents = Math.round(baseCents * rate);
+                progress = Math.min(100, Math.floor(cartTotal * 100 / threshCents));
+                remaining = Math.max(0, threshCents - cartTotal);
+              }
+
+              var fill = el.querySelector('[data-free-shipping-bar]');
+              if (fill) fill.style.width = progress + '%';
+              el.classList.toggle('tc-freeship--unlocked', progress >= 100);
+
+              var msg = el.querySelector('[data-free-shipping-message]');
+              if (!msg) return;
+              if (progress >= 100) {
+                msg.innerHTML = 'Free shipping unlocked';
+              } else {
+                var formatted;
+                try {
+                  formatted = new Intl.NumberFormat(document.documentElement.lang || 'en', {
+                    style: 'currency', currency: active, maximumFractionDigits: 2
+                  }).format(remaining / 100);
+                } catch (e) {
+                  formatted = (remaining / 100).toFixed(0) + ' ' + active;
+                }
+                var pre = el.dataset.freeShippingPrefix || '';
+                var suf = el.dataset.freeShippingSuffix || '';
+                msg.innerHTML = (pre ? pre + ' ' : '') + '<strong>' + formatted + '</strong>' + (suf ? ' ' + suf : '');
+              }
+            });
+          })
+          .catch(function () {});
+      }
+
+      document.addEventListener('CartLinesUpdateEvent', async function (e) {
+        try { await (e.detail && e.detail.promise); } catch (_) {}
+        setTimeout(run, 100);
+      });
+      document.addEventListener('localization:changed', run);
+      document.addEventListener('currency:changed', run);
+
+    return run;
+  }());
+
+  document.addEventListener('DOMContentLoaded', function () { window.tcUpdateFSBars(); });
+</script>
+
 {% stylesheet %}
   cart-drawer-component {
     --cart-drawer-padding: var(--theme-drawer-padding);
     --font-paragraph--line-height: 1;
     display: contents;
+  }
+
+  cart-drawer-component:not(:defined) {
+    display: block;
   }
 
   .cart-drawer__inner {
@@ -345,6 +452,7 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .cart-drawer__items {
@@ -396,7 +504,7 @@
     }
   }
 
-  .theme-drawer__dialog[cart-summary-sticky='false'] .cart-drawer__summary {
+  #cart-drawer .theme-drawer__dialog[cart-summary-sticky='false'] .cart-drawer__summary {
     position: static;
     mask-image: none;
   }
@@ -464,6 +572,10 @@
   .theme-drawer__dialog.color-custom-drawer {
     background-color: #FFF4D9;
     border-left: 3px solid #2B1B12;
+  }
+
+  #cart-drawer .theme-drawer__dialog.color-custom-drawer {
+    overflow: hidden;
   }
 
   .theme-drawer__header {
@@ -633,13 +745,14 @@
     flex-shrink: 0;
   }
 
-  .cart-drawer__summary {
+  #cart-drawer .cart-drawer__summary {
     background-color: #FFF4D9;
     border-top: 2px solid #2B1B12;
     mask-image: none;
     position: static;
     flex-shrink: 0;
     margin-top: 0;
+    padding-bottom: calc(var(--cart-drawer-summary-padding) + env(safe-area-inset-bottom, 0px));
   }
 
   /* ── Short viewport: compact summary so products get usable height ── */
@@ -823,6 +936,55 @@
     #cart-drawer .theme-drawer__dialog::backdrop {
       background: rgba(0, 0, 0, 0.35);
     }
+  }
+
+  /* ── Free shipping bar ─────────────────────────────────────── */
+  .tc-freeship {
+    margin: 12px 16px 4px;
+    padding: 10px 14px 12px;
+    background: #FFF4D9;
+    border: 2.5px solid #2d2d2d;
+    border-radius: 16px;
+    box-shadow: 3px 3px 0 #2d2d2d;
+  }
+  .tc-freeship__text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #2B1B12;
+    line-height: 1.3;
+  }
+  .tc-freeship__text svg {
+    width: 18px;
+    height: 18px;
+    color: #2eaa5f;
+    flex-shrink: 0;
+  }
+  .tc-freeship--unlocked .tc-freeship__text {
+    color: #2eaa5f;
+  }
+  .tc-freeship--unlocked .tc-freeship__text svg {
+    color: #2eaa5f;
+  }
+  .tc-freeship__text strong {
+    font-weight: 800;
+  }
+  .tc-freeship__track {
+    height: 8px;
+    background: #E4DDD5;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .tc-freeship__fill {
+    height: 100%;
+    background: #2eaa5f;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+    min-width: 2px;
   }
 
   /* ── Delete all button ──────────────────────────────────────── */
