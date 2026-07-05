@@ -1,0 +1,402 @@
+{%- liquid
+  assign tab_plain   = section.settings.heading_plain | default: 'Our'
+  assign tab_hi      = section.settings.heading_hi    | default: 'Story'
+  assign tab_intro   = section.settings.intro_text
+  assign tab_mission_h = section.settings.mission_heading | default: 'Our Mission'
+  assign tab_mission_t = section.settings.mission_text
+  assign tab_cta_h   = section.settings.cta_heading   | default: 'Find something your pet will love'
+  assign tab_cta_btn = section.settings.cta_btn_text  | default: 'Shop Best Sellers'
+  assign tab_cta_url = section.settings.cta_btn_url   | default: '/collections/best-sellers'
+
+  assign tab_story_blocks = section.blocks | where: 'type', 'story_step'
+  assign tab_value_blocks = section.blocks | where: 'type', 'value'
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: #FFFFFF;
+  }
+{% endstyle %}
+
+<div class="tab-section">
+  <div class="tab-container">
+
+    <!-- ── Hero ── -->
+    <div class="tab-hero">
+      <h1 class="tab-hero__heading">
+        {%- if tab_plain != blank -%}
+          <span>{{- tab_plain | escape -}}&nbsp;</span>
+        {%- endif -%}
+        {%- if tab_hi != blank -%}
+          <span class="tab-hero__highlight">
+            {{- tab_hi | escape -}}
+            <svg class="tab-underline-svg" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="var(--pc-green, #5BB870)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+          </span>
+        {%- endif -%}
+      </h1>
+      {%- if tab_intro != blank -%}
+        <p class="tab-hero__intro">{{ tab_intro | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <!-- ── Story timeline ── -->
+    {%- if tab_story_blocks.size > 0 -%}
+      <div class="tab-story">
+        {%- for block in tab_story_blocks -%}
+          <div class="tab-story__step{% if block.settings.highlight %} tab-story__step--highlight{% endif %}" {{ block.shopify_attributes }}>
+            <div class="tab-story__marker" aria-hidden="true">
+              {%- if block.settings.emoji != blank -%}
+                <span class="tab-story__emoji">{{ block.settings.emoji }}</span>
+              {%- else -%}
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <ellipse cx="12" cy="15.5" rx="5" ry="4.5"/>
+                  <ellipse cx="5.5" cy="11" rx="2" ry="2.5"/>
+                  <ellipse cx="18.5" cy="11" rx="2" ry="2.5"/>
+                  <ellipse cx="8.5" cy="8" rx="1.8" ry="2.2"/>
+                  <ellipse cx="15.5" cy="8" rx="1.8" ry="2.2"/>
+                </svg>
+              {%- endif -%}
+            </div>
+            <div class="tab-story__card">
+              {%- if block.settings.kicker != blank -%}
+                <span class="tab-story__kicker">{{ block.settings.kicker | escape }}</span>
+              {%- endif -%}
+              <h2 class="tab-story__title">{{ block.settings.title | escape }}</h2>
+              <p class="tab-story__text">{{ block.settings.text | escape }}</p>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <!-- ── Mission banner ── -->
+    {%- if tab_mission_t != blank -%}
+      <div class="tab-mission">
+        <span class="tab-mission__paw" aria-hidden="true">🐾</span>
+        <h2 class="tab-mission__heading">{{ tab_mission_h | escape }}</h2>
+        <p class="tab-mission__text">{{ tab_mission_t | escape }}</p>
+      </div>
+    {%- endif -%}
+
+    <!-- ── Values ── -->
+    {%- if tab_value_blocks.size > 0 -%}
+      <div class="tab-values">
+        {%- for block in tab_value_blocks -%}
+          <div class="tab-value-card" {{ block.shopify_attributes }}>
+            <span class="tab-value-card__emoji" aria-hidden="true">{{ block.settings.emoji }}</span>
+            <span class="tab-value-card__title">{{ block.settings.title | escape }}</span>
+            <span class="tab-value-card__text">{{ block.settings.text | escape }}</span>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <!-- ── CTA ── -->
+    <div class="tab-cta">
+      <h2 class="tab-cta__heading">{{ tab_cta_h | escape }}</h2>
+      <a href="{{ tab_cta_url }}" class="tab-cta__btn">{{ tab_cta_btn | escape }}</a>
+    </div>
+
+  </div>
+</div>
+
+{% stylesheet %}
+  .tab-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding-inline: var(--page-margin, 20px);
+  }
+
+  /* ── Hero ── */
+  .tab-hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .tab-hero__heading {
+    font-family: 'Fredoka', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    color: var(--pc-text, #2B1B12);
+    line-height: 1.25;
+    margin: 0 0 20px;
+  }
+
+  .tab-hero__highlight {
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    color: var(--pc-text, #2B1B12);
+  }
+
+  .tab-underline-svg {
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 100%;
+    height: 14px;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .tab-hero__intro {
+    font-size: 1.1rem;
+    color: var(--pc-text, #2B1B12);
+    opacity: 0.8;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+
+  /* ── Story timeline ── */
+  .tab-story {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    margin-bottom: 56px;
+    padding-left: 8px;
+  }
+
+  /* Connecting line */
+  .tab-story::before {
+    content: '';
+    position: absolute;
+    left: 33px;
+    top: 30px;
+    bottom: 30px;
+    width: 3px;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--pc-text, #2B1B12) 0 8px,
+      transparent 8px 16px
+    );
+    opacity: 0.35;
+  }
+
+  .tab-story__step {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    position: relative;
+  }
+
+  .tab-story__marker {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFF4D9;
+    border: 2.5px solid var(--pc-text, #2B1B12);
+    border-radius: 50%;
+    box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
+    color: var(--pc-orange, #ee7b28);
+    z-index: 1;
+  }
+
+  .tab-story__marker svg { width: 26px; height: 26px; }
+  .tab-story__emoji { font-size: 1.4rem; line-height: 1; }
+
+  .tab-story__card {
+    flex: 1;
+    background: #fff;
+    border: 2.5px solid var(--pc-text, #2B1B12);
+    border-radius: 16px;
+    box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+    padding: 20px 22px;
+  }
+
+  .tab-story__step--highlight .tab-story__card {
+    background: #FFF4D9;
+  }
+
+  .tab-story__kicker {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pc-orange, #ee7b28);
+    margin-bottom: 4px;
+  }
+
+  .tab-story__title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--pc-text, #2B1B12);
+    margin: 0 0 8px;
+    line-height: 1.3;
+  }
+
+  .tab-story__text {
+    font-size: 1rem;
+    color: var(--pc-text, #2B1B12);
+    opacity: 0.85;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ── Mission ── */
+  .tab-mission {
+    text-align: center;
+    background: #FFF4D9;
+    border: 2.5px solid var(--pc-text, #2B1B12);
+    border-radius: 20px;
+    box-shadow: 5px 5px 0 var(--pc-text, #2B1B12);
+    padding: 36px 28px;
+    margin-bottom: 56px;
+  }
+
+  .tab-mission__paw {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  .tab-mission__heading {
+    font-family: 'Fredoka', sans-serif;
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 700;
+    color: var(--pc-text, #2B1B12);
+    margin: 0 0 12px;
+  }
+
+  .tab-mission__text {
+    font-size: 1.1rem;
+    color: var(--pc-text, #2B1B12);
+    opacity: 0.85;
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* ── Values ── */
+  .tab-values {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 56px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .tab-values { grid-template-columns: 1fr; }
+  }
+
+  .tab-value-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 24px 16px;
+    background: #fff;
+    border: 2.5px solid var(--pc-text, #2B1B12);
+    border-radius: 16px;
+    box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+  }
+
+  .tab-value-card__emoji { font-size: 1.8rem; line-height: 1; }
+
+  .tab-value-card__title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--pc-text, #2B1B12);
+  }
+
+  .tab-value-card__text {
+    font-size: 0.95rem;
+    color: var(--pc-text, #2B1B12);
+    opacity: 0.8;
+    line-height: 1.5;
+  }
+
+  /* ── CTA ── */
+  .tab-cta {
+    text-align: center;
+  }
+
+  .tab-cta__heading {
+    font-family: 'Fredoka', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--pc-text, #2B1B12);
+    margin: 0 0 18px;
+  }
+
+  .tab-cta__btn {
+    display: inline-block;
+    padding: 0.9rem 2.2rem;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff;
+    background: var(--pc-green, #5BB870);
+    border: 2.5px solid var(--pc-text, #2B1B12);
+    border-radius: 999px;
+    box-shadow: 4px 4px 0 var(--pc-text, #2B1B12);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .tab-cta__btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Tailand About",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "heading_plain", "label": "Heading (plain part)", "default": "Our" },
+    { "type": "text", "id": "heading_hi", "label": "Heading (highlighted part)", "default": "Story" },
+    { "type": "textarea", "id": "intro_text", "label": "Intro text" },
+
+    { "type": "header", "content": "Mission" },
+    { "type": "text", "id": "mission_heading", "label": "Mission heading", "default": "Our Mission" },
+    { "type": "textarea", "id": "mission_text", "label": "Mission text" },
+
+    { "type": "header", "content": "Call to Action" },
+    { "type": "text", "id": "cta_heading", "label": "CTA heading", "default": "Find something your pet will love" },
+    { "type": "text", "id": "cta_btn_text", "label": "CTA button text", "default": "Shop Best Sellers" },
+    { "type": "url", "id": "cta_btn_url", "label": "CTA button link" },
+
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 8, "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 8, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "story_step",
+      "name": "Story step",
+      "settings": [
+        { "type": "text", "id": "emoji", "label": "Marker emoji", "info": "Leave empty for a paw icon." },
+        { "type": "text", "id": "kicker", "label": "Small label above title" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "textarea", "id": "text", "label": "Text" },
+        { "type": "checkbox", "id": "highlight", "label": "Highlight this step (cream background)", "default": false }
+      ]
+    },
+    {
+      "type": "value",
+      "name": "Value card",
+      "settings": [
+        { "type": "text", "id": "emoji", "label": "Emoji", "default": "🐾" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "text", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Tailand About" }]
+}
+{% endschema %}

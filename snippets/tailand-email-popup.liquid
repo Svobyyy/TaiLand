@@ -1,0 +1,382 @@
+{% doc %}
+  Email capture popup — 25% welcome coupon (WELCOME25).
+
+  Shows once per visitor after a short delay. Dismissing snoozes it for 7 days;
+  signing up hides it forever (localStorage). After a successful signup Shopify
+  reloads the page with ?tc-welcome=1 (via return_to), which reopens the popup
+  in its success state showing the code.
+
+  The WELCOME25 discount is configured in Shopify admin with combinesWith all
+  disabled, so it can never stack with the "Buy 2+ Save 25%" automatic deal.
+{% enddoc %}
+
+{%- assign tc_wp_return = request.path | append: '?tc-welcome=1' -%}
+
+<div id="tc-welcome-popup" class="tc-wp" hidden>
+  <div class="tc-wp__backdrop" data-tc-wp-close></div>
+  <div class="tc-wp__card" role="dialog" aria-modal="true" aria-labelledby="tc-wp-heading">
+    <button type="button" class="tc-wp__close" data-tc-wp-close aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+
+    <div class="tc-wp__paw" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 13.5c-2.7 0-5.5 2.1-5.5 4.6 0 1.4 1 2.4 2.5 2.4 1.1 0 1.9-.5 3-.5s1.9.5 3 .5c1.5 0 2.5-1 2.5-2.4 0-2.5-2.8-4.6-5.5-4.6ZM7.2 8.1c-.5-1.6-1.9-2.6-3.1-2.2-1.2.4-1.7 2-1.2 3.6.5 1.6 1.9 2.6 3.1 2.2 1.2-.4 1.7-2 1.2-3.6Zm12.7-2.2c-1.2-.4-2.6.6-3.1 2.2-.5 1.6 0 3.2 1.2 3.6 1.2.4 2.6-.6 3.1-2.2.5-1.6 0-3.2-1.2-3.6ZM10 7.7c1.3 0 2.3-1.3 2.3-3S11.3 1.8 10 1.8 7.7 3.1 7.7 4.8s1 2.9 2.3 2.9Zm4 0c1.3 0 2.3-1.3 2.3-3s-1-2.9-2.3-2.9-2.3 1.2-2.3 2.9 1 3 2.3 3Z" transform="translate(0 .5)"/></svg>
+    </div>
+
+    {%- comment -%} ── Signup state ── {%- endcomment -%}
+    <div class="tc-wp__state" data-tc-wp-state="signup">
+      <p class="tc-wp__kicker">Woof! Before you go…</p>
+      <h2 class="tc-wp__heading" id="tc-wp-heading">Get <span class="tc-wp__accent">25% OFF</span> your first order</h2>
+      <p class="tc-wp__sub">Join the pack and we&rsquo;ll send your code right away.</p>
+
+      {%- form 'customer', id: 'tc-wp-form', class: 'tc-wp__form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter,popup-25">
+        <input type="hidden" name="return_to" value="{{ tc_wp_return }}">
+        <label for="tc-wp-email" class="visually-hidden">Email address</label>
+        <input
+          id="tc-wp-email"
+          type="email"
+          name="contact[email]"
+          class="tc-wp__input"
+          placeholder="your@email.com"
+          required
+          autocomplete="email"
+        >
+        <button type="submit" class="tc-wp__btn">Get my 25% off</button>
+        {%- if form.errors -%}
+          <p class="tc-wp__error" data-tc-wp-error>{{ form.errors | default_errors }}</p>
+        {%- endif -%}
+      {%- endform -%}
+
+      <p class="tc-wp__fine">One use per customer. Can&rsquo;t be combined with other discounts (like our Buy&nbsp;2+ deal).</p>
+    </div>
+
+    {%- comment -%} ── Success state ── {%- endcomment -%}
+    <div class="tc-wp__state" data-tc-wp-state="success" hidden>
+      <p class="tc-wp__kicker">You&rsquo;re in the pack! 🎉</p>
+      <h2 class="tc-wp__heading">Here&rsquo;s your <span class="tc-wp__accent">25% OFF</span></h2>
+      <div class="tc-wp__code-row">
+        <code class="tc-wp__code">WELCOME25</code>
+        <button type="button" class="tc-wp__copy" data-tc-wp-copy aria-label="Copy code">Copy</button>
+      </div>
+      <a class="tc-wp__btn tc-wp__btn--shop" href="/discount/WELCOME25?redirect=/collections/best-sellers">Apply code &amp; shop</a>
+      <p class="tc-wp__fine">Applies at checkout. One use per customer. Can&rsquo;t be combined with other discounts.</p>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .tc-wp {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  /* display:flex above overrides the hidden attribute's UA display:none —
+     without this rule the invisible overlay blocks clicks on the whole page. */
+  .tc-wp[hidden] {
+    display: none;
+  }
+
+  .tc-wp__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(43, 27, 18, 0.55);
+  }
+
+  .tc-wp__card {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: #FFF4D9;
+    border: 3px solid #2B1B12;
+    border-radius: 20px;
+    box-shadow: 6px 6px 0 #2B1B12;
+    padding: 2rem 1.75rem 1.5rem;
+    text-align: center;
+    animation: tc-wp-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes tc-wp-pop {
+    from { transform: translateY(24px) scale(0.94); opacity: 0; }
+  }
+
+  @media screen and (prefers-reduced-motion: reduce) {
+    .tc-wp__card { animation: none; }
+  }
+
+  .tc-wp__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 2.5px solid #2B1B12;
+    border-radius: 50%;
+    color: #2B1B12;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #2B1B12;
+  }
+
+  .tc-wp__close:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #2B1B12;
+  }
+
+  .tc-wp__paw {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 0.5rem;
+    color: #ee7b28;
+  }
+
+  .tc-wp__kicker {
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #ee7b28;
+    margin: 0 0 0.35rem;
+  }
+
+  .tc-wp__heading {
+    font-size: clamp(1.4rem, 4vw, 1.75rem);
+    line-height: 1.15;
+    color: #2B1B12;
+    margin: 0 0 0.5rem;
+  }
+
+  .tc-wp__accent { color: #ee7b28; }
+
+  .tc-wp__sub {
+    font-size: 1rem;
+    color: #2B1B12;
+    opacity: 0.85;
+    margin: 0 0 1.1rem;
+  }
+
+  .tc-wp__form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tc-wp__input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    background: #fff;
+    border: 2.5px solid #2B1B12;
+    border-radius: 12px;
+    color: #2B1B12;
+  }
+
+  .tc-wp__input:focus {
+    outline: 2px solid #ee7b28;
+    outline-offset: 1px;
+  }
+
+  .tc-wp__btn {
+    display: block;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    background: #5BB870;
+    color: #fff;
+    border: 2.5px solid #2B1B12;
+    border-radius: 12px;
+    box-shadow: 3px 3px 0 #2B1B12;
+    cursor: pointer;
+  }
+
+  .tc-wp__btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #2B1B12;
+  }
+
+  .tc-wp__error {
+    font-size: 0.875rem;
+    color: #c0392b;
+    margin: 0;
+  }
+
+  .tc-wp__fine {
+    font-size: 0.75rem;
+    color: #2B1B12;
+    opacity: 0.65;
+    margin: 0.9rem 0 0;
+    line-height: 1.4;
+  }
+
+  .tc-wp__code-row {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 8px;
+    margin: 0.75rem 0 1rem;
+  }
+
+  .tc-wp__code {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 0.6rem 1.1rem;
+    background: #fff;
+    border: 2.5px dashed #2B1B12;
+    border-radius: 12px;
+    color: #2B1B12;
+  }
+
+  .tc-wp__copy {
+    padding: 0 1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    background: #ffad33;
+    color: #2B1B12;
+    border: 2.5px solid #2B1B12;
+    border-radius: 12px;
+    box-shadow: 2px 2px 0 #2B1B12;
+    cursor: pointer;
+  }
+
+  .tc-wp__copy:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #2B1B12;
+  }
+
+  @media screen and (max-width: 479px) {
+    .tc-wp__card { padding: 1.6rem 1.2rem 1.2rem; }
+  }
+{% endstylesheet %}
+
+<script>
+  (function () {
+    var DONE_KEY = 'tcWelcome.done';
+    var SNOOZE_KEY = 'tcWelcome.snooze';
+    var SNOOZE_MS = 7 * 24 * 60 * 60 * 1000;
+    var SHOW_DELAY_MS = 4500;
+
+    var popup = document.getElementById('tc-welcome-popup');
+    if (!popup) return;
+    if (window.Shopify && window.Shopify.designMode) return;
+
+    function storageGet(key) {
+      try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+    function storageSet(key, value) {
+      try { localStorage.setItem(key, value); } catch (e) {}
+    }
+
+    function setState(name) {
+      popup.querySelectorAll('[data-tc-wp-state]').forEach(function (el) {
+        el.hidden = el.getAttribute('data-tc-wp-state') !== name;
+      });
+    }
+
+    var lastFocused = null;
+    function open(state) {
+      setState(state);
+      lastFocused = document.activeElement;
+      popup.hidden = false;
+      var focusTarget = state === 'signup'
+        ? popup.querySelector('#tc-wp-email')
+        : popup.querySelector('[data-tc-wp-copy]');
+      if (focusTarget) focusTarget.focus({ preventScroll: true });
+    }
+
+    function close() {
+      popup.hidden = true;
+      // Only snooze if they never signed up — a done user never sees it again anyway.
+      if (!storageGet(DONE_KEY)) storageSet(SNOOZE_KEY, String(Date.now()));
+      if (lastFocused && lastFocused.focus) lastFocused.focus({ preventScroll: true });
+    }
+
+    popup.querySelectorAll('[data-tc-wp-close]').forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !popup.hidden) close();
+    });
+
+    var copyBtn = popup.querySelector('[data-tc-wp-copy]');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var write = navigator.clipboard && navigator.clipboard.writeText
+          ? navigator.clipboard.writeText('WELCOME25')
+          : Promise.reject();
+        write.then(function () {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(function () { copyBtn.textContent = 'Copy'; }, 2000);
+        }).catch(function () {
+          // Clipboard unavailable (http/permissions) — select-like fallback.
+          copyBtn.textContent = 'WELCOME25';
+        });
+      });
+    }
+
+    // Mark a submission in sessionStorage so the success state still shows if
+    // Shopify's redirect (possibly via the captcha challenge page) drops our
+    // ?tc-welcome=1 marker from return_to.
+    var form = document.getElementById('tc-wp-form');
+    if (form) {
+      form.addEventListener('submit', function () {
+        try { sessionStorage.setItem('tcWelcome.pending', '1'); } catch (e) {}
+      });
+    }
+    var pending = null;
+    try {
+      pending = sessionStorage.getItem('tcWelcome.pending');
+      if (pending) sessionStorage.removeItem('tcWelcome.pending');
+    } catch (e) {}
+
+    // ── Entry points ────────────────────────────────────────────────────────
+    var params = new URLSearchParams(location.search);
+
+    // 1. Form posted but had errors — reopen immediately so they see the message.
+    if (popup.querySelector('[data-tc-wp-error]')) {
+      open('signup');
+      return;
+    }
+
+    // 2. Returning from a successful signup: URL marker (return_to) or the
+    //    pending flag set at submit time (covers marker-less redirects).
+    if (params.get('tc-welcome') === '1' || params.get('customer_posted') === 'true' || pending) {
+      storageSet(DONE_KEY, '1');
+      open('success');
+      // Clean the markers out of the URL so refresh/share doesn't re-trigger.
+      if (params.has('tc-welcome') || params.has('customer_posted')) {
+        params.delete('tc-welcome');
+        params.delete('customer_posted');
+        var qs = params.toString();
+        history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
+      }
+      return;
+    }
+
+    // 3. Normal delayed show for new visitors.
+    if (storageGet(DONE_KEY)) return;
+    var snoozedAt = parseInt(storageGet(SNOOZE_KEY) || '0', 10);
+    if (snoozedAt && Date.now() - snoozedAt < SNOOZE_MS) return;
+
+    setTimeout(function () {
+      // Don't interrupt an open cart drawer.
+      var drawer = document.getElementById('cart-drawer');
+      if (drawer && drawer.hasAttribute('open')) {
+        setTimeout(function () { open('signup'); }, 8000);
+        return;
+      }
+      open('signup');
+    }, SHOW_DELAY_MS);
+  })();
+</script>

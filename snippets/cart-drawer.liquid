@@ -142,20 +142,19 @@
                 style="--header-height: 60px;"
               >
                 <scroll-hint class="cart-drawer__items">
-                  {%- if section.settings.free_shipping_threshold > 0 -%}
+                  {%- assign tc_fs_threshold = section.settings.free_shipping_threshold | default: 60 -%}
+                  {%- if tc_fs_threshold > 0 -%}
                     {%- assign tc_exchange = localization.country.currency.exchange_rate | default: 1 -%}
                     {%- if tc_exchange == 0 -%}{%- assign tc_exchange = 1 -%}{%- endif -%}
-                    {%- assign tc_fs_cents = section.settings.free_shipping_threshold | times: tc_exchange | times: 100 | round -%}
+                    {%- assign tc_fs_cents = tc_fs_threshold | times: tc_exchange | times: 100 | round -%}
                     {%- assign tc_fs_unlocked = false -%}
-                    {%- if cart.total_price >= tc_fs_cents -%}
-                      {%- assign tc_fs_unlocked = true -%}
-                    {%- endif -%}
+                    {%- if cart.total_price >= tc_fs_cents -%}{%- assign tc_fs_unlocked = true -%}{%- endif -%}
                     {%- assign tc_fs_remaining = tc_fs_cents | minus: cart.total_price -%}
                     {%- assign tc_fs_pct = cart.total_price | times: 100 | divided_by: tc_fs_cents | at_most: 100 -%}
                     <div class="tc-freeship{% if tc_fs_unlocked %} tc-freeship--unlocked{% endif %}"
                          id="tc-freeship"
                          data-free-shipping-progress
-                         data-fs-usd-cents="{{ section.settings.free_shipping_threshold | times: 100 }}"
+                         data-fs-usd-cents="{{ tc_fs_threshold | times: 100 }}"
                          data-free-shipping-prefix="You are"
                          data-free-shipping-suffix="away from free shipping">
                       <div class="tc-freeship__text">
@@ -311,6 +310,7 @@
         .then(function (r) {
           if (!r.ok) throw new Error('clear failed');
           updateBadges();
+          if (window.tcUpdateFSBars) window.tcUpdateFSBars();
           if (isCartPage) {
             setTimeout(function () { window.location.reload(); }, 600);
             return;
@@ -345,6 +345,41 @@
         }
       });
     })();
+
+    // ── Populate drawer on open (cart-icon click without cart change) ────────
+    // cart-items-component starts empty and only fills via CartLinesUpdateEvent.
+    // When opened via cart icon (no cart change), we fetch SRA ourselves.
+    // Timing: the drawer opens BEFORE CartLinesUpdateEvent fires on Add to Cart,
+    // so we delay 700ms to let the native SRA complete first, then double-check
+    // inside .then() before writing — avoids the race condition entirely.
+    (function () {
+      var themeDrawer = document.getElementById('cart-drawer');
+      if (!themeDrawer) return;
+
+      function ensureLoaded() {
+        var cic = document.querySelector('cart-items-component[data-drawer]');
+        if (!cic) return;
+        // No items in cart yet — nothing to fix.
+        if (!cic.querySelector('table.cart-items__table')) return;
+        // Items exist AND are inside the .cart-drawer__items grid context — layout is correct.
+        if (cic.querySelector('.cart-drawer__items .cart-items__table-row')) return;
+        // Items exist but NOT inside .cart-drawer__items — the empty→non-empty morph left
+        // the layout broken. Do a full section refresh to recover.
+        refreshDrawer();
+      }
+
+      new MutationObserver(function (muts) {
+        for (var i = 0; i < muts.length; i++) {
+          if (muts[i].attributeName === 'open' && themeDrawer.hasAttribute('open')) {
+            // Delay 700ms: gives CartLinesUpdateEvent's own SRA time to complete.
+            // On Add to Cart the bar will be present by then → double-check bails out.
+            // On cart-icon open there's no pending SRA → we fetch after the delay.
+            setTimeout(ensureLoaded, 700);
+            return;
+          }
+        }
+      }).observe(themeDrawer, { attributes: true, attributeFilter: ['open'] });
+    })();
   </script>
 {%- endif -%}
 
@@ -356,7 +391,6 @@
         var js = window.Shopify || {};
         var rate = parseFloat((js.currency && js.currency.rate) || 1) || 1;
         var active = (js.currency && js.currency.active) || SHOP_CURRENCY;
-        if (rate === 1 && active === SHOP_CURRENCY) return;
 
         fetch('/cart.js')
           .then(function (r) { return r.json(); })
@@ -383,7 +417,9 @@
 
               var fill = el.querySelector('[data-free-shipping-bar]');
               if (fill) fill.style.width = progress + '%';
-              el.classList.toggle('tc-freeship--unlocked', progress >= 100);
+              if (el.classList.contains('tc-freeship') || el.classList.contains('tc-freeship--unlocked')) {
+                el.classList.toggle('tc-freeship--unlocked', progress >= 100);
+              }
 
               var msg = el.querySelector('[data-free-shipping-message]');
               if (!msg) return;
@@ -459,6 +495,7 @@
     display: flex;
     flex-direction: column;
     padding-inline: var(--cart-drawer-padding);
+    padding-bottom: 14px;
     overflow-y: auto;
   }
 
@@ -593,14 +630,39 @@
     color: #2B1B12;
   }
 
+  /* Break the table formatting context so display:grid works reliably on <tr> across all browsers */
+  .cart-drawer__items .cart-items__table,
+  .cart-drawer__items .cart-items__table tbody {
+    display: block;
+  }
+  .cart-drawer__items .cart-items__table thead {
+    display: none;
+  }
+
   .cart-drawer__items .cart-items__table-row {
+    display: grid;
     background: #fff;
     border: 2.5px solid #2B1B12;
     border-radius: 16px;
     box-shadow: 4px 4px 0 #2B1B12;
     padding: 0.9rem;
     margin-bottom: 1rem;
+    /* 80px image | flexible title | price auto-sized */
+    grid-template-columns: 80px minmax(0, 1fr) auto;
+    grid-template-rows: repeat(5, min-content);
+    grid-template-areas: 'media details price' 'media variants variants' 'media unit_price unit_price' 'media quantity quantity' 'media error error';
+    column-gap: 10px;
   }
+
+  /* Assign grid areas on cells */
+  .cart-drawer__items .cart-items__media              { grid-area: media; align-self: start; width: 80px; }
+  .cart-drawer__items .cart-items__details            { display: contents; }
+  .cart-drawer__items .cart-items__product-info       { grid-area: details; }
+  .cart-drawer__items .cart-items__variants-wrapper   { grid-area: variants; }
+  .cart-drawer__items .cart-items__unit-price-wrapper { grid-area: unit_price; }
+  .cart-drawer__items .cart-items__quantity           { grid-area: quantity; }
+  .cart-drawer__items .cart-items__price              { grid-area: price; text-align: end; min-width: 0; }
+  .cart-drawer__items .cart-items__error              { grid-area: error; }
 
   .cart-drawer__items .cart-items__table-row:last-child {
     border: 2.5px solid #2B1B12;
@@ -611,18 +673,19 @@
   /* Spacing between header and first card, and last card and summary */
   .cart-drawer__items {
     padding-top: 1.25rem;
-    padding-bottom: 0;
+    padding-bottom: 20px;
   }
 
   /* Hide per-unit price in drawer — line total top-right is sufficient */
   .cart-drawer__items .cart-items__unit-price-wrapper {
-    display: none;
+    display: none !important;
   }
 
   .cart-items__media-container {
     border-radius: 10px;
     overflow: hidden;
     border: 2px solid #2B1B12;
+    width: 100%;
   }
 
   .cart-items__title {
@@ -786,6 +849,11 @@
     font-size: 1.1rem;
   }
 
+  /* Space between discount section and totals/shipping */
+  #cart-drawer .totals {
+    margin-top: 14px;
+  }
+
   .cart__ctas .cart__checkout-button {
     background-color: #5BB870;
     color: #fff;
@@ -940,7 +1008,7 @@
 
   /* ── Free shipping bar ─────────────────────────────────────── */
   .tc-freeship {
-    margin: 12px 16px 4px;
+    margin: 0 0 12px;
     padding: 10px 14px 12px;
     background: #FFF4D9;
     border: 2.5px solid #2d2d2d;

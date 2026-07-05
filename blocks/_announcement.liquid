@@ -4,6 +4,9 @@
 {%- assign plain_text = block_settings.text | strip_newlines | strip_html | strip -%}
 {%- assign block_index = section.blocks | find_index: 'id', block.id -%}
 
+{%- assign tc_fs_threshold = block_settings.free_shipping_threshold | default: 0 -%}
+{%- assign tc_fs_usd_cents = tc_fs_threshold | times: 100 -%}
+
 {%- unless plain_text == '' -%}
   <slideshow-slide
     ref="slides[]"
@@ -27,9 +30,41 @@
     {{ block.shopify_attributes }}
     aria-hidden="{% if block_index == 0 %}false{% else %}true{% endif %}"
   >
-    <p class="announcement-bar__text" style="width:100%;text-align:center;{% if block_settings.text_color != blank %} color:{{ block_settings.text_color }};{% endif %}">
-      <span class="pc-announcement-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="15" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="10" rx="1"/><path d="M16 6h4l2 3v4h-6V6z"/><circle cx="6" cy="17" r="2"/><circle cx="19" cy="17" r="2"/></svg></span>{{ block.settings.text }}
+    <p class="announcement-bar__text" style="width:100%;text-align:center;{% if block_settings.text_color != blank %} color:{{ block_settings.text_color }};{% endif %}"{% if tc_fs_threshold > 0 %} data-tc-fs-usd-cents="{{ tc_fs_usd_cents }}"{% endif %}>
+      <span class="pc-announcement-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="15" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="10" rx="1"/><path d="M16 6h4l2 3v4h-6V6z"/><circle cx="6" cy="17" r="2"/><circle cx="19" cy="17" r="2"/></svg></span>{%- if tc_fs_threshold > 0 -%}<span class="tc-fs-announce-text">Free shipping on orders ${{ tc_fs_threshold }}+</span>{%- else -%}{{ block.settings.text }}{%- endif -%}
     </p>
+    {%- if tc_fs_threshold > 0 -%}
+    <script>
+      (function() {
+        var slide = document.currentScript && document.currentScript.closest('.announcement-bar__slide');
+        var container = slide ? slide.querySelector('[data-tc-fs-usd-cents]') : document.querySelector('[data-tc-fs-usd-cents]');
+        function update() {
+          if (!container) return;
+          var usdCents = parseFloat(container.dataset.tcFsUsdCents) || 0;
+          if (!usdCents) return;
+          var js = window.Shopify || {};
+          var rate = parseFloat((js.currency && js.currency.rate) || 1) || 1;
+          var active = (js.currency && js.currency.active) || 'USD';
+          var amount = (usdCents / 100) * rate;
+          try {
+            var formatted = new Intl.NumberFormat(document.documentElement.lang || 'en', {
+              style: 'currency', currency: active,
+              minimumFractionDigits: 0, maximumFractionDigits: 0
+            }).format(amount);
+            var textEl = container.querySelector('.tc-fs-announce-text');
+            if (textEl) textEl.textContent = 'Free shipping on orders ' + formatted + '+';
+          } catch(e) {}
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', update);
+        } else {
+          update();
+        }
+        document.addEventListener('currency:changed', update);
+        document.addEventListener('localization:changed', update);
+      })();
+    </script>
+    {%- endif -%}
 
     {% if block_settings.link != blank %}
       <a
@@ -125,6 +160,12 @@
       "id": "text",
       "label": "t:settings.text",
       "default": "t:text_defaults.shop_our_latest_arrivals"
+    },
+    {
+      "type": "number",
+      "id": "free_shipping_threshold",
+      "label": "Free shipping threshold (USD)",
+      "info": "When set, overrides the text above with a localized currency amount. Set to 0 to use the text field instead."
     },
     {
       "type": "url",

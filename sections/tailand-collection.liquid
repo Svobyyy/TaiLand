@@ -61,6 +61,8 @@
           <span class="tc-tab__label">All Products</span>
         </a>
         {%- for link in tc_linklist.links -%}
+          {%- comment %} Category tabs are collections only — skip pages, blogs, external links etc. {%- endcomment -%}
+          {%- unless link.type == 'collection_link' -%}{%- continue -%}{%- endunless -%}
           {%- comment %} Extract collection handle from /collections/{handle} URL {%- endcomment -%}
           {%- assign tc_lh = link.url | split: '/collections/' | last | split: '?' | first | split: '/' | first -%}
           {%- assign tc_active = false -%}

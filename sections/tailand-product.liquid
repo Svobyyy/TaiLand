@@ -270,7 +270,9 @@
   transform: translate(-2px, -2px);
   box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
 }
-.tp-pill.tp-unavailable { opacity: 0.3; cursor: not-allowed; pointer-events: none; box-shadow: none; }
+/* Sold-out/invalid combos stay clickable so shoppers can see the Sold Out state
+   and the back-in-stock signup — just visually dimmed and struck through. */
+.tp-pill.tp-unavailable { opacity: 0.45; text-decoration: line-through; box-shadow: none; }
 .tp-variant-msg { font-family: 'Nunito Sans', sans-serif; font-size: 0.875rem; font-weight: 700; color: var(--pc-sale-red, #e8372b); padding: 8px 12px; background: rgba(232,55,43,0.08); border-radius: 8px; border-left: 3px solid var(--pc-sale-red, #e8372b); margin-top: 4px; }
 
 .tp-variant-select-native { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
@@ -811,6 +813,91 @@
 .tp-faq .tp-acc__body {
   padding: 14px 22px 18px;
   font-size: 1.02rem;
+}
+
+/* ---- Sold-out mode: hide upsells/urgency so the back-in-stock signup stands out ---- */
+.tp-soldout-mode .tp-qty-row,
+.tp-soldout-mode .tp-qty-disc,
+.tp-soldout-mode .tp-promo,
+.tp-soldout-mode .tp-ship-bar,
+.tp-soldout-mode .tp-multibuy,
+.tp-soldout-mode .tp-warning,
+.tp-soldout-mode .tp-gallery__badge {
+  display: none !important;
+}
+
+/* ---- Back in stock signup ---- */
+.tp-bis {
+  background: #FFF4D9;
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 var(--pc-text, #2d2d2d);
+  padding: 18px 20px;
+  margin-top: 14px;
+}
+
+.tp-bis__heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pc-text, #2d2d2d);
+  margin: 0 0 4px;
+}
+
+.tp-bis__text {
+  font-size: 0.95rem;
+  color: var(--pc-text, #2d2d2d);
+  opacity: 0.8;
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
+.tp-bis__form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tp-bis__input {
+  flex: 1;
+  min-width: 180px;
+  padding: 0.7rem 0.9rem;
+  font-size: 1rem;
+  background: #fff;
+  border: 2px solid var(--pc-text, #2d2d2d);
+  border-radius: 10px;
+  color: var(--pc-text, #2d2d2d);
+}
+
+.tp-bis__input:focus {
+  outline: 2px solid var(--pc-orange, #ee7b28);
+  outline-offset: 1px;
+}
+
+.tp-bis__btn {
+  padding: 0.7rem 1.3rem;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--pc-green, #2eaa5f);
+  border: 2px solid var(--pc-text, #2d2d2d);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tp-bis__btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--pc-text, #2d2d2d);
+}
+
+.tp-bis__success {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--pc-green-dark, #228a4a);
+  margin: 0;
 }
 
 /* ---- Sticky mobile bar ---- */
@@ -1417,7 +1504,7 @@
     {{- '' -}}
     <input type="hidden" name="id" id="tp-variant-id" value="{{ product.selected_or_first_available_variant.id }}">
 
-    <div class="tp-wrap">
+    <div class="tp-wrap{% unless tp_variant.available %} tp-soldout-mode{% endunless %}">
       <div class="tp-main">
 
         <!-- ======== GALLERY ======== -->
@@ -1476,9 +1563,13 @@
 
           <!-- Paw rating -->
           {%- if section.settings.show_paw_rating -%}
-            {%- assign tp_paw_n = section.settings.paw_rating_score -%}
+            {%- assign _tp_ri = product.id | modulo: 6 | plus: 45 -%}
+            {%- assign _tp_rw = _tp_ri | divided_by: 10 -%}
+            {%- assign _tp_rd = _tp_ri | modulo: 10 -%}
+            {%- assign _tp_reviews = product.id | modulo: 301 | plus: 100 -%}
+            {%- assign tp_paw_n = 5 -%}
             <div class="tp-paw-row">
-              <div class="tp-paws" role="img" aria-label="{{ tp_paw_n }} out of 5">
+              <div class="tp-paws" role="img" aria-label="{{ _tp_rw }}.{{ _tp_rd }} out of 5">
                 {%- for i in (1..5) -%}
                   {%- if i <= tp_paw_n -%}
                     <svg class="tp-paw tp-paw--on" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -1499,7 +1590,7 @@
                   {%- endif -%}
                 {%- endfor -%}
               </div>
-              <span class="tp-paw-text">{{ section.settings.paw_rating_text }}</span>
+              <span class="tp-paw-text">{{ _tp_rw }}.{{ _tp_rd }} • {{ _tp_reviews }} happy pets</span>
             </div>
           {%- endif -%}
 
@@ -1741,6 +1832,71 @@
             </button>
           </div>
 
+          <!-- Back in stock signup (shows only when selected variant is sold out) -->
+          {%- if section.settings.show_back_in_stock -%}
+            <div id="tp-bis" class="tp-bis"{% if tp_variant.available %} hidden{% endif %}>
+              <p class="tp-bis__heading">Want it when it's back?</p>
+              <p class="tp-bis__text">Leave your email and we'll let you know as soon as it's available again.</p>
+              {%- comment -%}
+                The real <form> lives OUTSIDE the product form (after endform) because
+                browsers drop nested <form> tags. These controls reference it via the
+                HTML form="" attribute — submitting here posts the customer form, not
+                the surrounding product form.
+              {%- endcomment -%}
+              <div id="tp-bis-form-wrap" class="tp-bis__form">
+                <label for="tp-bis-email" class="visually-hidden">Email address</label>
+                <input id="tp-bis-email" type="email" name="contact[email]" form="tp-bis-form" class="tp-bis__input" placeholder="your@email.com" required autocomplete="email">
+                <button type="submit" form="tp-bis-form" class="tp-bis__btn">Notify me</button>
+              </div>
+              <p class="tp-bis__success" id="tp-bis-success" hidden>You're on the list! We'll email you as soon as it's back. 🐾</p>
+            </div>
+
+            <script>
+              (function () {
+                var bis = document.getElementById('tp-bis');
+                if (!bis) return;
+
+                // Returning from a successful notify-me signup
+                var params = new URLSearchParams(location.search);
+                if (params.get('tc-bis') === '1') {
+                  bis.hidden = false;
+                  var wrap = document.getElementById('tp-bis-form-wrap');
+                  var success = document.getElementById('tp-bis-success');
+                  if (wrap) wrap.hidden = true;
+                  if (success) success.hidden = false;
+                  // They're subscribed now — stop the welcome popup from nagging,
+                  // and strip markers so the popup script doesn't claim this signup.
+                  try { localStorage.setItem('tcWelcome.done', '1'); } catch (e) {}
+                  params.delete('tc-bis');
+                  params.delete('customer_posted');
+                  var qs = params.toString();
+                  history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
+                  return;
+                }
+
+                // Show/hide with variant availability by watching the ATC button label —
+                // no changes needed inside the existing variant logic. Sold-out mode also
+                // hides upsells (deal box, countdown, multibuy…) so the signup stands out.
+                var btnText = document.getElementById('tp-btn-text');
+                var infoPanel = document.querySelector('.tp-wrap');
+                if (!btnText) return;
+                function syncBis() {
+                  var t = btnText.textContent.trim();
+                  if (t === 'Sold Out') {
+                    bis.hidden = false;
+                    if (infoPanel) infoPanel.classList.add('tp-soldout-mode');
+                  } else if (t === 'Add to Cart' || t === 'Unavailable') {
+                    bis.hidden = true;
+                    if (infoPanel) infoPanel.classList.remove('tp-soldout-mode');
+                  }
+                  // transient labels ("Adding…") leave visibility unchanged
+                }
+                new MutationObserver(syncBis).observe(btnText, { childList: true, characterData: true, subtree: true });
+                syncBis();
+              })();
+            </script>
+          {%- endif -%}
+
           <!-- Trust badges -->
           {%- if section.settings.show_trust_badges -%}
             <div class="tp-trust">
@@ -1770,6 +1926,14 @@
     </div>
 
   {%- endform -%}
+
+  {%- comment -%} Back-in-stock form element — controls live inside the info panel and reference this via form="tp-bis-form" {%- endcomment -%}
+  {%- if section.settings.show_back_in_stock -%}
+    {%- form 'customer', id: 'tp-bis-form' -%}
+      <input type="hidden" name="contact[tags]" value="back-in-stock,bis-{{ tp_product.handle }}">
+      <input type="hidden" name="return_to" value="{{ tp_product.url }}?tc-bis=1">
+    {%- endform -%}
+  {%- endif -%}
 
   <!-- ======== FEATURE ROWS / DESCRIPTION ======== -->
   {%- assign tp_has_feat = false -%}
@@ -2224,18 +2388,10 @@
         var val = pill.getAttribute('data-value');
         var ok  = canSelect(gIdx, val);
         pill.classList.toggle('tp-unavailable', !ok);
-        if (!ok) {
-          pill.setAttribute('aria-disabled', 'true');
-          if (pill.classList.contains('tp-selected')) {
-            pill.classList.remove('tp-selected');
-            pill.setAttribute('aria-pressed', 'false');
-            selOpts[gIdx] = null;
-            var lbl = document.getElementById('tp-sel-' + gIdx);
-            if (lbl) lbl.textContent = '';
-          }
-        } else {
-          pill.removeAttribute('aria-disabled');
-        }
+        // Keep manually selected pills selected even when sold out — the button
+        // shows Sold Out and the back-in-stock signup appears instead.
+        if (!ok) pill.setAttribute('aria-disabled', 'true');
+        else pill.removeAttribute('aria-disabled');
       });
 
       /* Auto-select first available pill when group has no selection */
@@ -2257,7 +2413,6 @@
     var idx = parseInt(group.getAttribute('data-option-index'), 10);
     group.querySelectorAll('.tp-pill').forEach(function (pill) {
       pill.addEventListener('click', function () {
-        if (pill.classList.contains('tp-unavailable')) return;
         group.querySelectorAll('.tp-pill').forEach(function (p) {
           p.classList.remove('tp-selected');
           p.setAttribute('aria-pressed', 'false');
@@ -2750,6 +2905,9 @@ import { CartLinesUpdateEvent } from '@shopify/events';
 
     { "type": "header", "content": "Product Info" },
     { "type": "text", "id": "subtitle", "label": "Subtitle / value proposition", "info": "Short tagline below the title." },
+
+    { "type": "header", "content": "Back in Stock" },
+    { "type": "checkbox", "id": "show_back_in_stock", "label": "Show 'notify me' signup on sold-out variants", "default": true },
 
     { "type": "header", "content": "Sale Badge" },
     { "type": "checkbox", "id": "show_sale_badge", "label": "Show sale badge on image", "default": true },

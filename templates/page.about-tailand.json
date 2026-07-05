@@ -1,0 +1,87 @@
+{
+  "sections": {
+    "tailand_about_main": {
+      "type": "tailand-about",
+      "settings": {
+        "heading_plain": "Our",
+        "heading_hi": "Story",
+        "intro_text": "Tailand started with a kid who wasn't allowed to have pets, and never stopped loving them anyway.",
+        "mission_heading": "Our Mission",
+        "mission_text": "To spread happiness to pets and the people who love them, with products we'd genuinely give to our own.",
+        "cta_heading": "Find something your pet will love",
+        "cta_btn_text": "Shop Best Sellers",
+        "cta_btn_url": "/collections/best-sellers",
+        "padding_top": 64,
+        "padding_bottom": 80
+      },
+      "blocks": {
+        "step_1": {
+          "type": "story_step",
+          "settings": {
+            "emoji": "🤧",
+            "kicker": "Where it started",
+            "title": "The kid who couldn't have a pet",
+            "text": "I've loved animals for as long as I can remember. There was just one problem: my sister was allergic, so a pet at home was never an option. That didn't stop me from wanting one every single day.",
+            "highlight": false
+          }
+        },
+        "step_2": {
+          "type": "story_step",
+          "settings": {
+            "emoji": "🐱",
+            "kicker": "Age 7",
+            "title": "The great kitten heist",
+            "text": "When I was seven, I tried to smuggle a kitten home from my aunt's house. It didn't work (moms notice these things), but it tells you everything about how much I wanted a pet of my own.",
+            "highlight": true
+          }
+        },
+        "step_3": {
+          "type": "story_step",
+          "settings": {
+            "emoji": "💛",
+            "kicker": "The dream comes true",
+            "title": "Two sphynx cats changed everything",
+            "text": "Years later I finally got my own pets: two sphynx cats, the friendliest, most affectionate companions I could have ever wished for. They showed me just how much joy a pet brings to everyday life.",
+            "highlight": false
+          }
+        },
+        "step_4": {
+          "type": "story_step",
+          "settings": {
+            "emoji": "🚀",
+            "kicker": "Today",
+            "title": "Tailand is born",
+            "text": "Now I want to pass that happiness on. Tailand exists to help owners and their pets enjoy every day together, with products picked by someone who knows what it means to really, really want a pet.",
+            "highlight": false
+          }
+        },
+        "value_1": {
+          "type": "value",
+          "settings": {
+            "emoji": "🐾",
+            "title": "Pets come first",
+            "text": "Every product is chosen with your pet's comfort and safety in mind."
+          }
+        },
+        "value_2": {
+          "type": "value",
+          "settings": {
+            "emoji": "😊",
+            "title": "Happiness guaranteed",
+            "text": "If you or your pet aren't happy, we'll make it right with easy 30-day returns."
+          }
+        },
+        "value_3": {
+          "type": "value",
+          "settings": {
+            "emoji": "💬",
+            "title": "Real pet people",
+            "text": "Questions? You'll always talk to someone who genuinely loves animals."
+          }
+        }
+      },
+      "block_order": ["step_1", "step_2", "step_3", "step_4", "value_1", "value_2", "value_3"]
+    }
+  },
+  "order": ["tailand_about_main"]
+}

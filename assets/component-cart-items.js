@@ -345,10 +345,12 @@ export class CartItemsComponent extends createViewEventElement(Component) {
       ?.then(async ({ detail }) => {
         const sections = detail?.sections;
         const cartItemsHtml = sections?.[this.sectionId];
-        // Animate empty → non-empty in the drawer (possible in squeeze mode
-        // where the page is interactive alongside the open drawer). This also
-        // needs the response stylesheet because it adds the cart summary markup.
-        const wasEmptyCartDrawer = this.isDrawer && this.querySelector('[data-cart-drawer-empty]') !== null;
+        // Detect empty→non-empty transition in the drawer by checking whether
+        // scroll-hint.cart-drawer__items exists BEFORE the morph. Our custom empty
+        // state uses a plain <div>, so the original [data-cart-drawer-empty] check
+        // never fired. Detecting by tag is reliable: non-empty state always uses
+        // scroll-hint, empty state always uses div.
+        const wasEmptyCartDrawer = this.isDrawer && !this.querySelector('scroll-hint.cart-drawer__items');
         /** @type {'hydration' | 'full'} */
         const mode = this.isDrawer ? 'hydration' : 'full';
         const morphOptions = {
@@ -359,12 +361,23 @@ export class CartItemsComponent extends createViewEventElement(Component) {
         if (cartItemsHtml) {
           const existingKeys = new Set(this.refs.cartItemRows?.map((row) => row.dataset.key) ?? []);
 
+          await morphSection(this.sectionId, cartItemsHtml, morphOptions);
+
           if (wasEmptyCartDrawer) {
-            startViewTransition(() => {
-              morphSection(this.sectionId, cartItemsHtml, morphOptions);
-            }, ['fill-cart-drawer']);
-          } else {
-            await morphSection(this.sectionId, cartItemsHtml, morphOptions);
+            // iOS Safari does not immediately apply display:grid on <tr> elements that
+            // are freshly inserted (vs morphed in-place). Reading offsetHeight forces a
+            // synchronous layout reflow, which causes Safari to re-evaluate the cascade
+            // and apply the grid correctly before the next paint.
+            const table = this.querySelector('.cart-drawer__items table');
+            if (table) void table.offsetHeight;
+
+            if (!prefersReducedMotion()) {
+              const content = this.querySelector('.cart-drawer__content');
+              if (content) {
+                content.style.animation = 'cart-contents-new 465ms ease-out';
+                content.addEventListener('animationend', () => content.style.removeProperty('animation'), { once: true });
+              }
+            }
           }
 
           // Animate newly added rows (reverse of the remove animation).

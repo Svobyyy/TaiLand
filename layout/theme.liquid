@@ -29,7 +29,13 @@
     {%- render 'fonts' -%}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+    {%- comment -%}
+      Load Google Fonts without blocking first paint: media="print" defers CSS
+      evaluation, onload swaps it live. display=swap in the URL means text shows
+      in fallback fonts immediately. Saves ~800ms render-block (Lighthouse).
+    {%- endcomment -%}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap"></noscript>
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-palette' -%}
@@ -136,7 +142,7 @@
       </footer>
     </div>
 
-    {% render 'cart-drawer', render_wrapper: true %}
+    {% section 'cart-drawer-section' %}
     {% render 'theme-drawer' %}
 
     {% render 'search-modal' %}
@@ -145,6 +151,7 @@
       {% render 'quick-add-modal' %}
     {% endif %}
     {%- render 'tailand-paw-bg' -%}
+    {%- render 'tailand-email-popup' -%}
     <script src="{{ 'tailand-countdown.js' | asset_url }}" defer></script>
   </body>
 </html>

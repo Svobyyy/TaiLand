@@ -18,6 +18,19 @@
     });
   }
 
+  function removeCard(card) {
+    if (!card) return;
+    var list = card.closest('.fbt-list');
+    card.classList.add('fbt-removing');
+    setTimeout(function () {
+      card.remove();
+      if (list && !list.querySelector('[data-fbt-card]')) {
+        var section = list.closest('.fbt-section');
+        if (section) section.remove();
+      }
+    }, 300);
+  }
+
   /**
    * Refresh the cart drawer using the theme's morphSection (smart DOM diffing)
    * when available, falling back to a raw replaceWith.
@@ -78,6 +91,7 @@
 
       btn.textContent = 'Added ✓';
       btn.classList.add('fbt-added');
+      removeCard(card);
 
       if (isCartPage) {
         setTimeout(function () { window.location.reload(); }, 900);
@@ -85,8 +99,8 @@
       }
 
       var sectionHtml = res.data.sections && res.data.sections['cart-drawer-section'];
-      // Refresh immediately — morphSection handles concurrent calls safely
       if (sectionHtml) refreshCartDrawer(sectionHtml);
+      if (window.tcUpdateFSBars) window.tcUpdateFSBars();
 
       return fetch('/cart.js').then(function (r) { return r.json(); });
     })

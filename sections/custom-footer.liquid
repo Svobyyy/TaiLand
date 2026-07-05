@@ -168,6 +168,13 @@
             {%- endfor -%}
           </ul>
         {%- endif -%}
+        {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+          <ul class="cft-payments" role="list" aria-label="Accepted payment methods">
+            {%- for type in shop.enabled_payment_types -%}
+              <li class="cft-payments__item">{{ type | payment_type_svg_tag }}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
         <p class="cft-copyright">{{ cft_copyright | escape }}</p>
       </div>
 
@@ -466,6 +473,29 @@
   border-top: 2px solid rgba(43, 27, 18, 0.18);
 }
 
+/* ── Payment icons ── */
+.cft-payments {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cft-payments__item {
+  display: flex;
+  align-items: center;
+}
+
+.cft-payments__item svg {
+  display: block;
+  height: 26px;
+  width: auto;
+  border-radius: 4px;
+}
+
 .cft-bottom__policies {
   display: flex;
   flex-wrap: wrap;
@@ -702,6 +732,12 @@
     {
       "type": "header",
       "content": "Bottom Bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment method icons",
+      "default": true
     },
     {
       "type": "text",
