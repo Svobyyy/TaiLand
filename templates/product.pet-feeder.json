@@ -12,6 +12,12 @@
     "tailand_product_main": {
       "type": "tailand-product",
       "blocks": {
+        "ugc_video_WYXyJc": {
+          "type": "ugc_video",
+          "settings": {
+            "video": "shopify://files/videos/cjVideos (1).mp4"
+          }
+        },
         "faq_1": {
           "type": "faq_item",
           "settings": {
@@ -56,6 +62,7 @@
         }
       },
       "block_order": [
+        "ugc_video_WYXyJc",
         "faq_1",
         "faq_2",
         "faq_3",

@@ -1,0 +1,153 @@
+{% comment %}
+  Tailand — Order confirmation
+  Paste into: Shopify Admin → Settings → Notifications → Customer notifications → Order confirmation
+  (replace the whole email body — "Revert to default" restores Shopify's original if ever needed)
+  Subject suggestion: Thanks for your order! 🐾 ({{ name }})
+{% endcomment %}
+
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">Your order is confirmed — happy pet incoming.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFF4D9;margin:0;padding:0;">
+  <tr>
+    <td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+        <!-- Logo -->
+        <tr>
+          <td align="center" style="padding:0 0 24px;">
+            <img src="https://tailand.store/cdn/shop/files/logo_main.png?width=300" width="150" alt="{{ shop.name }}" style="display:block;width:150px;height:auto;border:0;">
+          </td>
+        </tr>
+
+        <!-- Main card -->
+        <tr>
+          <td style="background-color:#ffffff;border:3px solid #2B1B12;border-radius:20px;padding:36px 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,Helvetica,sans-serif;">
+
+              <tr>
+                <td align="center">
+                  <p style="margin:0 0 6px;font-size:14px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:#EE7B28;">Order {{ name }} confirmed 🎉</p>
+                  <h1 style="margin:0 0 14px;font-size:28px;line-height:1.25;color:#2B1B12;">
+                    {% if customer.first_name %}Thanks, {{ customer.first_name }}!{% else %}Thank you!{% endif %}
+                  </h1>
+                  <p style="margin:0 0 26px;font-size:16px;line-height:1.6;color:#2B1B12;">
+                    We're getting your order ready. Somewhere out there, a very lucky pet
+                    has no idea what's coming. We'll email you again as soon as it ships.
+                  </p>
+                </td>
+              </tr>
+
+              <!-- Status button -->
+              <tr>
+                <td align="center" style="padding:0 0 30px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td align="center" style="background-color:#5BB870;border:3px solid #2B1B12;border-radius:14px;">
+                        <a href="{{ order_status_url }}" style="display:inline-block;padding:13px 34px;font-size:16px;font-weight:bold;color:#ffffff;text-decoration:none;">View my order &rarr;</a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <!-- Items -->
+              <tr>
+                <td style="border-top:2px solid #FFF4D9;padding:20px 0 4px;">
+                  {% for line in subtotal_line_items %}
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 14px;">
+                    <tr>
+                      <td width="84" valign="top" style="padding-right:14px;">
+                        {% if line.image %}
+                          <img src="{{ line | img_url: 'compact_cropped' }}" width="72" height="72" alt="{{ line.title }}" style="display:block;width:72px;height:72px;object-fit:cover;border:2px solid #2B1B12;border-radius:12px;">
+                        {% endif %}
+                      </td>
+                      <td valign="middle" align="left">
+                        <p style="margin:0 0 3px;font-size:15px;font-weight:bold;line-height:1.35;color:#2B1B12;">{{ line.title }}</p>
+                        {% if line.variant.title and line.variant.title != 'Default Title' %}
+                          <p style="margin:0 0 3px;font-size:13px;color:#2B1B12;opacity:0.7;">{{ line.variant.title }}</p>
+                        {% endif %}
+                        <p style="margin:0;font-size:13px;color:#2B1B12;opacity:0.7;">Qty: {{ line.quantity }}</p>
+                      </td>
+                      <td valign="middle" align="right" style="font-size:15px;font-weight:bold;color:#2B1B12;white-space:nowrap;">
+                        {{ line.final_line_price | money }}
+                      </td>
+                    </tr>
+                  </table>
+                  {% endfor %}
+                </td>
+              </tr>
+
+              <!-- Totals -->
+              <tr>
+                <td style="border-top:2px solid #FFF4D9;padding:16px 0;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px;color:#2B1B12;">
+                    <tr>
+                      <td style="padding:3px 0;">Subtotal</td>
+                      <td align="right" style="padding:3px 0;">{{ subtotal_price | money }}</td>
+                    </tr>
+                    {% if total_discounts > 0 %}
+                    <tr>
+                      <td style="padding:3px 0;color:#5BB870;font-weight:bold;">Discount 🎉</td>
+                      <td align="right" style="padding:3px 0;color:#5BB870;font-weight:bold;">-{{ total_discounts | money }}</td>
+                    </tr>
+                    {% endif %}
+                    {% for shipping_method in shipping_methods %}
+                    <tr>
+                      <td style="padding:3px 0;">Shipping ({{ shipping_method.title }})</td>
+                      <td align="right" style="padding:3px 0;">{% if shipping_method.price == 0 %}FREE 🚚{% else %}{{ shipping_method.price | money }}{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if tax_price > 0 %}
+                    <tr>
+                      <td style="padding:3px 0;">Tax</td>
+                      <td align="right" style="padding:3px 0;">{{ tax_price | money }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                      <td style="padding:12px 0 0;font-size:17px;font-weight:bold;border-top:2px solid #FFF4D9;">Total</td>
+                      <td align="right" style="padding:12px 0 0;font-size:17px;font-weight:bold;border-top:2px solid #FFF4D9;">{{ total_price | money }}</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <!-- Addresses -->
+              {% if shipping_address or billing_address %}
+              <tr>
+                <td style="border-top:2px solid #FFF4D9;padding:18px 0 0;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;line-height:1.6;color:#2B1B12;">
+                    <tr>
+                      {% if shipping_address %}
+                      <td valign="top" width="50%">
+                        <p style="margin:0 0 4px;font-weight:bold;text-transform:uppercase;font-size:12px;letter-spacing:0.5px;color:#EE7B28;">Shipping to</p>
+                        {{ shipping_address | format_address }}
+                      </td>
+                      {% endif %}
+                      {% if billing_address %}
+                      <td valign="top" width="50%">
+                        <p style="margin:0 0 4px;font-weight:bold;text-transform:uppercase;font-size:12px;letter-spacing:0.5px;color:#EE7B28;">Billing</p>
+                        {{ billing_address | format_address }}
+                      </td>
+                      {% endif %}
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              {% endif %}
+
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td align="center" style="padding:24px 12px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#2B1B12;">
+            Questions about your order? Just reply to this email &mdash; a real pet person answers. 🐾<br>
+            {{ shop.name }} &middot; <a href="{{ shop.url }}" style="color:#2B1B12;">{{ shop.url | remove: 'https://' }}</a>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>

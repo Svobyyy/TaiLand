@@ -26,6 +26,11 @@
     src="{{ 'component-cart-items.js' | asset_url }}"
     fetchpriority="low"
   ></script>
+  <script
+    type="module"
+    src="{{ 'component-cart-quantity-selector.js' | asset_url }}"
+    fetchpriority="low"
+  ></script>
   <script type="module">
     import { morphSection, sectionRenderer } from '@theme/section-renderer';
     window._tailandMorphSection = morphSection;

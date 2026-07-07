@@ -8,7 +8,24 @@
       "Bash(shopify theme *)",
       "Bash(ls -la \"c:\\\\Users\\\\svoby\\\\OneDrive\\\\Plocha\\\\NasObchod\\\\\" | head -30)",
       "Read(//c/Users/svoby/OneDrive/Plocha/**)",
-      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\svoby\\\\OneDrive\\\\Plocha\\\\NasObchod\" -Force | Select-Object Name, @{Name=\"Type\"; Expression={if \\($_.PSIsContainer\\) {\"Dir\"} else {\"File\"}}} | Format-Table -AutoSize)"
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\svoby\\\\OneDrive\\\\Plocha\\\\NasObchod\" -Force | Select-Object Name, @{Name=\"Type\"; Expression={if \\($_.PSIsContainer\\) {\"Dir\"} else {\"File\"}}} | Format-Table -AutoSize)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://tailand.store/sitemap.xml)",
+      "mcp__claude_ai_Shopify__graphql_query",
+      "Bash(node test-05-retry-clean.js)",
+      "Bash(node test-06-qty-deep.js)",
+      "Bash(node test-07-custom-element.js)",
+      "Bash(node C:\\Users\\svoby\\AppData\\Local\\Temp\\claude\\playwright-test\\**)",
+      "Bash(cd C:\\Users\\svoby\\AppData\\Local\\Temp\\claude\\playwright-test\\** && node *)",
+      "Bash(shopify theme push*)",
+      "Bash(curl -s * https://tailand.store/*)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Read(//c/Users/svoby/AppData/Local/Temp/claude/**)",
+      "Write(//c/Users/svoby/AppData/Local/Temp/claude/**)",
+      "Edit(//c/Users/svoby/AppData/Local/Temp/claude/**)"
     ]
   }
 }

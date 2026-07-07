@@ -1,0 +1,106 @@
+<!-- Tailand — Abandoned checkout recovery — paste into Shopify Email custom code editor -->
+<!-- Subject suggestion: Your pet's new favorite is waiting 🐾 -->
+<!-- Preview text suggestion: We saved your cart — it's ready when you are. -->
+<!--
+  Variable names below are confirmed against Shopify's official Liquid reference
+  for Shopify Messaging abandoned-checkout automations:
+  https://help.shopify.com/en/manual/promoting-marketing/create-marketing/shopify-messaging/email/create-email/custom-liquid
+  - abandoned_checkout.line_items — the customer's own abandoned products (first 5),
+    each with image_url / product_title / variant_title / quantity.
+  - abandoned_checkout.remaining_products_count — set if there are more than 5 (not
+    used here, but available if you want a "+N more items" line).
+  - abandoned_checkout.url — the customer's personal recovery link.
+  - unsubscribe_url / unsubscribe_link — REQUIRED by Shopify on every marketing
+    automation email. Included in the footer below — do not remove it.
+-->
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">We saved your cart — it's ready when you are.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFF4D9;margin:0;padding:0;">
+  <tr>
+    <td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+        <!-- No logo here on purpose — Shopify's native Logo block already
+             renders one above this Custom Liquid section. -->
+
+        <!-- Card -->
+        <tr>
+          <td style="background-color:#ffffff;border:3px solid #2B1B12;border-radius:20px;padding:36px 32px;text-align:center;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td align="center" style="font-family:Arial,Helvetica,sans-serif;">
+
+                  <p style="margin:0 0 6px;font-size:14px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:#EE7B28;">Psst&hellip; your cart is waiting</p>
+
+                  <h1 style="margin:0 0 14px;font-size:28px;line-height:1.25;color:#2B1B12;">Forgot something pawsome?</h1>
+
+                  <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#2B1B12;">
+                    Your cart is saved and ready &mdash; your pet just doesn't know how lucky
+                    they're about to get. Orders over $60 ship free, and if you grab 2 or more
+                    items, <strong>25% off applies automatically at checkout</strong>.
+                  </p>
+
+                  {% if abandoned_checkout.line_items %}
+                  <!-- The customer's abandoned products -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+                    {% for item in abandoned_checkout.line_items %}
+                    <tr>
+                      <td style="padding:10px 0;border-bottom:2px solid #FFF4D9;" align="left">
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                          <tr>
+                            {% if item.image_url %}
+                            <td width="84" valign="top" style="padding-right:14px;">
+                              <img src="{{ item.image_url }}" width="72" height="72" alt="{{ item.product_title }}"
+                                   style="display:block;width:72px;height:72px;object-fit:cover;border:2px solid #2B1B12;border-radius:12px;">
+                            </td>
+                            {% endif %}
+                            <td valign="middle" align="left" style="font-family:Arial,Helvetica,sans-serif;">
+                              <p style="margin:0 0 3px;font-size:15px;font-weight:bold;line-height:1.35;color:#2B1B12;">{{ item.product_title }}</p>
+                              {% if item.variant_title and item.variant_title != 'Default Title' %}
+                              <p style="margin:0 0 3px;font-size:13px;color:#2B1B12;opacity:0.7;">{{ item.variant_title }}</p>
+                              {% endif %}
+                              <p style="margin:0;font-size:13px;color:#2B1B12;opacity:0.7;">Qty: {{ item.quantity }}</p>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                  {% endif %}
+
+                  <!-- Button — personal recovery link with safe fallback -->
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 22px;">
+                    <tr>
+                      <td align="center" style="background-color:#5BB870;border:3px solid #2B1B12;border-radius:14px;">
+                        <a href="{{ abandoned_checkout.url | default: 'https://tailand.store/cart' }}"
+                           style="display:inline-block;padding:14px 36px;font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:bold;color:#ffffff;text-decoration:none;">
+                          Complete my order &rarr;
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <p style="margin:0;font-size:13px;line-height:1.6;color:#2B1B12;opacity:0.75;">
+                    🚚 Free shipping over $60 &nbsp;&middot;&nbsp; 🐾 Easy 30-day returns &nbsp;&middot;&nbsp; 🔒 Secure checkout
+                  </p>
+
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td align="center" style="padding:24px 12px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#2B1B12;">
+            Questions? Just reply to this email &mdash; a real pet person answers. 🐾<br>
+            <a href="{{ unsubscribe_url }}" style="color:#2B1B12;opacity:0.6;text-decoration:underline;">{{ unsubscribe_link }}</a>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+{{ open_tracking_block }}

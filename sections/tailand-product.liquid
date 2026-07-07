@@ -826,6 +826,411 @@
   display: none !important;
 }
 
+/* ---- Flagship: full-bleed alternating section bands (same technique as
+   the description's .tp-feat__band / .tc-cream-paw-bg — white, then cream,
+   alternating, starting with white). Wraps whichever flagship sections
+   actually render (before/after, UGC, comparison, reviews) in sequence. ---- */
+.tpx-band {
+  padding: 3rem 0;
+}
+
+.tpx-band > .tpx-ugc,
+.tpx-band > .tpx-cmp,
+.tpx-band > .tpx-rev {
+  margin-top: 0;
+}
+
+/* ---- Flagship: before/after slider ---- */
+.tpx-ba__slider {
+  position: relative;
+  flex: 1.4 1 58%;
+  min-width: 0;
+  aspect-ratio: 4 / 3;
+  border: 3px solid var(--pc-text, #2d2d2d);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 6px 6px 0 var(--pc-text, #2d2d2d);
+  cursor: ew-resize;
+  user-select: none;
+  touch-action: none;
+}
+
+@media screen and (max-width: 749px) {
+  .tpx-ba__slider { width: 100%; flex: none; }
+}
+
+/* Text column yields space to the slider in before/after rows */
+.tpx-ba .tp-feat__content { flex: 1 1 38%; }
+
+.tpx-ba__simg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  display: block;
+}
+
+.tpx-ba__simg--after { z-index: 1; }
+.tpx-ba__simg--before { z-index: 2; }
+
+.tpx-ba__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 2px 0 0 rgba(43, 27, 18, 0.35);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.tpx-ba__handle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: var(--pc-orange, #ee7b28);
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 50%;
+  box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
+  cursor: ew-resize;
+  pointer-events: auto;
+  color: #fff;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.tpx-ba__handle-btn svg { width: 24px; height: 18px; display: block; }
+
+.tpx-ba__slider .tpx-ba__tag {
+  top: 14px;
+  left: 14px;
+  z-index: 4;
+}
+
+.tpx-ba__slider .tpx-ba__tag--after {
+  left: auto;
+  right: 14px;
+}
+
+/* Single-image fallback */
+.tpx-ba__imgs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.tpx-ba__fig {
+  position: relative;
+  margin: 0;
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 4px 4px 0 var(--pc-text, #2d2d2d);
+}
+
+.tpx-ba__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+
+.tpx-ba__tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  padding: 4px 12px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--pc-orange, #ee7b28);
+  border: 2px solid var(--pc-text, #2d2d2d);
+  border-radius: 999px;
+}
+
+.tpx-ba__tag--after { background: var(--pc-green, #2eaa5f); }
+
+@media screen and (max-width: 749px) {
+  .tpx-ba .tp-feat__content { margin-bottom: 18px; }
+}
+
+/* ---- Flagship: UGC videos ---- */
+.tpx-ugc {
+  max-width: 1280px;
+  margin: 3rem auto 0;
+  padding: 0 1.5rem;
+}
+
+.tpx-ugc__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 1.75rem;
+}
+
+/* A single video shouldn't stretch to fill the grid — center it at a natural width */
+.tpx-ugc__grid:has(.tpx-ugc__item:only-child) {
+  grid-template-columns: minmax(0, 320px);
+  justify-content: center;
+}
+
+@media screen and (max-width: 749px) {
+  .tpx-ugc__grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+  .tpx-ugc__item { flex: 0 0 72%; scroll-snap-align: center; }
+  /* Single video: no scroll row needed — center it like a normal block */
+  .tpx-ugc__grid:has(.tpx-ugc__item:only-child) {
+    overflow-x: visible;
+    justify-content: center;
+  }
+  .tpx-ugc__grid:has(.tpx-ugc__item:only-child) .tpx-ugc__item { flex: 0 0 85%; }
+}
+
+.tpx-ugc__item {
+  position: relative;
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 5px 5px 0 var(--pc-text, #2d2d2d);
+}
+
+.tpx-ugc__video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+}
+
+.tpx-ugc__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pc-orange, #ee7b28);
+  color: #fff;
+  border: 2.5px solid var(--pc-text, #2d2d2d);
+  border-radius: 50%;
+  box-shadow: 3px 3px 0 var(--pc-text, #2d2d2d);
+  cursor: pointer;
+}
+
+.tpx-ugc__play svg { width: 30px; height: 30px; margin-left: 3px; }
+
+.tpx-ugc__play:hover { transform: translate(-50%, -50%) scale(1.06); }
+
+/* ---- Flagship: comparison table ---- */
+.tpx-cmp {
+  max-width: 980px;
+  margin: 3.5rem auto 0;
+  padding: 0 1.5rem;
+}
+
+.tpx-cmp__scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 1.75rem;
+  /* Without paint containment the table's 560px min-width leaks into the
+     document scroll extent on mobile despite the overflow clip (Chrome quirk). */
+  contain: paint;
+}
+
+.tpx-cmp__table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.tpx-cmp__table th,
+.tpx-cmp__table td {
+  padding: 14px 16px;
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.95rem;
+  border-bottom: 2px solid rgba(43, 27, 18, 0.15);
+  background: #fff;
+}
+
+.tpx-cmp__table thead th {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text, #2d2d2d);
+  border-bottom: 2.5px solid var(--pc-text, #2d2d2d);
+}
+
+.tpx-cmp__feature {
+  text-align: left;
+  font-weight: 700;
+  color: var(--pc-text, #2d2d2d);
+}
+
+/* Highlighted "ours" column */
+.tpx-cmp__ours-h {
+  background: var(--pc-orange, #ee7b28) !important;
+  color: #fff !important;
+  border: 2.5px solid var(--pc-text, #2d2d2d) !important;
+  border-radius: 14px 14px 0 0;
+}
+
+.tpx-cmp__ours {
+  background: #FFF4D9 !important;
+  border-left: 2.5px solid var(--pc-text, #2d2d2d) !important;
+  border-right: 2.5px solid var(--pc-text, #2d2d2d) !important;
+}
+
+.tpx-cmp__table tbody tr:last-child .tpx-cmp__ours {
+  border-bottom: 2.5px solid var(--pc-text, #2d2d2d) !important;
+  border-radius: 0 0 14px 14px;
+}
+
+.tpx-cmp__yes, .tpx-cmp__no {
+  width: 26px;
+  height: 26px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* ---- Flagship: photo reviews ---- */
+.tpx-rev {
+  max-width: 1280px;
+  margin: 3.5rem auto 0;
+  padding: 0 1.5rem;
+}
+
+.tpx-rev__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 1.75rem;
+}
+
+@media screen and (max-width: 989px) {
+  .tpx-rev__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media screen and (max-width: 749px) {
+  .tpx-rev__grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+  .tpx-rev__card { flex: 0 0 68%; scroll-snap-align: center; }
+}
+
+/* Polaroid snapshots — deliberately NOT the product-card look */
+.tpx-rev__card {
+  position: relative;
+  margin: 0;
+  background: #fff;
+  border: 2px solid var(--pc-text, #2d2d2d);
+  border-radius: 6px;
+  padding: 12px 12px 0;
+  box-shadow: 4px 5px 0 rgba(43, 27, 18, 0.35);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Alternating pinned-photo tilt, straightens on hover */
+.tpx-rev__grid .tpx-rev__card:nth-child(4n+1) { transform: rotate(-2deg); }
+.tpx-rev__grid .tpx-rev__card:nth-child(4n+2) { transform: rotate(1.6deg); }
+.tpx-rev__grid .tpx-rev__card:nth-child(4n+3) { transform: rotate(-1.2deg); }
+.tpx-rev__grid .tpx-rev__card:nth-child(4n+4) { transform: rotate(2.2deg); }
+
+.tpx-rev__card:hover {
+  transform: rotate(0deg) scale(1.03);
+  box-shadow: 6px 8px 0 rgba(43, 27, 18, 0.35);
+  z-index: 2;
+}
+
+/* Tape strip on the top edge */
+.tpx-rev__card::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-4deg);
+  width: 92px;
+  height: 26px;
+  background: rgba(255, 236, 190, 0.85);
+  border: 1px solid rgba(43, 27, 18, 0.18);
+  box-shadow: 1px 1px 0 rgba(43, 27, 18, 0.15);
+  z-index: 3;
+}
+
+.tpx-rev__img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center;
+  border: 1px solid rgba(43, 27, 18, 0.2);
+}
+
+.tpx-rev__body {
+  padding: 12px 6px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+}
+
+.tpx-rev__paws { display: flex; gap: 3px; justify-content: center; }
+
+.tpx-rev__paw {
+  width: 19px;
+  height: 19px;
+  color: rgba(43, 27, 18, 0.15);
+}
+
+.tpx-rev__paw--on { color: var(--pc-orange, #ee7b28); }
+
+.tpx-rev__quote {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--pc-text, #2d2d2d);
+  opacity: 0.8;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.tpx-rev__name {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--pc-text, #2d2d2d);
+}
+
+/* Rotated cards need breathing room so they don't clip */
+.tpx-rev__grid { padding: 14px 6px 10px; }
+
 /* ---- Back in stock signup ---- */
 .tp-bis {
   background: #FFF4D9;
@@ -1499,6 +1904,47 @@
   #shopify-section-{{ section.id }} { background: #FFFFFF; }
 </style>
 
+{%- comment -%}
+  Product structured data (schema.org/JSON-LD) — lets Google show price and
+  stock status as rich results in search. Deliberately NO aggregateRating/review
+  block: the paw-rating row above is not real review data, and fabricated
+  Review/AggregateRating schema is a Google Search spam violation that can
+  trigger a manual action against the whole site. Add real rating schema only
+  once Judge.me (or similar) provides genuine review data.
+{%- endcomment -%}
+{%- assign tp_ld_media = tp_product.media.first | default: tp_product.featured_media -%}
+{%- if tp_ld_media != blank -%}
+  {%- assign tp_ld_img = tp_ld_media.preview_image -%}
+{%- else -%}
+  {%- assign tp_ld_img = tp_product.featured_image -%}
+{%- endif -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": {{ tp_product.title | json }},
+  "description": {{ tp_product.description | strip_html | json }},
+  {%- if tp_ld_img != blank -%}
+  {%- assign tp_ld_img_url = tp_ld_img | image_url: width: 900 -%}
+  {%- unless tp_ld_img_url contains 'https:' -%}{%- assign tp_ld_img_url = 'https:' | append: tp_ld_img_url -%}{%- endunless -%}
+  "image": [{{ tp_ld_img_url | json }}],
+  {%- endif -%}
+  "sku": {{ tp_variant.sku | json }},
+  "brand": {
+    "@type": "Brand",
+    "name": {{ shop.name | json }}
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": {{ request.origin | append: tp_product.url | json }},
+    "priceCurrency": {{ cart.currency.iso_code | default: shop.currency | json }},
+    "price": {{ tp_variant.price | divided_by: 100.0 | json }},
+    "availability": "https://schema.org/{% if tp_variant.available %}InStock{% else %}OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+}
+</script>
+
 <section id="tp-{{ section.id }}">
   {%- form 'product', tp_product, id: 'tp-form' -%}
     {{- '' -}}
@@ -1875,20 +2321,13 @@
                 }
 
                 // Show/hide with variant availability by watching the ATC button label —
-                // no changes needed inside the existing variant logic. Sold-out mode also
-                // hides upsells (deal box, countdown, multibuy…) so the signup stands out.
+                // no changes needed inside the existing variant logic.
                 var btnText = document.getElementById('tp-btn-text');
-                var infoPanel = document.querySelector('.tp-wrap');
                 if (!btnText) return;
                 function syncBis() {
                   var t = btnText.textContent.trim();
-                  if (t === 'Sold Out') {
-                    bis.hidden = false;
-                    if (infoPanel) infoPanel.classList.add('tp-soldout-mode');
-                  } else if (t === 'Add to Cart' || t === 'Unavailable') {
-                    bis.hidden = true;
-                    if (infoPanel) infoPanel.classList.remove('tp-soldout-mode');
-                  }
+                  if (t === 'Sold Out') bis.hidden = false;
+                  else if (t === 'Add to Cart' || t === 'Unavailable') bis.hidden = true;
                   // transient labels ("Adding…") leave visibility unchanged
                 }
                 new MutationObserver(syncBis).observe(btnText, { childList: true, characterData: true, subtree: true });
@@ -1896,6 +2335,28 @@
               })();
             </script>
           {%- endif -%}
+
+          {%- comment -%}
+            Sold-out mode (hides upsells: deal box, countdown, multibuy…) is intentionally
+            OUTSIDE the show_back_in_stock check above — it must keep working even if the
+            merchant turns the "notify me" signup off, since it watches the Add to Cart
+            button label, not the BIS box.
+          {%- endcomment -%}
+          <script>
+            (function () {
+              var btnText = document.getElementById('tp-btn-text');
+              var infoPanel = document.querySelector('.tp-wrap');
+              if (!btnText || !infoPanel) return;
+              function syncSoldOutMode() {
+                var t = btnText.textContent.trim();
+                if (t === 'Sold Out') infoPanel.classList.add('tp-soldout-mode');
+                else if (t === 'Add to Cart' || t === 'Unavailable') infoPanel.classList.remove('tp-soldout-mode');
+                // transient labels ("Adding…") leave the mode unchanged
+              }
+              new MutationObserver(syncSoldOutMode).observe(btnText, { childList: true, characterData: true, subtree: true });
+              syncSoldOutMode();
+            })();
+          </script>
 
           <!-- Trust badges -->
           {%- if section.settings.show_trust_badges -%}
@@ -2048,6 +2509,323 @@
     <div class="tp-desc-section">
       <div class="tp-description">{{ tp_product.description }}</div>
     </div>
+  {%- endif -%}
+
+  {%- comment -%}
+    ===== Flagship sections =====
+    Content is scoped per product via templates: each flagship product gets its
+    own product.<name>.json template holding its own video/comparison/before-after/
+    review blocks (assigned in Admin → Product → Theme template). Products on the
+    shared template have no flagship blocks, so nothing renders there.
+  {%- endcomment -%}
+  {%- assign tp_is_main = true -%}
+
+  {%- comment -%}
+    Running counter for the flagship sections' alternating white/cream bands
+    (same technique as the description's .tp-feat__band / .tc-cream-paw-bg).
+    Only increments for sections that actually render, so the alternation
+    never skips a color when a section has no content yet. Starts on white.
+  {%- endcomment -%}
+  {%- assign tpx_band_idx = 0 -%}
+
+  <!-- ======== BEFORE / AFTER (main-product) ======== -->
+  {%- if tp_is_main -%}
+    {%- assign tpx_ba_blocks = section.blocks | where: 'type', 'before_after' -%}
+    {%- assign tpx_has_ba = false -%}
+    {%- for block in tpx_ba_blocks -%}
+      {%- if block.settings.image_before != blank or block.settings.image_after != blank -%}{%- assign tpx_has_ba = true -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if tpx_has_ba -%}
+      <div class="tp-feat">
+        {%- for block in tpx_ba_blocks -%}
+          {%- if block.settings.image_before == blank and block.settings.image_after == blank -%}{%- continue -%}{%- endif -%}
+          {%- assign tpx_band_idx = tpx_band_idx | plus: 1 -%}
+          {%- assign tpx_band_mod = tpx_band_idx | modulo: 2 -%}
+          {%- assign tpx_band_cls = 'tp-feat__band' -%}
+          {%- unless tpx_band_mod == 1 -%}{%- assign tpx_band_cls = 'tp-feat__band tc-cream-paw-bg' -%}{%- endunless -%}
+          <div class="{{ tpx_band_cls }}">
+            <div class="tp-feat__row tpx-ba" {{ block.shopify_attributes }}>
+              <div class="tp-feat__content">
+                {%- if block.settings.eyebrow != blank -%}
+                  <span class="tp-feat__eyebrow">{{ block.settings.eyebrow | escape }}</span>
+                {%- endif -%}
+                {%- if block.settings.title != blank -%}
+                  <h3 class="tp-feat__title">{{ block.settings.title | escape }}</h3>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="tp-feat__body">{{ block.settings.text }}</div>
+                {%- endif -%}
+              </div>
+              {%- if block.settings.image_before != blank and block.settings.image_after != blank -%}
+                {%- comment -%} Interactive drag slider — same mechanism as the homepage Before & After {%- endcomment -%}
+                {%- assign tpx_init = block.settings.initial_position | default: 50 -%}
+                {%- assign tpx_clip = 100 | minus: tpx_init -%}
+                {%- assign tpx_clip_style = 'clip-path: inset(0 ' | append: tpx_clip | append: '% 0 0)' -%}
+                <div class="tpx-ba__slider" data-tpx-ba>
+                  {{- block.settings.image_after | image_url: width: 900 | image_tag: class: 'tpx-ba__simg tpx-ba__simg--after', alt: block.settings.label_after, loading: 'lazy', widths: '450, 600, 900', sizes: '(max-width: 749px) 100vw, 55vw' -}}
+                  {{- block.settings.image_before | image_url: width: 900 | image_tag: class: 'tpx-ba__simg tpx-ba__simg--before', alt: block.settings.label_before, loading: 'lazy', widths: '450, 600, 900', sizes: '(max-width: 749px) 100vw, 55vw', style: tpx_clip_style -}}
+                  <div class="tpx-ba__handle" data-tpx-ba-handle style="left: {{ tpx_init }}%">
+                    <button type="button" class="tpx-ba__handle-btn" aria-label="Drag to compare">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="7,2 2,7 7,12"/>
+                        <polyline points="13,2 18,7 13,12"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <span class="tpx-ba__tag" aria-hidden="true">{{ block.settings.label_before | default: 'Before' | escape }}</span>
+                  <span class="tpx-ba__tag tpx-ba__tag--after" aria-hidden="true">{{ block.settings.label_after | default: 'After' | escape }}</span>
+                </div>
+              {%- else -%}
+                {%- comment -%} Only one image set — plain labeled image fallback {%- endcomment -%}
+                <div class="tpx-ba__imgs tpx-ba__imgs--single">
+                  {%- if block.settings.image_before != blank -%}
+                    <figure class="tpx-ba__fig">
+                      <span class="tpx-ba__tag">{{ block.settings.label_before | default: 'Before' | escape }}</span>
+                      {{- block.settings.image_before | image_url: width: 600 | image_tag: class: 'tpx-ba__img', alt: block.settings.label_before, loading: 'lazy', widths: '300, 450, 600', sizes: '(max-width: 749px) 88vw, 480px' -}}
+                    </figure>
+                  {%- endif -%}
+                  {%- if block.settings.image_after != blank -%}
+                    <figure class="tpx-ba__fig">
+                      <span class="tpx-ba__tag tpx-ba__tag--after">{{ block.settings.label_after | default: 'After' | escape }}</span>
+                      {{- block.settings.image_after | image_url: width: 600 | image_tag: class: 'tpx-ba__img', alt: block.settings.label_after, loading: 'lazy', widths: '300, 450, 600', sizes: '(max-width: 749px) 88vw, 480px' -}}
+                    </figure>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <script>
+        (function () {
+          'use strict';
+          document.querySelectorAll('[data-tpx-ba]').forEach(function (el) {
+            var beforeImg = el.querySelector('.tpx-ba__simg--before');
+            var handle = el.querySelector('[data-tpx-ba-handle]');
+            if (!beforeImg || !handle) return;
+
+            var dragging = false;
+            var cachedRect = null;
+
+            function setPosition(clientX) {
+              var rect = cachedRect || el.getBoundingClientRect();
+              var pct = Math.min(100, Math.max(0, (clientX - rect.left) / rect.width * 100));
+              beforeImg.style.clipPath = 'inset(0 ' + (100 - pct).toFixed(2) + '% 0 0)';
+              handle.style.left = pct.toFixed(2) + '%';
+            }
+
+            el.addEventListener('mousedown', function (e) {
+              cachedRect = el.getBoundingClientRect();
+              dragging = true;
+              setPosition(e.clientX);
+              e.preventDefault();
+            });
+            el.addEventListener('touchstart', function (e) {
+              cachedRect = el.getBoundingClientRect();
+              dragging = true;
+              setPosition(e.touches[0].clientX);
+            }, { passive: true });
+            el.addEventListener('touchmove', function (e) {
+              if (dragging) setPosition(e.touches[0].clientX);
+            }, { passive: true });
+            el.addEventListener('touchend', function () { dragging = false; });
+            window.addEventListener('mousemove', function (e) { if (dragging) setPosition(e.clientX); });
+            window.addEventListener('mouseup', function () { dragging = false; cachedRect = null; });
+          });
+        })();
+      </script>
+    {%- endif -%}
+  {%- endif -%}
+
+  <!-- ======== UGC VIDEOS (main-product) ======== -->
+  {%- if tp_is_main -%}
+    {%- assign tpx_vid_blocks = section.blocks | where: 'type', 'ugc_video' -%}
+    {%- assign tpx_has_vid = false -%}
+    {%- for block in tpx_vid_blocks -%}
+      {%- if block.settings.video != blank -%}{%- assign tpx_has_vid = true -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if tpx_has_vid -%}
+      {%- assign tpx_band_idx = tpx_band_idx | plus: 1 -%}
+      {%- assign tpx_band_mod = tpx_band_idx | modulo: 2 -%}
+      {%- assign tpx_band_cls = 'tpx-band' -%}
+      {%- unless tpx_band_mod == 1 -%}{%- assign tpx_band_cls = 'tpx-band tc-cream-paw-bg' -%}{%- endunless -%}
+      <div class="{{ tpx_band_cls }}">
+      <div class="tpx-ugc">
+        <h2 class="tp-related__heading">
+          {%- if section.settings.ugc_heading_plain != blank -%}
+            <span class="tp-related__heading-plain">{{ section.settings.ugc_heading_plain | escape }}&nbsp;</span>
+          {%- endif -%}
+          {%- if section.settings.ugc_heading_hl != blank -%}
+            <span class="tp-related__heading-hl">
+              {{- section.settings.ugc_heading_hl | escape -}}
+              <svg class="tp-related__heading-line" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          {%- endif -%}
+        </h2>
+        <div class="tpx-ugc__grid">
+          {%- for block in tpx_vid_blocks -%}
+            {%- if block.settings.video == blank -%}{%- continue -%}{%- endif -%}
+            <div class="tpx-ugc__item" {{ block.shopify_attributes }}>
+              {{ block.settings.video | video_tag: playsinline: true, preload: 'metadata', muted: true, loop: true, class: 'tpx-ugc__video', image_size: '600x' }}
+              <button type="button" class="tpx-ugc__play" aria-label="Play video">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg>
+              </button>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+      </div>
+
+      <script>
+        (function () {
+          document.querySelectorAll('.tpx-ugc__item').forEach(function (item) {
+            var video = item.querySelector('video');
+            var btn = item.querySelector('.tpx-ugc__play');
+            if (!video || !btn) return;
+            btn.addEventListener('click', function () {
+              // Pause any other playing UGC video first
+              document.querySelectorAll('.tpx-ugc__video').forEach(function (v) {
+                if (v !== video) { v.pause(); v.closest('.tpx-ugc__item').querySelector('.tpx-ugc__play').hidden = false; }
+              });
+              video.muted = false;
+              video.controls = true;
+              video.play();
+              btn.hidden = true;
+            });
+            video.addEventListener('pause', function () { btn.hidden = false; });
+            video.addEventListener('play', function () { btn.hidden = true; });
+          });
+        })();
+      </script>
+    {%- endif -%}
+  {%- endif -%}
+
+  <!-- ======== COMPARISON TABLE (main-product) ======== -->
+  {%- if tp_is_main -%}
+    {%- assign tpx_cmp_blocks = section.blocks | where: 'type', 'compare_row' -%}
+    {%- if tpx_cmp_blocks.size > 0 -%}
+      {%- assign tpx_band_idx = tpx_band_idx | plus: 1 -%}
+      {%- assign tpx_band_mod = tpx_band_idx | modulo: 2 -%}
+      {%- assign tpx_band_cls = 'tpx-band' -%}
+      {%- unless tpx_band_mod == 1 -%}{%- assign tpx_band_cls = 'tpx-band tc-cream-paw-bg' -%}{%- endunless -%}
+      <div class="{{ tpx_band_cls }}">
+      <div class="tpx-cmp">
+        <h2 class="tp-related__heading">
+          {%- if section.settings.cmp_heading_plain != blank -%}
+            <span class="tp-related__heading-plain">{{ section.settings.cmp_heading_plain | escape }}&nbsp;</span>
+          {%- endif -%}
+          {%- if section.settings.cmp_heading_hl != blank -%}
+            <span class="tp-related__heading-hl">
+              {{- section.settings.cmp_heading_hl | escape -}}
+              <svg class="tp-related__heading-line" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          {%- endif -%}
+        </h2>
+        <div class="tpx-cmp__scroll">
+          <table class="tpx-cmp__table">
+            <thead>
+              <tr>
+                <th class="tpx-cmp__feature-h" scope="col"><span class="visually-hidden">Feature</span></th>
+                <th class="tpx-cmp__ours-h" scope="col">{{ section.settings.cmp_col_ours | default: 'Tailand' | escape }}</th>
+                <th scope="col">{{ section.settings.cmp_col_alt1 | default: 'Other Brands' | escape }}</th>
+                <th scope="col">{{ section.settings.cmp_col_alt2 | default: 'Cheap Alternatives' | escape }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%- for block in tpx_cmp_blocks -%}
+                <tr {{ block.shopify_attributes }}>
+                  <th class="tpx-cmp__feature" scope="row">{{ block.settings.title | escape }}</th>
+                  <td class="tpx-cmp__ours">
+                    {%- if block.settings.ours -%}
+                      <svg class="tpx-cmp__yes" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#5BB870"/><polyline points="7 12.5 10.5 16 17 8.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span class="visually-hidden">Yes</span>
+                    {%- else -%}
+                      <svg class="tpx-cmp__no" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#E8372B"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg><span class="visually-hidden">No</span>
+                    {%- endif -%}
+                  </td>
+                  <td>
+                    {%- if block.settings.alt1 -%}
+                      <svg class="tpx-cmp__yes" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#5BB870"/><polyline points="7 12.5 10.5 16 17 8.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span class="visually-hidden">Yes</span>
+                    {%- else -%}
+                      <svg class="tpx-cmp__no" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#E8372B"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg><span class="visually-hidden">No</span>
+                    {%- endif -%}
+                  </td>
+                  <td>
+                    {%- if block.settings.alt2 -%}
+                      <svg class="tpx-cmp__yes" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#5BB870"/><polyline points="7 12.5 10.5 16 17 8.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span class="visually-hidden">Yes</span>
+                    {%- else -%}
+                      <svg class="tpx-cmp__no" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#E8372B"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg><span class="visually-hidden">No</span>
+                    {%- endif -%}
+                  </td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+
+  <!-- ======== PHOTO REVIEWS (main-product) ======== -->
+  {%- if tp_is_main -%}
+    {%- assign tpx_rev_blocks = section.blocks | where: 'type', 'review_photo' -%}
+    {%- assign tpx_has_rev = false -%}
+    {%- for block in tpx_rev_blocks -%}
+      {%- if block.settings.image != blank -%}{%- assign tpx_has_rev = true -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if tpx_has_rev -%}
+      {%- assign tpx_band_idx = tpx_band_idx | plus: 1 -%}
+      {%- assign tpx_band_mod = tpx_band_idx | modulo: 2 -%}
+      {%- assign tpx_band_cls = 'tpx-band' -%}
+      {%- unless tpx_band_mod == 1 -%}{%- assign tpx_band_cls = 'tpx-band tc-cream-paw-bg' -%}{%- endunless -%}
+      <div class="{{ tpx_band_cls }}">
+      <div class="tpx-rev">
+        <h2 class="tp-related__heading">
+          {%- if section.settings.rev_heading_plain != blank -%}
+            <span class="tp-related__heading-plain">{{ section.settings.rev_heading_plain | escape }}&nbsp;</span>
+          {%- endif -%}
+          {%- if section.settings.rev_heading_hl != blank -%}
+            <span class="tp-related__heading-hl">
+              {{- section.settings.rev_heading_hl | escape -}}
+              <svg class="tp-related__heading-line" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          {%- endif -%}
+        </h2>
+        <div class="tpx-rev__grid">
+          {%- for block in tpx_rev_blocks -%}
+            {%- if block.settings.image == blank -%}{%- continue -%}{%- endif -%}
+            {%- assign tpx_rev_rating = block.settings.rating | default: 5 -%}
+            <figure class="tpx-rev__card" {{ block.shopify_attributes }}>
+              {%- assign tpx_rev_alt = block.settings.name | default: 'Customer photo' -%}
+              {{- block.settings.image | image_url: width: 600 | image_tag: class: 'tpx-rev__img', alt: tpx_rev_alt, loading: 'lazy', widths: '300, 450, 600', sizes: '(max-width: 749px) 70vw, 300px' -}}
+              <figcaption class="tpx-rev__body">
+                <span class="tpx-rev__paws" role="img" aria-label="{{ tpx_rev_rating }} out of 5">
+                  {%- for i in (1..5) -%}
+                    <svg class="tpx-rev__paw{% if i <= tpx_rev_rating %} tpx-rev__paw--on{% endif %}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <ellipse cx="6.5" cy="9" rx="2" ry="2.5"/><ellipse cx="10" cy="6.5" rx="2" ry="2.5"/><ellipse cx="14" cy="6.5" rx="2" ry="2.5"/><ellipse cx="17.5" cy="9" rx="2" ry="2.5"/><path d="M12 22.5C8.5 22.5 5.5 20.5 5.5 17.5C5.5 14.5 7.5 12.5 12 12.5C16.5 12.5 18.5 14.5 18.5 17.5C18.5 20.5 15.5 22.5 12 22.5Z"/>
+                    </svg>
+                  {%- endfor -%}
+                </span>
+                {%- if block.settings.quote != blank -%}
+                  <p class="tpx-rev__quote">&ldquo;{{ block.settings.quote | escape }}&rdquo;</p>
+                {%- endif -%}
+                {%- if block.settings.name != blank -%}
+                  <span class="tpx-rev__name">&ndash; {{ block.settings.name | escape }}</span>
+                {%- endif -%}
+              </figcaption>
+            </figure>
+          {%- endfor -%}
+        </div>
+      </div>
+      </div>
+    {%- endif -%}
   {%- endif -%}
 
   <!-- ======== LOWER CONTENT ======== -->
@@ -2223,6 +3001,95 @@
         </div>
       {%- endif -%}
     {%- endif -%}
+  {%- endif -%}
+
+  <!-- ======== RECENTLY VIEWED ======== -->
+  {%- if section.settings.show_recently_viewed -%}
+    <div class="tp-related" id="tp-recent" hidden>
+      <h2 class="tp-related__heading">
+        <span class="tp-related__heading-plain">Recently&nbsp;</span>
+        <span class="tp-related__heading-hl">
+          Viewed
+          <svg class="tp-related__heading-line" viewBox="0 0 300 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M4 10 C40 5 80 12 140 7 C200 2 240 11 296 8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </h2>
+      <ul class="plt-grid" role="list" id="tp-recent-grid"></ul>
+    </div>
+
+    <script>
+      (function () {
+        var KEY = 'tcRecentlyViewed';
+        var MAX = 12;
+        var SHOW = 4;
+        var SHOP_CURRENCY = {{ shop.currency | json }};
+        var current = {
+          handle: {{ tp_product.handle | json }},
+          url: {{ tp_product.url | json }},
+          title: {{ tp_product.title | json }},
+          {%- if tp_product.featured_image -%}
+            img: {{ tp_product.featured_image | image_url: width: 600 | json }},
+            imgAlt: {{ tp_product.featured_image.alt | default: tp_product.title | json }},
+          {%- else -%}
+            img: null,
+            imgAlt: '',
+          {%- endif -%}
+          priceCents: {{ tp_product.selected_or_first_available_variant.price | json }},
+          compareCents: {{ tp_product.selected_or_first_available_variant.compare_at_price | default: 0 | json }}
+        };
+
+        function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+        function save(list) { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {} }
+
+        // Products viewed before this visit (excluding the one on screen).
+        var items = load().filter(function (it) { return it && it.handle && it.handle !== current.handle; }).slice(0, SHOW);
+
+        // Record the current product at the front of the list.
+        var list = load().filter(function (it) { return it && it.handle && it.handle !== current.handle; });
+        list.unshift(current);
+        save(list.slice(0, MAX));
+
+        if (!items.length) return;
+
+        // Display-only currency conversion — same official Shopify.currency.rate
+        // pattern used by the free-shipping bars and announcement bar.
+        function money(cents) {
+          var js = window.Shopify || {};
+          var rate = parseFloat((js.currency && js.currency.rate) || 1) || 1;
+          var active = (js.currency && js.currency.active) || SHOP_CURRENCY;
+          var amount = (cents / 100) * rate;
+          try {
+            return new Intl.NumberFormat(document.documentElement.lang || 'en', { style: 'currency', currency: active }).format(amount);
+          } catch (e) { return amount.toFixed(2) + ' ' + active; }
+        }
+        function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML.replace(/"/g, '&quot;'); }
+
+        var chevron = '<svg aria-hidden="true" focusable="false" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+
+        document.getElementById('tp-recent-grid').innerHTML = items.map(function (it) {
+          var sale = it.compareCents > it.priceCents;
+          return '<li class="plt-card">' +
+            '<div class="plt-card__media-wrap">' +
+              '<a href="' + esc(it.url) + '" class="plt-card__media-link" aria-hidden="true" tabindex="-1">' +
+                (it.img ? '<img class="plt-card__img" src="' + esc(it.img) + '" alt="' + esc(it.imgAlt) + '" loading="lazy" width="600" height="600">' : '') +
+              '</a>' +
+              (sale ? '<div class="plt-badge-group"><span class="plt-sale-badge">SALE</span></div>' : '') +
+            '</div>' +
+            '<div class="plt-card__body">' +
+              '<a href="' + esc(it.url) + '" class="plt-card__title-link"><h3 class="plt-card__title">' + esc(it.title) + '</h3></a>' +
+              '<div class="plt-card__price">' +
+                (sale
+                  ? '<span class="plt-card__price-sale">' + money(it.priceCents) + '</span><span class="plt-card__price-compare">' + money(it.compareCents) + '</span>'
+                  : '<span class="plt-card__price-reg">' + money(it.priceCents) + '</span>') +
+              '</div>' +
+              '<a href="' + esc(it.url) + '" class="plt-card__btn">Shop Now' + chevron + '</a>' +
+            '</div>' +
+          '</li>';
+        }).join('');
+        document.getElementById('tp-recent').hidden = false;
+      })();
+    </script>
   {%- endif -%}
 
   <!-- ======== FAQ ======== -->
@@ -2982,6 +3849,18 @@ import { CartLinesUpdateEvent } from '@shopify/events';
 
     { "type": "header", "content": "Related Products" },
     { "type": "checkbox", "id": "show_related", "label": "Show related products", "default": true },
+    { "type": "checkbox", "id": "show_recently_viewed", "label": "Show recently viewed products", "default": true },
+
+    { "type": "header", "content": "Flagship sections", "info": "UGC videos, comparison table, before/after and review blocks render on any product whose template contains those blocks. Give each flagship product its own template (Admin → Product → Theme template) so each has its own content." },
+    { "type": "text", "id": "ugc_heading_plain", "label": "Videos heading — plain part", "default": "See Why Pet Parents Are" },
+    { "type": "text", "id": "ugc_heading_hl", "label": "Videos heading — highlighted", "default": "OBSESSED" },
+    { "type": "text", "id": "cmp_heading_plain", "label": "Comparison heading — plain part", "default": "Why Pet Parents Choose" },
+    { "type": "text", "id": "cmp_heading_hl", "label": "Comparison heading — highlighted", "default": "Tailand" },
+    { "type": "text", "id": "cmp_col_ours", "label": "Comparison column 1 (yours)", "default": "Tailand" },
+    { "type": "text", "id": "cmp_col_alt1", "label": "Comparison column 2", "default": "Other Brands" },
+    { "type": "text", "id": "cmp_col_alt2", "label": "Comparison column 3", "default": "Cheap Alternatives" },
+    { "type": "text", "id": "rev_heading_plain", "label": "Reviews heading — plain part", "default": "Pets Living" },
+    { "type": "text", "id": "rev_heading_hl", "label": "Reviews heading — highlighted", "default": "Their Best Life" },
     { "type": "text", "id": "related_heading", "label": "Related heading — plain part", "default": "You May" },
     { "type": "text", "id": "related_heading_highlight", "label": "Related heading — highlighted (underlined)", "default": "Also Like" },
     { "type": "collection", "id": "related_collection", "label": "Related products collection", "info": "Leave blank to use the product's own collection." },
@@ -3044,6 +3923,47 @@ import { CartLinesUpdateEvent } from '@shopify/events';
       "settings": [
         { "type": "text", "id": "question", "label": "Question", "default": "How long does shipping take?" },
         { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Orders are typically delivered within 3–7 business days.</p>" }
+      ]
+    },
+    {
+      "type": "ugc_video",
+      "name": "UGC Video (flagship)",
+      "settings": [
+        { "type": "video", "id": "video", "label": "Video", "info": "Vertical 9:16 works best. Only shows on products tagged 'main-product'." }
+      ]
+    },
+    {
+      "type": "compare_row",
+      "name": "Compare Row (flagship)",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Feature", "default": "Pet-safe materials" },
+        { "type": "checkbox", "id": "ours", "label": "Your product has it", "default": true },
+        { "type": "checkbox", "id": "alt1", "label": "Column 2 has it", "default": false },
+        { "type": "checkbox", "id": "alt2", "label": "Column 3 has it", "default": false }
+      ]
+    },
+    {
+      "type": "review_photo",
+      "name": "Review Photo (flagship)",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Customer photo" },
+        { "type": "text", "id": "name", "label": "Customer name" },
+        { "type": "textarea", "id": "quote", "label": "Short quote (optional)" },
+        { "type": "range", "id": "rating", "label": "Rating", "min": 1, "max": 5, "step": 1, "default": 5 }
+      ]
+    },
+    {
+      "type": "before_after",
+      "name": "Before/After (flagship)",
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow (small label)" },
+        { "type": "text", "id": "title", "label": "Heading", "default": "See the Difference" },
+        { "type": "richtext", "id": "text", "label": "Text" },
+        { "type": "image_picker", "id": "image_before", "label": "Left image" },
+        { "type": "text", "id": "label_before", "label": "Left label", "default": "Before" },
+        { "type": "image_picker", "id": "image_after", "label": "Right image" },
+        { "type": "text", "id": "label_after", "label": "Right label", "default": "After" },
+        { "type": "range", "id": "initial_position", "label": "Initial slider position", "info": "How much of the left image shows on load.", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 50 }
       ]
     }
   ],

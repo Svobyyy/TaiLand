@@ -166,9 +166,9 @@
                       {%- if product.featured_image -%}
                         {%- assign tc_img_alt = product.featured_image.alt | default: product.title | escape -%}
                         {%- if forloop.first -%}
-                          {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'eager', fetchpriority: 'high', width: 600, height: 600 -}}
+                          {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'eager', fetchpriority: 'high', width: 600, height: 600, widths: '200, 300, 450, 600', sizes: '(max-width: 749px) 44vw, (max-width: 1199px) 31vw, 280px' -}}
                         {%- else -%}
-                          {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'lazy', width: 600, height: 600 -}}
+                          {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'lazy', width: 600, height: 600, widths: '200, 300, 450, 600', sizes: '(max-width: 749px) 44vw, (max-width: 1199px) 31vw, 280px' -}}
                         {%- endif -%}
                       {%- else -%}
                         <div class="tc-card__img tc-card__img--placeholder" aria-hidden="true">

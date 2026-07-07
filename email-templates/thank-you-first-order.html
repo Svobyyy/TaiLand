@@ -1,0 +1,80 @@
+<!-- Tailand — "Thank you!" (sent after customer's FIRST order) — paste into that message's Custom Liquid block -->
+<!-- Subject suggestion: Thank you for your first order! 🐾 -->
+<!-- Preview text suggestion: Welcome to the Tailand family. -->
+<!--
+  Uses customer.first_name and customer.last_order — the universal Liquid
+  variables documented as available on ALL Shopify Messaging templates:
+  https://help.shopify.com/en/manual/promoting-marketing/create-marketing/shopify-messaging/email/create-email/custom-liquid
+  customer.last_order.name (order number) is used defensively — if that
+  exact field isn't right, the line silently doesn't render, everything
+  else still works.
+  No logo, no social icons, no address in this file — Shopify's native
+  Logo / Social Icons / Footer blocks already provide those around this
+  Custom Liquid card (same lesson as the abandoned-cart/checkout templates).
+  No discount code here on purpose — this is a thank-you email, not a promo.
+-->
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">Welcome to the Tailand family.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFF4D9;margin:0;padding:0;">
+  <tr>
+    <td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+        <!-- Card -->
+        <tr>
+          <td style="background-color:#ffffff;border:3px solid #2B1B12;border-radius:20px;padding:36px 32px;text-align:center;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td align="center" style="font-family:Arial,Helvetica,sans-serif;">
+
+                  <p style="margin:0 0 6px;font-size:14px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:#EE7B28;">Order confirmed{% if customer.last_order.name %} &middot; {{ customer.last_order.name }}{% endif %}</p>
+
+                  <h1 style="margin:0 0 14px;font-size:28px;line-height:1.25;color:#2B1B12;">
+                    {% if customer.first_name %}Thank You, {{ customer.first_name }}!{% else %}Thank You for Shopping With Us!{% endif %}
+                  </h1>
+
+                  <!-- Lifestyle photo — swap for any product/pet photo you like -->
+                  <img src="https://tailand.store/cdn/shop/files/hf_20260622_002639_40ae7abb-421c-46a9-b951-af28f6fd913e.png?width=600" width="536" alt="Happy dog with a Tailand toy" style="display:block;width:100%;max-width:536px;height:auto;border:3px solid #2B1B12;border-radius:16px;margin:0 0 24px;">
+
+                  <p style="margin:0 0 14px;font-size:16px;line-height:1.6;color:#2B1B12;">
+                    Welcome to the Tailand family! We're so excited to have you and your pet(s) with
+                    us. Your order is on its way, and we hope it brings a whole lot of tail-wagging
+                    (or purring) joy.
+                  </p>
+
+                  <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#2B1B12;">
+                    Got a question before it arrives? Just reply to this email &mdash;
+                    a real pet person will help, not a bot.
+                  </p>
+
+                  <!-- Button -->
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 8px;">
+                    <tr>
+                      <td align="center" style="background-color:#5BB870;border:3px solid #2B1B12;border-radius:14px;">
+                        <a href="https://tailand.store"
+                           style="display:inline-block;padding:14px 36px;font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:bold;color:#ffffff;text-decoration:none;">
+                          Visit Store &rarr;
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td align="center" style="padding:24px 12px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#2B1B12;">
+            Thanks again for choosing Tailand. 🐾<br>
+            <a href="{{ unsubscribe_url }}" style="color:#2B1B12;opacity:0.6;text-decoration:underline;">{{ unsubscribe_link }}</a>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+{{ open_tracking_block }}

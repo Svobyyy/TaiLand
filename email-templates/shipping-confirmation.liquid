@@ -1,0 +1,120 @@
+{% comment %}
+  Tailand — Shipping confirmation
+  Paste into: Shopify Admin → Settings → Notifications → Customer notifications → Shipping confirmation
+  ("Revert to default" restores Shopify's original if ever needed)
+  Subject suggestion: It's on the way! 🚚🐾 ({{ name }})
+{% endcomment %}
+
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">Your Tailand order has shipped — track it inside.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFF4D9;margin:0;padding:0;">
+  <tr>
+    <td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+        <!-- Logo -->
+        <tr>
+          <td align="center" style="padding:0 0 24px;">
+            <img src="https://tailand.store/cdn/shop/files/logo_main.png?width=300" width="150" alt="{{ shop.name }}" style="display:block;width:150px;height:auto;border:0;">
+          </td>
+        </tr>
+
+        <!-- Main card -->
+        <tr>
+          <td style="background-color:#ffffff;border:3px solid #2B1B12;border-radius:20px;padding:36px 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,Helvetica,sans-serif;">
+
+              <tr>
+                <td align="center">
+                  <p style="margin:0 0 6px;font-size:14px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:#EE7B28;">Order {{ name }} has shipped 🚚</p>
+                  <h1 style="margin:0 0 14px;font-size:28px;line-height:1.25;color:#2B1B12;">
+                    {% if customer.first_name %}It's on the way, {{ customer.first_name }}!{% else %}It's on the way!{% endif %}
+                  </h1>
+                  <p style="margin:0 0 26px;font-size:16px;line-height:1.6;color:#2B1B12;">
+                    Your package just left on its journey. Time to practice your
+                    "who's a good boy" voice &mdash; you'll need it soon.
+                  </p>
+                </td>
+              </tr>
+
+              <!-- Track button -->
+              <tr>
+                <td align="center" style="padding:0 0 18px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td align="center" style="background-color:#5BB870;border:3px solid #2B1B12;border-radius:14px;">
+                        <a href="{{ order_status_url }}" style="display:inline-block;padding:13px 34px;font-size:16px;font-weight:bold;color:#ffffff;text-decoration:none;">Track my order &rarr;</a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <!-- Tracking numbers (if the carrier provided any) -->
+              {% if fulfillment.tracking_numbers.size > 0 %}
+              <tr>
+                <td align="center" style="padding:0 0 24px;font-size:13px;line-height:1.7;color:#2B1B12;">
+                  {% for tracking_number in fulfillment.tracking_numbers %}
+                    Tracking number:
+                    {% if fulfillment.tracking_urls[forloop.index0] %}
+                      <a href="{{ fulfillment.tracking_urls[forloop.index0] }}" style="color:#EE7B28;font-weight:bold;">{{ tracking_number }}</a>
+                    {% else %}
+                      <strong>{{ tracking_number }}</strong>
+                    {% endif %}
+                    {% if fulfillment.tracking_company %} ({{ fulfillment.tracking_company }}){% endif %}<br>
+                  {% endfor %}
+                </td>
+              </tr>
+              {% endif %}
+
+              <!-- Items in this shipment -->
+              <tr>
+                <td style="border-top:2px solid #FFF4D9;padding:20px 0 4px;">
+                  <p style="margin:0 0 12px;font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:0.5px;color:#EE7B28;">In this shipment</p>
+                  {% for line in fulfillment.fulfillment_line_items %}
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 14px;">
+                    <tr>
+                      <td width="84" valign="top" style="padding-right:14px;">
+                        {% if line.line_item.image %}
+                          <img src="{{ line.line_item | img_url: 'compact_cropped' }}" width="72" height="72" alt="{{ line.line_item.title }}" style="display:block;width:72px;height:72px;object-fit:cover;border:2px solid #2B1B12;border-radius:12px;">
+                        {% endif %}
+                      </td>
+                      <td valign="middle" align="left">
+                        <p style="margin:0 0 3px;font-size:15px;font-weight:bold;line-height:1.35;color:#2B1B12;">{{ line.line_item.title }}</p>
+                        {% if line.line_item.variant.title and line.line_item.variant.title != 'Default Title' %}
+                          <p style="margin:0 0 3px;font-size:13px;color:#2B1B12;opacity:0.7;">{{ line.line_item.variant.title }}</p>
+                        {% endif %}
+                        <p style="margin:0;font-size:13px;color:#2B1B12;opacity:0.7;">Qty: {{ line.quantity }}</p>
+                      </td>
+                    </tr>
+                  </table>
+                  {% endfor %}
+                </td>
+              </tr>
+
+              <!-- Delivery address -->
+              {% if shipping_address %}
+              <tr>
+                <td style="border-top:2px solid #FFF4D9;padding:18px 0 0;font-size:13px;line-height:1.6;color:#2B1B12;">
+                  <p style="margin:0 0 4px;font-weight:bold;text-transform:uppercase;font-size:12px;letter-spacing:0.5px;color:#EE7B28;">Delivering to</p>
+                  {{ shipping_address | format_address }}
+                </td>
+              </tr>
+              {% endif %}
+
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td align="center" style="padding:24px 12px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#2B1B12;">
+            You can also track any order at <a href="https://tailand.store/pages/tracking" style="color:#EE7B28;font-weight:bold;">tailand.store/pages/tracking</a><br>
+            Questions? Just reply to this email &mdash; a real pet person answers. 🐾
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>

@@ -164,10 +164,14 @@
                 <a href="{{ product.url }}" class="tc-card__media-link" tabindex="-1" aria-hidden="true">
                   {%- if product.featured_image -%}
                     {%- assign tc_img_alt = product.featured_image.alt | default: product.title | escape -%}
+                    {%- comment -%}
+                      srcset lets the browser pick the right size: ~2-col mobile grid needs
+                      ~450px at high-DPR, desktop grid ~600px — instead of always 600px.
+                    {%- endcomment -%}
                     {%- if forloop.first -%}
-                      {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'eager', fetchpriority: 'high', width: 600, height: 600 -}}
+                      {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'eager', fetchpriority: 'high', width: 600, height: 600, widths: '200, 300, 450, 600', sizes: '(max-width: 749px) 44vw, (max-width: 1199px) 31vw, 280px' -}}
                     {%- else -%}
-                      {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'lazy', width: 600, height: 600 -}}
+                      {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'lazy', width: 600, height: 600, widths: '200, 300, 450, 600', sizes: '(max-width: 749px) 44vw, (max-width: 1199px) 31vw, 280px' -}}
                     {%- endif -%}
                   {%- else -%}
                     <div class="tc-card__img tc-card__img--placeholder" aria-hidden="true">

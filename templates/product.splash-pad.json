@@ -12,6 +12,33 @@
     "tailand_product_main": {
       "type": "tailand-product",
       "blocks": {
+        "ugc_video_QaXf7b": {
+          "type": "ugc_video",
+          "settings": {
+            "video": "shopify://files/videos/1 (1).mp4"
+          }
+        },
+        "ugc_video_FdFLX4": {
+          "type": "ugc_video",
+          "settings": {
+            "video": "shopify://files/videos/video (1).mp4"
+          }
+        },
+        "review_photo_RNkDUK": {
+          "type": "review_photo",
+          "settings": {
+            "image": "shopify://shop_images/fgnfgbfdgb.webp",
+            "name": "RAMI AL TORK",
+            "quote": "fugias ja mam boren",
+            "rating": 5
+          }
+        },
+        "ugc_video_8knyH6": {
+          "type": "ugc_video",
+          "settings": {
+            "video": "shopify://files/videos/cjVideos.mp4"
+          }
+        },
         "faq_1": {
           "type": "faq_item",
           "settings": {
@@ -53,20 +80,88 @@
             "question": "What if my pet does not like the product?",
             "answer": "<p>Contact our team and we will do our best to find a solution that makes both you and your pet happy.</p>"
           }
+        },
+        "cmp_1": {
+          "type": "compare_row",
+          "settings": {
+            "title": "Durable Pet-Safe Material",
+            "ours": true,
+            "alt1": false,
+            "alt2": false
+          }
+        },
+        "cmp_2": {
+          "type": "compare_row",
+          "settings": {
+            "title": "Non-Slip Base",
+            "ours": true,
+            "alt1": false,
+            "alt2": false
+          }
+        },
+        "cmp_3": {
+          "type": "compare_row",
+          "settings": {
+            "title": "Adjustable Water Pressure",
+            "ours": true,
+            "alt1": false,
+            "alt2": false
+          }
+        },
+        "cmp_4": {
+          "type": "compare_row",
+          "settings": {
+            "title": "Easy Setup & Drain",
+            "ours": true,
+            "alt1": true,
+            "alt2": false
+          }
+        },
+        "cmp_5": {
+          "type": "compare_row",
+          "settings": {
+            "title": "30-Day Returns",
+            "ours": true,
+            "alt1": false,
+            "alt2": false
+          }
+        },
+        "ba_1": {
+          "type": "before_after",
+          "settings": {
+            "eyebrow": "See the difference",
+            "title": "From Bored to Obsessed",
+            "text": "<p>Drag the slider and see the difference for yourself.</p>",
+            "image_before": "shopify://shop_images/hf_20260622_163052_97a69b1a-027a-4ecb-853b-8ba79ad8795d.png",
+            "label_before": "Before",
+            "image_after": "shopify://shop_images/hf_20260622_002639_40ae7abb-421c-46a9-b951-af28f6fd913e.png",
+            "label_after": "After",
+            "initial_position": 35
+          }
         }
       },
       "block_order": [
+        "ugc_video_QaXf7b",
+        "ugc_video_FdFLX4",
+        "review_photo_RNkDUK",
+        "ugc_video_8knyH6",
         "faq_1",
         "faq_2",
         "faq_3",
         "faq_4",
         "faq_5",
-        "faq_6"
+        "faq_6",
+        "cmp_1",
+        "cmp_2",
+        "cmp_3",
+        "cmp_4",
+        "cmp_5",
+        "ba_1"
       ],
       "settings": {
         "show_paw_rating": true,
         "paw_rating_score": 5,
-        "paw_rating_text": "4.8 • 120 happy pets",
+        "paw_rating_text": "4.8 • 254 happy pets",
         "subtitle": "",
         "show_back_in_stock": true,
         "show_sale_badge": true,
