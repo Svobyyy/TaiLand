@@ -10,6 +10,7 @@
 {
   "current": {
     "logo": "shopify://shop_images/logo_main.png",
+    "favicon": "shopify://shop_images/tailand-favicon.png",
     "logo_height": 88,
     "logo_height_mobile": 55,
     "page_text_color": "{{ settings.color_palette.foreground }}",
@@ -120,7 +121,7 @@
     "fbt_toy_1": "soft-knot-cat-kicker-toy-plush-chew-bite-toy-for-cats-and-small-dogs",
     "fbt_toy_2": "squeaky-plush-dog-toy-cute-corduroy-donkey-chew-toy-for-puppies-small-dogs-squeaker-inside",
     "fbt_toy_3": "durable-dog-chew-toy-tough-tpr-bone-for-aggressive-chewers-teeth-cleaning-teething-medium-large-dogs",
-    "fbt_cat_1": "2-in-1-plush-cat-cave-bed-cozy-warm-calming-donut-bed-hooded-hideaway-for-cats-small-dogs",
+    "fbt_cat_1": "2-in-1-plush-cat-cave-bed-cozy-warm-calming-donut-bed-hooded-hideaway-for-cats",
     "fbt_cat_2": "2-in-1-interactive-cat-toy-self-spinning-feather-teaser-rolling-ball-track-for-bored-indoor-cats",
     "fbt_cat_3": "soft-knot-cat-kicker-toy-plush-chew-bite-toy-for-cats-and-small-dogs",
     "fbt_dog_1": "no-spill-dog-water-bowl-anti-splash-floating-bowl-for-dogs-cats-mess-free-1-5l-home-car",

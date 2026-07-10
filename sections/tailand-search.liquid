@@ -73,13 +73,13 @@
       </a>
       <a href="/collections/dogs" class="tc-tab">
         <span class="tc-tab__icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="17" rx="5.5" ry="5"/><ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/><ellipse cx="9" cy="7.5" rx="2" ry="2.8"/><ellipse cx="15" cy="7.5" rx="2" ry="2.8"/></svg>
+          {% render 'icon-dog', width: 20, height: 20 %}
         </span>
         <span class="tc-tab__label">Dogs</span>
       </a>
       <a href="/collections/cats" class="tc-tab">
         <span class="tc-tab__icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V3l4 3h.5a7 7 0 0 1 7 0H16L20 3v3c2 1.5 4 3.5 4 7 0 4-3 8-8.5 8S4 18 4 14c0-3.5 1.5-6 3-7z"/><path d="M9.5 14.5h.01M14.5 14.5h.01"/></svg>
+          {% render 'icon-cat', width: 20, height: 20 %}
         </span>
         <span class="tc-tab__label">Cats</span>
       </a>
@@ -149,74 +149,7 @@
             {%- for result in search.results -%}
               {%- if result.object_type == 'product' -%}
                 {%- assign product = result -%}
-                {%- assign tc_has_sale = false -%}
-                {%- if product.compare_at_price > product.price -%}
-                  {%- assign tc_has_sale = true -%}
-                {%- endif -%}
-                {%- assign tc_dual = false -%}
-                {%- if tc_show_badges and tc_has_sale and tc_show_best -%}
-                  {%- assign tc_dual = true -%}
-                {%- endif -%}
-
-                <li class="tc-card">
-
-                  <!-- Image + badges -->
-                  <div class="tc-card__media-wrap">
-                    <a href="{{ product.url }}" class="tc-card__media-link" tabindex="-1" aria-hidden="true">
-                      {%- if product.featured_image -%}
-                        {%- assign tc_img_alt = product.featured_image.alt | default: product.title | escape -%}
-                        {%- if forloop.first -%}
-                          {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'eager', fetchpriority: 'high', width: 600, height: 600, widths: '200, 300, 450, 600', sizes: '(max-width: 749px) 44vw, (max-width: 1199px) 31vw, 280px' -}}
-                        {%- else -%}
-                          {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'lazy', width: 600, height: 600, widths: '200, 300, 450, 600', sizes: '(max-width: 749px) 44vw, (max-width: 1199px) 31vw, 280px' -}}
-                        {%- endif -%}
-                      {%- else -%}
-                        <div class="tc-card__img tc-card__img--placeholder" aria-hidden="true">
-                          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
-                            <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
-                            <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
-                            <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
-                            <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
-                          </svg>
-                        </div>
-                      {%- endif -%}
-                    </a>
-
-                    {%- if tc_show_badges -%}
-                      <div class="tc-badge-group{%- if tc_dual %} tc-badge-group--dual{%- endif %}">
-                        {%- if tc_has_sale -%}
-                          <span class="tc-sale-badge" aria-label="Ends soon">ENDS SOON</span>
-                        {%- endif -%}
-                        {%- if tc_show_best -%}
-                          <span class="tc-best-badge" aria-label="{{ tc_best_text | escape }}">{{ tc_best_text | escape }}</span>
-                        {%- endif -%}
-                      </div>
-                    {%- endif -%}
-                  </div>
-
-                  <!-- Card body -->
-                  <div class="tc-card__body">
-                    <a href="{{ product.url }}" class="tc-card__title-link">
-                      <h2 class="tc-card__title">{{ product.title | escape }}</h2>
-                    </a>
-
-                    <div class="tc-card__price">
-                      {%- if tc_has_sale -%}
-                        <span class="tc-card__price-sale">{{ product.price | money }}</span>
-                        <span class="tc-card__price-compare">{{ product.compare_at_price | money }}</span>
-                      {%- else -%}
-                        <span class="tc-card__price-reg">{{ product.price | money }}</span>
-                      {%- endif -%}
-                    </div>
-
-                    <a href="{{ product.url }}" class="tc-card__btn">
-                      {{- tc_btn | escape -}}
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="9 18 15 12 9 6"/></svg>
-                    </a>
-                  </div>
-
-                </li>
+                {% render 'tailand-product-card', product: product, tc_show_badges: tc_show_badges, tc_show_best: tc_show_best, tc_best_text: tc_best_text, tc_btn: tc_btn, eager: forloop.first %}
               {%- endif -%}
             {%- endfor -%}
           </ul>
@@ -264,7 +197,11 @@
 {% render 'tailand-grid-styles' %}
 
 {% stylesheet %}
-/* ── Search form ── */
+/* =========================================================
+   Tailand Search Page — search-exclusive rules only (.tc-search-form*);
+   shared card/hero/tabs/grid/empty-state/query-badge CSS lives in
+   snippets/tailand-grid-styles.liquid, rendered above.
+   ========================================================= */
 
 .tc-search-form {
   display: flex;
@@ -331,76 +268,10 @@
   box-shadow: 2px 2px 0 var(--pc-text, #2B1B12);
 }
 
-/* ── Search-specific text styles ── */
-
-.tc-query-badge {
-  display: inline-flex;
-  align-items: center;
-  background: var(--pc-orange, #EE7B28);
-  color: #fff;
-  border: 2px solid var(--pc-text, #2B1B12);
-  border-radius: 50px;
-  box-shadow: 3px 3px 0 var(--pc-text, #2B1B12);
-  padding: 0.12em 0.65em 0.18em;
-  font-weight: 700;
-  font-size: 0.78em;
-  vertical-align: middle;
-  white-space: nowrap;
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-family: 'Nunito Sans', sans-serif;
-  letter-spacing: 0.01em;
-  line-height: 1.4;
-}
-
-.tc-search-meta {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 1rem;
-  color: var(--pc-text, #2B1B12);
-  opacity: 0.6;
-  margin: 8px auto 0;
-  font-weight: 600;
-}
-
-.tc-empty__heading {
-  font-family: 'Fredoka', sans-serif;
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--pc-text, #2B1B12);
-  margin: 0;
-  line-height: 1.4;
-}
-
-.tc-empty__heading .tc-query-badge {
-  font-size: 0.65em;
-  vertical-align: middle;
-}
-
-.tc-empty__actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 4px;
-}
-
-.tc-empty__btn--secondary {
-  background: var(--pc-white, #fff);
-  color: var(--pc-text, #2B1B12);
-}
-
-.tc-empty__btn--secondary:hover {
-  background: var(--pc-text, #2B1B12);
-  color: var(--pc-white, #fff);
-}
-
 @media screen and (max-width: 749px) {
   .tc-search-form { gap: 8px; margin-bottom: 28px; }
   .tc-search-form__btn span { display: none; }
   .tc-search-form__btn { padding: 13px 16px; }
-  .tc-empty__heading { font-size: 1.35rem; }
-  .tc-query-badge { max-width: 200px; }
 }
 {% endstylesheet %}
 

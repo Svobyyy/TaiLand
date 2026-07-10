@@ -117,9 +117,15 @@
     badge_setting: cup_badge_setting, btn_text: cup_btn, decline_text: cup_decline -%}
 {%- endif -%}
 
-<script>
+<script type="module">
+import { lockScroll, unlockScroll } from '@theme/utilities';
 (function () {
   'use strict';
+
+  /* Debug logging only when ?cup-debug is in the URL — keeps the production
+     console clean and skips the string building on every cart interaction. */
+  var CUP_DEBUG = /[?&]cup-debug/.test(location.search);
+  function cupLog() { if (CUP_DEBUG) console.log.apply(console, arguments); }
 
   /* ── tag cache: seeded from Liquid (cart at page-load time) ─────────
      { productId: ['tag1', 'tag2', ...] }
@@ -149,10 +155,10 @@
   });
 
   if (Object.keys(dialogs).length === 0) {
-    console.log('[CUP] no dialogs rendered — all slots unconfigured or sold out');
+    cupLog('[CUP] no dialogs rendered — all slots unconfigured or sold out');
     return;
   }
-  console.log('[CUP] ready | slots:', Object.keys(dialogs).join(', '));
+  cupLog('[CUP] ready | slots:', Object.keys(dialogs).join(', '));
 
   var activeDialog = null;
   var DECLINE_KEY  = 'tailand_cup_declined';
@@ -182,7 +188,7 @@
           tagCache[item.product_id] = (p.tags || []).map(function (t) {
             return t.toLowerCase().trim();
           });
-          console.log('[CUP] cached tags for', item.handle, ':', tagCache[item.product_id]);
+          cupLog('[CUP] cached tags for', item.handle, ':', tagCache[item.product_id]);
         })
         .catch(function () {
           tagCache[item.product_id] = []; /* empty on error so we don't retry */
@@ -207,7 +213,7 @@
       inCartVariants[String(item.variant_id)]  = true;
     });
 
-    console.log('[CUP] cart tags:', Object.keys(allTags).join(', ') || '(none)');
+    cupLog('[CUP] cart tags:', Object.keys(allTags).join(', ') || '(none)');
 
     for (var i = 0; i < RULES.length; i++) {
       var rule   = RULES[i];
@@ -225,25 +231,25 @@
 
       /* skip if this upsell product or variant is already in the cart */
       if (inCartProducts[dialog.dataset.productId]) {
-        console.log('[CUP] skip rule', rule.key, '— product already in cart');
+        cupLog('[CUP] skip rule', rule.key, '— product already in cart');
         continue;
       }
       if (inCartVariants[dialog.dataset.variantId]) {
-        console.log('[CUP] skip rule', rule.key, '— variant already in cart');
+        cupLog('[CUP] skip rule', rule.key, '— variant already in cart');
         continue;
       }
 
       /* skip if customer declined this variant during this session */
       if (isDeclined(dialog.dataset.variantId)) {
-        console.log('[CUP] skip rule', rule.key, '— declined this session');
+        cupLog('[CUP] skip rule', rule.key, '— declined this session');
         continue;
       }
 
-      console.log('[CUP] matched rule:', rule.key);
+      cupLog('[CUP] matched rule:', rule.key);
       return dialog;
     }
 
-    console.log('[CUP] no rule matched — skip popup');
+    cupLog('[CUP] no rule matched — skip popup');
     return null;
   }
 
@@ -252,7 +258,7 @@
     if (!dialog || dialog.open) return;
     activeDialog = dialog;
     dialog.showModal();
-    document.body.style.overflow = 'hidden';
+    lockScroll(dialog);
     var btn = dialog.querySelector('button:not([disabled])');
     if (btn) setTimeout(function () { btn.focus(); }, 50);
   }
@@ -277,7 +283,7 @@
     var addBtn    = dialog.querySelector('.cup-add-btn');
     var errorEl   = dialog.querySelector('.cup-error');
 
-    console.log('[CUP] adding variantId:', variantId, 'rule:', dialog.dataset.rule);
+    cupLog('[CUP] adding variantId:', variantId, 'rule:', dialog.dataset.rule);
     addBtn.disabled    = true;
     addBtn.textContent = 'Adding…';
     errorEl.hidden     = true;
@@ -292,14 +298,14 @@
     .then(function (cartData) {
       updateBadge(cartData.item_count);
       addBtn.textContent = 'Added ✓';
-      console.log('[CUP] add success — going to checkout in 700ms');
+      cupLog('[CUP] add success — going to checkout in 700ms');
       setTimeout(goCheckout, 700);
     })
     .catch(function () {
       addBtn.disabled    = false;
       addBtn.textContent = addBtn.dataset.originalText;
       errorEl.hidden     = false;
-      console.warn('[CUP] add failed');
+      cupLog('[CUP] add failed');
     });
   }
 
@@ -327,7 +333,7 @@
     var drawerDialog = cartDrawerEl ? cartDrawerEl.querySelector('dialog') : null;
     if (!drawerDialog || !drawerDialog.hasAttribute('open')) { cb(); return; }
 
-    console.log('[CUP] closing cart drawer first');
+    cupLog('[CUP] closing cart drawer first');
     var proceeded    = false;
 
     function proceed() {
@@ -356,7 +362,7 @@
     var el = dialogs[key];
 
     el.addEventListener('close', function () {
-      document.body.style.overflow = '';
+      unlockScroll(el);
       if (activeDialog === el) activeDialog = null;
     });
     el.addEventListener('cancel', function (e) {
@@ -413,13 +419,13 @@
 
     e.preventDefault();
     e.stopImmediatePropagation();
-    console.log('[CUP] checkout intercepted — fetching cart');
+    cupLog('[CUP] checkout intercepted — fetching cart');
 
     fetch('/cart.js')
       .then(function (r) { return r.json(); })
       .then(function (cartData) {
         if (!cartData.items || cartData.items.length === 0) {
-          console.log('[CUP] cart empty — passing through');
+          cupLog('[CUP] cart empty — passing through');
           goCheckout();
           return;
         }
@@ -430,18 +436,18 @@
         });
       })
       .catch(function (err) {
-        console.warn('[CUP] cart fetch error — passing through', err);
+        cupLog('[CUP] cart fetch error — passing through', err);
         goCheckout();
       });
   }, true);
 
-  /* ── reset session flag + refresh tag cache on AJAX cart updates ── */
+  /* ── reset session flag on AJAX cart updates ──────────────────────
+     No cache warm-up here: the checkout intercept fetches /cart.js and
+     awaits refreshTagCache() itself before deciding, so prefetching on
+     every cart change only duplicated those requests. */
   ['CartLinesUpdateEvent', 'cart:updated', 'cart:refresh'].forEach(function (name) {
     document.addEventListener(name, function () {
       clearDeclined(); /* cart changed — allow fresh upsell attempts */
-      fetch('/cart.js')
-        .then(function (r) { return r.json(); })
-        .then(function (cartData) { refreshTagCache(cartData); });
     });
   });
 

@@ -314,7 +314,11 @@ class LocalizationFormComponent extends Component {
    */
   #changeCountryFocus(direction) {
     const { countryListItems } = this.refs;
-    const focusableItems = countryListItems.filter((item) => !item.hasAttribute('hidden'));
+    // offsetParent (not just the item's own [hidden]) excludes popular-country
+    // list items whose ANCESTOR (the popular-countries block) is hidden during
+    // an active search — those items keep their own hidden attr removed by
+    // filterCountries() but are not actually visible/focusable.
+    const focusableItems = countryListItems.filter((item) => !item.hasAttribute('hidden') && item.offsetParent !== null);
     const focusedItemIndex = focusableItems.findIndex((item) => item === document.activeElement);
     const focusedItem = focusableItems[focusedItemIndex];
     let itemToFocus;

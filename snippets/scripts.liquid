@@ -283,6 +283,42 @@
 ></script>
 
 <script>
+  /* Shared display-only currency helpers — single source for the JS-converter
+     pattern (window.Shopify.currency.rate/.active) previously copy-pasted into
+     the announcement bar, cart drawer free-shipping bar, and product-page
+     recently-viewed grid. Classic head script, so it exists before any of
+     those consumers run. */
+  window.tcCurrencyInfo = function () {
+    var js = window.Shopify || {};
+    return {
+      rate: parseFloat((js.currency && js.currency.rate) || 1) || 1,
+      active: (js.currency && js.currency.active) || {{ shop.currency | json }},
+    };
+  };
+  /* Format cents that are ALREADY in the active display currency (no rate math). */
+  window.tcFormatMoney = function (cents, opts) {
+    opts = opts || {};
+    var active = opts.currency || window.tcCurrencyInfo().active;
+    var amount = cents / 100;
+    try {
+      return new Intl.NumberFormat(document.documentElement.lang || 'en', {
+        style: 'currency',
+        currency: active,
+        minimumFractionDigits: opts.minDigits,
+        maximumFractionDigits: opts.maxDigits,
+      }).format(amount);
+    } catch (e) {
+      return amount.toFixed(2) + ' ' + active;
+    }
+  };
+  /* Convert base-currency (shop currency) cents to the active display currency and format. */
+  window.tcMoney = function (baseCents, opts) {
+    var info = window.tcCurrencyInfo();
+    return window.tcFormatMoney(Math.round(baseCents * info.rate), opts);
+  };
+</script>
+
+<script>
   const Theme = {
     translations: {
       placeholder_image: `{{ 'content.placeholder_image' | t }}`,

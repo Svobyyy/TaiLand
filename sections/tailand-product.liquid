@@ -62,9 +62,7 @@
   object-fit: contain;
   display: block;
   border-radius: 14px;
-  transition: opacity 0.2s ease;
 }
-.tp-gallery__main-img.tp-fade { opacity: 0; }
 
 .tp-gallery__badge {
   position: absolute;
@@ -667,7 +665,8 @@
   z-index: 2;
   pointer-events: none;
 }
-.plt-sale-badge {
+.plt-sale-badge,
+.plt-soldout-badge {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -687,8 +686,11 @@
   pointer-events: none;
   white-space: nowrap;
 }
+.plt-soldout-badge { background: var(--pc-text, #2B1B12); }
+.plt-card--soldout .plt-card__img { opacity: 0.55; }
 @media screen and (max-width: 749px) {
-  .plt-sale-badge { font-size: 0.82rem; padding: 6px 12px; top: 8px; left: 8px; }
+  .plt-sale-badge,
+  .plt-soldout-badge { font-size: 0.82rem; padding: 6px 12px; top: 8px; left: 8px; }
 }
 .plt-card__body {
   padding: 14px 16px 18px;
@@ -1939,11 +1941,33 @@
     "url": {{ request.origin | append: tp_product.url | json }},
     "priceCurrency": {{ cart.currency.iso_code | default: shop.currency | json }},
     "price": {{ tp_variant.price | divided_by: 100.0 | json }},
+    "priceValidUntil": "{{ 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d' }}",
     "availability": "https://schema.org/{% if tp_variant.available %}InStock{% else %}OutOfStock{% endif %}",
-    "itemCondition": "https://schema.org/NewCondition"
+    "itemCondition": "https://schema.org/NewCondition",
+    "hasMerchantReturnPolicy": {
+      "@type": "MerchantReturnPolicy",
+      "applicableCountry": ["US","CA","GB","AU","SK","CZ","DE","AT","FR","IT","ES","NL","BE","PL","IE"],
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 14,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/ReturnFeesCustomerResponsibility"
+    }
   }
 }
 </script>
+{%- if tp_product.collections.size > 0 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ request.origin | json }} },
+    { "@type": "ListItem", "position": 2, "name": {{ tp_product.collections.first.title | json }}, "item": {{ request.origin | append: tp_product.collections.first.url | json }} },
+    { "@type": "ListItem", "position": 3, "name": {{ tp_product.title | json }} }
+  ]
+}
+</script>
+{%- endif -%}
 
 <section id="tp-{{ section.id }}">
   {%- form 'product', tp_product, id: 'tp-form' -%}
@@ -2473,12 +2497,26 @@
     </div>
   {%- elsif tp_desc_rows -%}
     <div class="tp-feat">
+      {%- comment -%}
+        Feature-row images default to starting at the SECOND gallery image
+        (offset 1), so the hero image isn't repeated. The 'first-image-description'
+        product tag starts them at the first image (offset 0) instead.
+      {%- endcomment -%}
+      {%- assign tp_feat_img_offset = 1 -%}
+      {%- for _ft in tp_product.tags -%}
+        {%- assign _ft_lc = _ft | downcase -%}
+        {%- if _ft_lc == 'first-image-description' -%}
+          {%- assign tp_feat_img_offset = 0 -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
       {%- assign tp_desc_idx = 0 -%}
       {%- for tp_part in tp_desc_parts -%}
         {%- assign tp_part_clean = tp_part | strip -%}
         {%- if tp_part_clean == blank -%}{%- continue -%}{%- endif -%}
         {%- assign tp_desc_idx = tp_desc_idx | plus: 1 -%}
-        {%- assign tp_feat_img = tp_product.images[forloop.index] -%}
+        {%- assign tp_feat_img_idx = forloop.index0 | plus: tp_feat_img_offset -%}
+        {%- assign tp_feat_img = tp_product.images[tp_feat_img_idx] -%}
         {%- assign tp_row_reverse = false -%}
         {%- assign tp_mod = forloop.index0 | modulo: 2 -%}
         {%- if tp_mod == 1 -%}{%- assign tp_row_reverse = true -%}{%- endif -%}
@@ -3018,12 +3056,13 @@
       <ul class="plt-grid" role="list" id="tp-recent-grid"></ul>
     </div>
 
-    <script>
+    <script type="module">
+      import { RecentlyViewed } from '@theme/recently-viewed-products';
+
       (function () {
-        var KEY = 'tcRecentlyViewed';
-        var MAX = 12;
+        var DATA_KEY = 'tcRecentlyViewedData';
         var SHOW = 4;
-        var SHOP_CURRENCY = {{ shop.currency | json }};
+        var currentId = '{{ tp_product.id }}';
         var current = {
           handle: {{ tp_product.handle | json }},
           url: {{ tp_product.url | json }},
@@ -3036,58 +3075,128 @@
             imgAlt: '',
           {%- endif -%}
           priceCents: {{ tp_product.selected_or_first_available_variant.price | json }},
-          compareCents: {{ tp_product.selected_or_first_available_variant.compare_at_price | default: 0 | json }}
+          compareCents: {{ tp_product.selected_or_first_available_variant.compare_at_price | default: 0 | json }},
+          available: {{ tp_product.available | json }}
         };
 
-        function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
-        function save(list) { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {} }
+        function loadData() { try { return JSON.parse(localStorage.getItem(DATA_KEY)) || {}; } catch (e) { return {}; } }
+        function saveData(data) { try { localStorage.setItem(DATA_KEY, JSON.stringify(data)); } catch (e) {} }
 
-        // Products viewed before this visit (excluding the one on screen).
-        var items = load().filter(function (it) { return it && it.handle && it.handle !== current.handle; }).slice(0, SHOW);
+        // The shared RecentlyViewed class (assets/recently-viewed-products.js)
+        // is the single source of truth for which products were viewed and in
+        // what order; it's fed on every product page via snippets/scripts.liquid.
+        // This cache only stores the extra render fields (title/image/price)
+        // keyed by the same product id, pruned to match the shared list.
+        var data = loadData();
+        // Liquid just rendered this data — it counts as freshly fetched.
+        current.fetchedAt = Date.now();
+        data[currentId] = current;
 
-        // Record the current product at the front of the list.
-        var list = load().filter(function (it) { return it && it.handle && it.handle !== current.handle; });
-        list.unshift(current);
-        save(list.slice(0, MAX));
+        var viewedIds = RecentlyViewed.getProducts();
+        var keep = {};
+        viewedIds.concat([currentId]).forEach(function (id) {
+          if (data[id]) keep[id] = data[id];
+        });
+        saveData(keep);
+
+        var items = viewedIds
+          .filter(function (id) { return id !== currentId; })
+          .map(function (id) { return keep[id]; })
+          .filter(Boolean)
+          .slice(0, SHOW);
 
         if (!items.length) return;
 
-        // Display-only currency conversion — same official Shopify.currency.rate
-        // pattern used by the free-shipping bars and announcement bar.
-        function money(cents) {
-          var js = window.Shopify || {};
-          var rate = parseFloat((js.currency && js.currency.rate) || 1) || 1;
-          var active = (js.currency && js.currency.active) || SHOP_CURRENCY;
-          var amount = (cents / 100) * rate;
-          try {
-            return new Intl.NumberFormat(document.documentElement.lang || 'en', { style: 'currency', currency: active }).format(amount);
-          } catch (e) { return amount.toFixed(2) + ' ' + active; }
-        }
         function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML.replace(/"/g, '&quot;'); }
 
         var chevron = '<svg aria-hidden="true" focusable="false" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 
-        document.getElementById('tp-recent-grid').innerHTML = items.map(function (it) {
+        function cardHtml(it) {
           var sale = it.compareCents > it.priceCents;
-          return '<li class="plt-card">' +
+          // Only false means sold out — entries cached before the availability
+          // field existed are undefined and treated as available.
+          var soldOut = it.available === false;
+          // Cached URLs are the width=600 CDN variant; derive 300w for the
+          // srcset so phones (grid cell ~50vw) don't download the 600px file.
+          var imgHtml = '';
+          if (it.img) {
+            var srcsetAttr = '';
+            if (it.img.indexOf('width=600') !== -1) {
+              srcsetAttr = ' srcset="' + esc(it.img.replace('width=600', 'width=300')) + ' 300w, ' + esc(it.img) + ' 600w"' +
+                ' sizes="(max-width: 749px) calc(50vw - 20px), (max-width: 1199px) calc(33vw - 24px), 280px"';
+            }
+            imgHtml = '<img class="plt-card__img" src="' + esc(it.img) + '"' + srcsetAttr + ' alt="' + esc(it.imgAlt) + '" loading="lazy" width="600" height="600">';
+          }
+          return '<li class="plt-card' + (soldOut ? ' plt-card--soldout' : '') + '">' +
             '<div class="plt-card__media-wrap">' +
               '<a href="' + esc(it.url) + '" class="plt-card__media-link" aria-hidden="true" tabindex="-1">' +
-                (it.img ? '<img class="plt-card__img" src="' + esc(it.img) + '" alt="' + esc(it.imgAlt) + '" loading="lazy" width="600" height="600">' : '') +
+              imgHtml +
               '</a>' +
-              (sale ? '<div class="plt-badge-group"><span class="plt-sale-badge">SALE</span></div>' : '') +
+              (soldOut
+                ? '<div class="plt-badge-group"><span class="plt-soldout-badge" aria-label="Sold out">SOLD OUT</span></div>'
+                : (sale ? '<div class="plt-badge-group"><span class="plt-sale-badge">SALE</span></div>' : '')) +
             '</div>' +
             '<div class="plt-card__body">' +
               '<a href="' + esc(it.url) + '" class="plt-card__title-link"><h3 class="plt-card__title">' + esc(it.title) + '</h3></a>' +
               '<div class="plt-card__price">' +
                 (sale
-                  ? '<span class="plt-card__price-sale">' + money(it.priceCents) + '</span><span class="plt-card__price-compare">' + money(it.compareCents) + '</span>'
-                  : '<span class="plt-card__price-reg">' + money(it.priceCents) + '</span>') +
+                  ? '<span class="plt-card__price-sale">' + window.tcMoney(it.priceCents) + '</span><span class="plt-card__price-compare">' + window.tcMoney(it.compareCents) + '</span>'
+                  : '<span class="plt-card__price-reg">' + window.tcMoney(it.priceCents) + '</span>') +
               '</div>' +
-              '<a href="' + esc(it.url) + '" class="plt-card__btn">Shop Now' + chevron + '</a>' +
+              '<a href="' + esc(it.url) + '" class="plt-card__btn">' + (soldOut ? 'Notify me' : 'Shop Now') + chevron + '</a>' +
             '</div>' +
           '</li>';
-        }).join('');
+        }
+
+        var grid = document.getElementById('tp-recent-grid');
+        function render() { grid.innerHTML = items.map(cardHtml).join(''); }
+        render();
         document.getElementById('tp-recent').hidden = false;
+
+        // The cached snapshot goes stale — prices change with sales, products
+        // sell out. Refresh the shown items from the storefront product JSON
+        // in the background and re-render only if something actually moved.
+        // items[] entries are the same objects as keep[id], so mutating them
+        // and saving keep persists the refresh. A 10-minute TTL per entry
+        // skips the refetch on rapid back-and-forth browsing (up to 4 requests
+        // saved per page view); prices rarely move faster than that, and any
+        // change still lands on the next post-TTL view.
+        var REFRESH_TTL = 600000;
+        var tsNow = Date.now();
+        var staleItems = items.filter(function (it) {
+          return !it.fetchedAt || tsNow - it.fetchedAt > REFRESH_TTL;
+        });
+        if (!staleItems.length) return;
+        Promise.all(staleItems.map(function (it) {
+          return fetch('/products/' + it.handle + '.js')
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .catch(function () { return null; });
+        })).then(function (fresh) {
+          var changed = false;
+          fresh.forEach(function (p, i) {
+            if (!p || !p.variants || !p.variants.length) return;
+            var v = null;
+            for (var j = 0; j < p.variants.length; j++) {
+              if (p.variants[j].available) { v = p.variants[j]; break; }
+            }
+            v = v || p.variants[0];
+            var it = staleItems[i];
+            var upd = {
+              title: p.title,
+              url: '/products/' + p.handle,
+              priceCents: v.price,
+              compareCents: v.compare_at_price || 0,
+              available: p.available
+            };
+            for (var k in upd) {
+              if (it[k] !== upd[k]) { it[k] = upd[k]; changed = true; }
+            }
+            it.fetchedAt = tsNow;
+          });
+          if (changed) render();
+          // Always persist: fetchedAt must survive so the TTL works across views.
+          saveData(keep);
+        });
       })();
     </script>
   {%- endif -%}
@@ -3159,10 +3268,16 @@
   /* --- Gallery thumbnails --- */
   var mainImg = document.getElementById('tp-main-img');
 
+  /* Swap only after the new image is decoded, and only if no newer swap has
+     been requested since (rapid thumbnail clicks) — the old image stays fully
+     visible the whole time, so there is never a blank frame. */
+  var tpSwapSeq = 0;
   function tpSwapImage(img, src, alt) {
     if (!img || !src) return;
-    img.classList.add('tp-fade');
-    setTimeout(function () {
+    if (img.src === src && !img.hasAttribute('srcset')) return;
+    var seq = ++tpSwapSeq;
+    var apply = function () {
+      if (seq !== tpSwapSeq) return;
       /* Shopify image_tag outputs srcset — browsers prefer srcset over src,
          so we must clear both attributes before assigning the new src,
          otherwise the displayed image never changes. */
@@ -3170,8 +3285,16 @@
       img.removeAttribute('sizes');
       img.src = src;
       if (alt) img.alt = alt;
-      img.classList.remove('tp-fade');
-    }, 180);
+    };
+    var pre = new Image();
+    pre.onload = apply;
+    /* Failed preload: keep the current image — swapping anyway would replace
+       a good image with the broken-image icon. */
+    pre.onerror = null;
+    pre.src = src;
+    /* complete is also true for a cached FAILED load; naturalWidth>0 means
+       it actually decoded. */
+    if (pre.complete) { pre.onload = null; if (pre.naturalWidth > 0) apply(); }
   }
 
   var allThumbs = Array.from(document.querySelectorAll('.tp-gallery__thumb'));
@@ -3558,14 +3681,20 @@
       qtyInput.addEventListener('change', function () { if (lastCount >= 0) applyState(lastCount); });
     }
 
-    /* Cart change events — fire at request-start so we use a delay to let the server finish */
-    ['shopify:cart:lines-update', 'cart:updated', 'cart:refresh', 'cart:change'].forEach(function (name) {
-      document.addEventListener(name, function () {
-        setTimeout(refreshCartDealState, 350);
-        setTimeout(refreshCartDealState, 950);
-        setTimeout(refreshCartDealState, 2500);
-        setTimeout(refreshCartDealState, 5000);
+    /* Cart change events — fire at request-start so we use a delay to let the
+       server finish. One managed chain: a new event resets the pending chain
+       instead of stacking another 4 fetches on top (rapid qty clicks fired
+       dozens of /cart.js requests before). The last event still gets its full
+       350ms→5s coverage. */
+    var _chainTimers = [];
+    function scheduleRefreshChain() {
+      _chainTimers.forEach(clearTimeout);
+      _chainTimers = [350, 950, 2500, 5000].map(function (ms) {
+        return setTimeout(refreshCartDealState, ms);
       });
+    }
+    ['shopify:cart:lines-update', 'cart:updated', 'cart:refresh', 'cart:change'].forEach(function (name) {
+      document.addEventListener(name, scheduleRefreshChain);
     });
 
     /* MutationObserver — badge elements get replaced by morphSection so we need

@@ -143,7 +143,9 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #ee7b28;
+    /* #b0540c, not brand orange #ee7b28: small text on the cream card needs
+       WCAG 4.5:1 contrast (this is 4.66:1; brand orange is only 2.56:1). */
+    color: #b0540c;
     margin: 0 0 0.35rem;
   }
 
@@ -154,7 +156,9 @@
     margin: 0 0 0.5rem;
   }
 
-  .tc-wp__accent { color: #ee7b28; }
+  /* Large heading text needs 3:1 on the cream card — #c96311 is 3.64:1
+     (brand orange #ee7b28 is 2.56:1 and fails). */
+  .tc-wp__accent { color: #c96311; }
 
   .tc-wp__sub {
     font-size: 1rem;
@@ -260,7 +264,8 @@
   }
 {% endstylesheet %}
 
-<script>
+<script type="module">
+  import { lockScroll, unlockScroll } from '@theme/utilities';
   (function () {
     var DONE_KEY = 'tcWelcome.done';
     var SNOOZE_KEY = 'tcWelcome.snooze';
@@ -285,18 +290,28 @@
     }
 
     var lastFocused = null;
+    var cachedFocusable = null;
     function open(state) {
       setState(state);
       lastFocused = document.activeElement;
       popup.hidden = false;
+      lockScroll(popup);
       var focusTarget = state === 'signup'
         ? popup.querySelector('#tc-wp-email')
         : popup.querySelector('[data-tc-wp-copy]');
       if (focusTarget) focusTarget.focus({ preventScroll: true });
+      var focusable = popup.querySelectorAll(
+        'button:not([hidden]):not([disabled]), [href]:not([hidden]), input:not([hidden]):not([disabled]), [tabindex]:not([tabindex="-1"]):not([hidden])'
+      );
+      cachedFocusable = Array.prototype.filter.call(focusable, function (el) {
+        return el.offsetParent !== null;
+      });
     }
 
     function close() {
       popup.hidden = true;
+      unlockScroll(popup);
+      cachedFocusable = null;
       // Only snooze if they never signed up — a done user never sees it again anyway.
       if (!storageGet(DONE_KEY)) storageSet(SNOOZE_KEY, String(Date.now()));
       if (lastFocused && lastFocused.focus) lastFocused.focus({ preventScroll: true });
@@ -306,7 +321,21 @@
       el.addEventListener('click', close);
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !popup.hidden) close();
+      if (popup.hidden) return;
+      if (e.key === 'Escape') { close(); return; }
+      if (e.key !== 'Tab') return;
+
+      var list = cachedFocusable;
+      if (!list || !list.length) return;
+      var first = list[0], last = list[list.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
 
     var copyBtn = popup.querySelector('[data-tc-wp-copy]');
@@ -351,7 +380,10 @@
 
     // 2. Returning from a successful signup: URL marker (return_to) or the
     //    pending flag set at submit time (covers marker-less redirects).
-    if (params.get('tc-welcome') === '1' || params.get('customer_posted') === 'true' || pending) {
+    //    Deliberately NOT keyed on the generic customer_posted=true marker —
+    //    other customer forms on the site (e.g. product back-in-stock signup)
+    //    produce that same marker and would wrongly trigger this popup.
+    if (params.get('tc-welcome') === '1' || pending) {
       storageSet(DONE_KEY, '1');
       open('success');
       // Clean the markers out of the URL so refresh/share doesn't re-trigger.
@@ -373,7 +405,11 @@
       // Don't interrupt an open cart drawer.
       var drawer = document.getElementById('cart-drawer');
       if (drawer && drawer.hasAttribute('open')) {
-        setTimeout(function () { open('signup'); }, 8000);
+        setTimeout(function () {
+          // Re-check — the shopper may still be in the drawer 8s later.
+          if (drawer.hasAttribute('open')) return;
+          open('signup');
+        }, 8000);
         return;
       }
       open('signup');

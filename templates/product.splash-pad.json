@@ -125,19 +125,6 @@
             "alt1": false,
             "alt2": false
           }
-        },
-        "ba_1": {
-          "type": "before_after",
-          "settings": {
-            "eyebrow": "See the difference",
-            "title": "From Bored to Obsessed",
-            "text": "<p>Drag the slider and see the difference for yourself.</p>",
-            "image_before": "shopify://shop_images/hf_20260622_163052_97a69b1a-027a-4ecb-853b-8ba79ad8795d.png",
-            "label_before": "Before",
-            "image_after": "shopify://shop_images/hf_20260622_002639_40ae7abb-421c-46a9-b951-af28f6fd913e.png",
-            "label_after": "After",
-            "initial_position": 35
-          }
         }
       },
       "block_order": [
@@ -155,8 +142,7 @@
         "cmp_2",
         "cmp_3",
         "cmp_4",
-        "cmp_5",
-        "ba_1"
+        "cmp_5"
       ],
       "settings": {
         "show_paw_rating": true,

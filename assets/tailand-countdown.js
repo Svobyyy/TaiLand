@@ -25,24 +25,34 @@
     return n < 10 ? '0' + n : '' + n;
   }
 
-  function updateAll() {
-    var total = Math.max(0, Math.floor(msUntilMidnight() / 1000));
-    var h     = Math.floor(total / 3600);
-    var m     = Math.floor((total % 3600) / 60);
-    var s     = total % 60;
-    var hStr  = pad(h);
-    var mStr  = pad(m);
-    var sStr  = pad(s);
+  /* Element refs are collected once per start() instead of re-querying the
+     whole document every second — the DOM only changes on section reload,
+     which re-runs start(). */
+  var targets = [];
 
+  function collect() {
+    targets = [];
     var els = document.querySelectorAll('[data-tailand-countdown]');
     for (var i = 0; i < els.length; i++) {
-      var el  = els[i];
-      var hEl = el.querySelector('[data-cd-h]');
-      var mEl = el.querySelector('[data-cd-m]');
-      var sEl = el.querySelector('[data-cd-s]');
-      if (hEl) hEl.textContent = hStr;
-      if (mEl) mEl.textContent = mStr;
-      if (sEl) sEl.textContent = sStr;
+      targets.push({
+        h: els[i].querySelector('[data-cd-h]'),
+        m: els[i].querySelector('[data-cd-m]'),
+        s: els[i].querySelector('[data-cd-s]'),
+      });
+    }
+  }
+
+  function updateAll() {
+    var total = Math.max(0, Math.floor(msUntilMidnight() / 1000));
+    var hStr  = pad(Math.floor(total / 3600));
+    var mStr  = pad(Math.floor((total % 3600) / 60));
+    var sStr  = pad(total % 60);
+
+    for (var i = 0; i < targets.length; i++) {
+      var t = targets[i];
+      if (t.h) t.h.textContent = hStr;
+      if (t.m) t.m.textContent = mStr;
+      if (t.s) t.s.textContent = sStr;
     }
   }
 
@@ -50,9 +60,21 @@
     /* Clear any previous interval so theme editor section reloads
        do not stack up multiple intervals on window. */
     if (window._TailandCD) clearInterval(window._TailandCD);
+    collect();
+    if (!targets.length) return;
     updateAll();
     window._TailandCD = setInterval(updateAll, 1000);
   }
+
+  /* No point ticking a timer nobody can see — pause while the tab is
+     hidden, catch up immediately on return. */
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      if (window._TailandCD) { clearInterval(window._TailandCD); window._TailandCD = null; }
+    } else {
+      start();
+    }
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start);

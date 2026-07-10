@@ -119,9 +119,32 @@
   href="{{ canonical_url }}"
 >
 
-{% if page_description %}
+{% if og_description %}
   <meta
     name="description"
-    content="{{ page_description | escape }}"
+    content="{{ og_description | escape }}"
   >
 {% endif %}
+
+{%- comment -%}
+  WebSite schema with SearchAction — makes the site eligible for Google's
+  sitelinks search box. Homepage only; Google reads it from there.
+{%- endcomment -%}
+{%- if request.page_type == 'index' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": {{ shop.name | json }},
+    "url": {{ request.origin | json }},
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "{{ request.origin }}/search?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+{%- endif -%}

@@ -256,6 +256,11 @@ h4, h5, h6,
   border-color: var(--pc-orange);
 }
 
+.pc-search-inline__input:focus-visible {
+  outline: 2px solid var(--pc-orange);
+  outline-offset: 2px;
+}
+
 .pc-search-inline__input::placeholder {
   color: #b0a090;
 }
@@ -963,6 +968,33 @@ drawer-localization-component.menu-drawer__localization {
   padding-inline: var(--drawer-padding, 20px);
   background: rgba(247, 223, 184, 0.25);
   border-top: 1.5px solid rgba(43, 27, 18, 0.1);
+}
+
+/* 4f. Tablet nav overflow -- drop "About Us" from the horizontal bar.
+   overflow-list.js collapses whatever doesn't fit into a "More" catch-all,
+   which looks bare/awkward at tablet widths. display:none takes the item
+   out of flex flow entirely (zero width, doesn't shift siblings), which is
+   safe here -- unlike hiding the "More" trigger itself, this doesn't touch
+   the element the JS measures against to decide what overflows, so the
+   other links naturally stop needing a "More" bucket instead of getting
+   miscounted. Mobile drawer and desktop nav both keep this link normally. */
+@media screen and (min-width: 750px) and (max-width: 1199px) {
+  /* $= (ends-with), not *= (substring): substring would also catch any future
+     URL merely containing this path (e.g. /pages/about-us-team). */
+  .overflow-menu .menu-list__list-item:has(a[href$="/pages/about-us"]) {
+    display: none !important;
+  }
+}
+
+/* At the narrowest tablet widths, dropping About Us alone still isn't enough
+   room for Sale to fit too -- drop it as well in just that sliver so "More"
+   never reappears anywhere in the tablet range. Sale stays on mobile drawer
+   and desktop, and reappears here automatically once About Us's freed-up
+   space is enough on its own (~900px+). */
+@media screen and (min-width: 750px) and (max-width: 899px) {
+  .overflow-menu .menu-list__list-item:has(a[href$="/collections/sale"]) {
+    display: none !important;
+  }
 }
 
 

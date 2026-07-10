@@ -42,18 +42,10 @@
           if (!container) return;
           var usdCents = parseFloat(container.dataset.tcFsUsdCents) || 0;
           if (!usdCents) return;
-          var js = window.Shopify || {};
-          var rate = parseFloat((js.currency && js.currency.rate) || 1) || 1;
-          var active = (js.currency && js.currency.active) || 'USD';
-          var amount = (usdCents / 100) * rate;
-          try {
-            var formatted = new Intl.NumberFormat(document.documentElement.lang || 'en', {
-              style: 'currency', currency: active,
-              minimumFractionDigits: 0, maximumFractionDigits: 0
-            }).format(amount);
-            var textEl = container.querySelector('.tc-fs-announce-text');
-            if (textEl) textEl.textContent = 'Free shipping on orders ' + formatted + '+';
-          } catch(e) {}
+          if (!window.tcMoney) return;
+          var formatted = window.tcMoney(usdCents, { minDigits: 0, maxDigits: 0 });
+          var textEl = container.querySelector('.tc-fs-announce-text');
+          if (textEl) textEl.textContent = 'Free shipping on orders ' + formatted + '+';
         }
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', update);

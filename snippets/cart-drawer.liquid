@@ -392,10 +392,19 @@
   window.tcUpdateFSBars = window.tcUpdateFSBars || (function () {
       var SHOP_CURRENCY = {{ shop.currency | json }};
 
+      /* Trailing debounce: an add-to-cart fires this from several places at
+         once (section re-render callback + CartLinesUpdateEvent + cart:updated)
+         — collapse the burst into one /cart.js fetch; the last call wins. */
+      var _fsDebounce;
       function run() {
-        var js = window.Shopify || {};
-        var rate = parseFloat((js.currency && js.currency.rate) || 1) || 1;
-        var active = (js.currency && js.currency.active) || SHOP_CURRENCY;
+        clearTimeout(_fsDebounce);
+        _fsDebounce = setTimeout(runNow, 150);
+      }
+
+      function runNow() {
+        var info = window.tcCurrencyInfo ? window.tcCurrencyInfo() : { rate: 1, active: SHOP_CURRENCY };
+        var rate = info.rate;
+        var active = info.active;
 
         fetch('/cart.js')
           .then(function (r) { return r.json(); })
@@ -431,14 +440,9 @@
               if (progress >= 100) {
                 msg.innerHTML = 'Free shipping unlocked';
               } else {
-                var formatted;
-                try {
-                  formatted = new Intl.NumberFormat(document.documentElement.lang || 'en', {
-                    style: 'currency', currency: active, maximumFractionDigits: 2
-                  }).format(remaining / 100);
-                } catch (e) {
-                  formatted = (remaining / 100).toFixed(0) + ' ' + active;
-                }
+                /* remaining is already in the active display currency here
+                   (rate-converted above) - format only, no second conversion. */
+                var formatted = window.tcFormatMoney(remaining, { currency: active, maxDigits: 2 });
                 var pre = el.dataset.freeShippingPrefix || '';
                 var suf = el.dataset.freeShippingSuffix || '';
                 msg.innerHTML = (pre ? pre + ' ' : '') + '<strong>' + formatted + '</strong>' + (suf ? ' ' + suf : '');

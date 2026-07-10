@@ -1,0 +1,102 @@
+{%- doc -%}
+  Renders one product card for the Tailand tc-* grid (used by tailand-collection.liquid
+  and tailand-search.liquid — keep them in sync by editing only this file).
+
+  @param {product} product
+  @param {boolean} tc_show_badges - merchant "Show sale badge (ENDS SOON)" setting
+  @param {boolean} tc_show_best - merchant "Show Best Seller badge" setting
+  @param {string} tc_best_text - Best Seller badge label
+  @param {string} tc_btn - card CTA button text (non-soldout state)
+  @param {boolean} [eager] - true for the first/LCP card (pass forloop.first)
+{%- enddoc -%}
+
+{%- liquid
+  assign tc_has_sale = false
+  if product.compare_at_price > product.price
+    assign tc_has_sale = true
+  endif
+  assign tc_is_soldout = false
+  unless product.available
+    assign tc_is_soldout = true
+    assign tc_has_sale = false
+  endunless
+  assign tc_dual = false
+  if tc_show_badges and tc_has_sale and tc_show_best
+    assign tc_dual = true
+  endif
+
+  assign tc_cta_href = product.url
+  assign tc_cta_text = tc_btn
+  if tc_is_soldout
+    assign tc_cta_href = product.url | append: '#tp-bis'
+    assign tc_cta_text = 'Notify me'
+  endif
+-%}
+
+<li class="tc-card{% if tc_is_soldout %} tc-card--soldout{% endif %}">
+
+  <!-- Image + badges -->
+  <div class="tc-card__media-wrap">
+    <a href="{{ product.url }}" class="tc-card__media-link" tabindex="-1" aria-hidden="true">
+      {%- if product.featured_image -%}
+        {%- assign tc_img_alt = product.featured_image.alt | default: product.title | escape -%}
+        {%- comment -%}
+          srcset lets the browser pick the right size: ~2-col mobile grid needs
+          ~450px at high-DPR, desktop grid ~600px — instead of always 600px.
+        {%- endcomment -%}
+        {%- if eager -%}
+          {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'eager', fetchpriority: 'high', width: 600, height: 600, widths: '200, 300, 450, 600', sizes: '(max-width: 749px) 44vw, (max-width: 1199px) 31vw, 280px' -}}
+        {%- else -%}
+          {{- product.featured_image | image_url: width: 600 | image_tag: class: 'tc-card__img', alt: tc_img_alt, loading: 'lazy', width: 600, height: 600, widths: '200, 300, 450, 600', sizes: '(max-width: 749px) 44vw, (max-width: 1199px) 31vw, 280px' -}}
+        {%- endif -%}
+      {%- else -%}
+        <div class="tc-card__img tc-card__img--placeholder" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="12" cy="17" rx="5.5" ry="5"/>
+            <ellipse cx="5.5" cy="11.5" rx="2.2" ry="3"/>
+            <ellipse cx="18.5" cy="11.5" rx="2.2" ry="3"/>
+            <ellipse cx="9" cy="7.5" rx="2" ry="2.8"/>
+            <ellipse cx="15" cy="7.5" rx="2" ry="2.8"/>
+          </svg>
+        </div>
+      {%- endif -%}
+    </a>
+
+    {%- if tc_is_soldout and tc_show_badges -%}
+      <div class="tc-badge-group">
+        <span class="tc-soldout-badge" aria-label="Sold out">SOLD OUT</span>
+      </div>
+    {%- elsif tc_has_sale and tc_show_badges or tc_show_best -%}
+      <div class="tc-badge-group{%- if tc_dual %} tc-badge-group--dual{%- endif %}">
+        {%- if tc_has_sale and tc_show_badges -%}
+          <span class="tc-sale-badge" aria-label="Ends soon">ENDS SOON</span>
+        {%- endif -%}
+        {%- if tc_show_best -%}
+          <span class="tc-best-badge" aria-label="{{ tc_best_text | escape }}">{{ tc_best_text | escape }}</span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <!-- Card body -->
+  <div class="tc-card__body">
+    <a href="{{ product.url }}" class="tc-card__title-link">
+      <h2 class="tc-card__title">{{ product.title | escape }}</h2>
+    </a>
+
+    <div class="tc-card__price">
+      {%- if tc_has_sale -%}
+        <span class="tc-card__price-sale">{{ product.price | money }}</span>
+        <span class="tc-card__price-compare">{{ product.compare_at_price | money }}</span>
+      {%- else -%}
+        <span class="tc-card__price-reg">{{ product.price | money }}</span>
+      {%- endif -%}
+    </div>
+
+    <a href="{{ tc_cta_href }}" class="tc-card__btn">
+      {{- tc_cta_text | escape -}}
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+  </div>
+
+</li>

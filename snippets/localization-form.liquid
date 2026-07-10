@@ -36,6 +36,15 @@
 
   assign aliases_us = 'us,usa,america,united states of america'
   assign aliases_uk = 'uk,gb,great britain'
+
+  comment
+    Every id in this file is namespaced by both localization_style (dropdown
+    vs drawer) AND form_id (the rendering block/section's own id) so that no
+    combination of call sites can ever collide, even if a future third call
+    site reuses an existing localization_style value.
+  endcomment
+  assign tc_id_prefix = localization_style | append: '-' | append: form_id
+  assign form_localization_id = tc_id_prefix | append: '-LocalizationForm'
 %}
 <localization-form-component
   ref="localizationForm"
@@ -46,7 +55,7 @@
   {% assign localization_label = 'content.localization_region_and_language' | t %}
 
   {%- form 'localization',
-    id: 'LocalizationForm',
+    id: form_localization_id,
     class: 'localization-form',
     ref: 'form',
     return_to: back,
@@ -63,14 +72,14 @@
             </div>
             <input
               class="country-filter__input"
-              id="country-filter-input"
+              id="{{ tc_id_prefix }}-country-filter-input"
               type="search"
               name="country_filter"
               value=""
               placeholder="{{ 'placeholders.search' | t }}"
               role="combobox"
-              aria-owns="country-results"
-              aria-controls="country-results"
+              aria-owns="{{ tc_id_prefix }}-country-results"
+              aria-controls="{{ tc_id_prefix }}-country-results"
               aria-haspopup="listbox"
               aria-autocomplete="list"
               aria-label="{{ 'accessibility.find_country' | t }}"
@@ -83,7 +92,7 @@
             >
             <label
               class="field__label visually-hidden"
-              for="country-filter-input"
+              for="{{ tc_id_prefix }}-country-filter-input"
             >
               {{- 'content.search' | t -}}
             </label>
@@ -105,7 +114,7 @@
       <div class="country-selector-form__wrapper">
         <h2
           class="visually-hidden"
-          id="{{ localization_style }}-CountryLabel"
+          id="{{ tc_id_prefix }}-CountryLabel"
         >
           Country/Region
         </h2>
@@ -119,7 +128,7 @@
         {% endif %}
         <div
           class="localization-form__list"
-          id="{{ localization_style }}-country-results"
+          id="{{ tc_id_prefix }}-country-results"
           ref="countryList"
         >
           {% if show_popular_countries %}
@@ -148,7 +157,7 @@
                   {% if aliases %}
                     data-aliases="{{ aliases }}"
                   {% endif %}
-                  id="{{ country.name }}"
+                  id="{{ tc_id_prefix }}-popular-{{ country.name | handle }}"
                   aria-label="{{ country.name }}"
                   role="option"
                   tabindex="-1"
@@ -178,7 +187,7 @@
           >
             <span
               class="localization-form__list-item localization-form__list-item-disabled"
-              id="no-results-message"
+              id="{{ tc_id_prefix }}-no-results-message"
               ref="noResultsMessage"
               hidden
             >
@@ -203,7 +212,7 @@
                 {% if aliases %}
                   data-aliases="{{ aliases }}"
                 {% endif %}
-                id="{{ country.name }}"
+                id="{{ tc_id_prefix }}-{{ country.name | handle }}"
                 aria-label="{{ country.name }}"
                 role="option"
                 tabindex="-1"
@@ -241,7 +250,7 @@
       <div class="language-selector{% if show_country %} top-shadow{% else %} language-selector--collapse-space{% endif %}{% if show_country == false and localization_style == 'drawer' %} h5{% endif %}">
         <h2
           class="visually-hidden"
-          id="{{ localization_style }}-LanguageLabel"
+          id="{{ tc_id_prefix }}-LanguageLabel"
         >
           {{ 'content.language' | t }}
         </h2>
@@ -249,7 +258,7 @@
           <span class="language-selector__label">{{ 'content.language' | t }}</span>
         {% endif %}
         <select
-          id="{{ localization_style }}Select"
+          id="{{ tc_id_prefix }}-Select"
           class="localization-form__select"
           name="language_code"
           aria-label="{{ 'content.language' | t }}"
@@ -395,7 +404,7 @@
     }
   }
 
-  .localization-form__list-item#no-results-message {
+  .localization-form__list-item.localization-form__list-item-disabled {
     grid-template-columns: 1fr;
     text-align: center;
     color: var(--color-foreground-subdued);

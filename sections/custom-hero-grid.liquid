@@ -128,6 +128,11 @@
                 srcset="{{ section.settings.right_top_mobile_image | image_url: width: 750 }} 750w"
               >
             {%- endif -%}
+            {%- comment -%}
+              eager but NOT fetchpriority:high — only the big left card (the
+              LCP element) keeps high priority; three images all marked high
+              just compete with each other for bandwidth.
+            {%- endcomment -%}
             {{
               section.settings.right_top_image
               | image_url: width: 700
@@ -136,8 +141,7 @@
                 alt: right_top_image_alt,
                 widths: '300, 500, 700',
                 sizes: '(max-width: 749px) 100vw, 35vw',
-                loading: 'eager',
-                fetchpriority: 'high'
+                loading: 'eager'
             }}
           </picture>
         {%- endif -%}
@@ -186,8 +190,7 @@
                 alt: right_bottom_image_alt,
                 widths: '300, 500, 700',
                 sizes: '(max-width: 749px) 100vw, 35vw',
-                loading: 'eager',
-                fetchpriority: 'high'
+                loading: 'eager'
             }}
           </picture>
         {%- endif -%}
